@@ -235,7 +235,9 @@ def apply_indices(content: dict, plan: dict, semantics: dict, mapping: dict) -> 
 
 
 def transform_plan(template_dir: Path, content_dir: Path, plan: dict, pack: dict | None,
-                   semantics: dict | None, output: Path) -> dict:
+                   semantics: dict | None, output: Path, marks: dict | None = None) -> dict:
+    if semantics is not None and marks is not None:
+        raise DocumentError("SEMANTIC_PAYLOAD_CONFLICT")
     if output.exists() and any(output.iterdir()):
         raise DocumentError("OUTPUT_NOT_EMPTY")
     raw = (template_dir / "rules.json").read_bytes()
@@ -246,7 +248,8 @@ def transform_plan(template_dir: Path, content_dir: Path, plan: dict, pack: dict
     validate_catalogue_plan(content, template, plan)
     result = copy.deepcopy(plan)
     report = {"mode": "offline_replay", "new_model_calls": 0, "strict_I1_eligible": False,
-        "source_indices_used": semantics is not None, "rules_used": pack is not None,
+        "source_indices_used": semantics is not None or marks is not None,
+        "source_marks_used": marks is not None, "rules_used": pack is not None,
         "applied": [], "unresolved": [], "needs_review": True}
     if pack is not None:
         result, changes = apply_context_rules(template, content, result, pack)
@@ -254,6 +257,10 @@ def transform_plan(template_dir: Path, content_dir: Path, plan: dict, pack: dict
     if semantics is not None:
         template, mapping = expand_vertical_styles(template)
         result = apply_indices(content, result, semantics, mapping)
+    if marks is not None:
+        from .semantic_marks import expand_mark_styles, apply_marks
+        template, mapping = expand_mark_styles(template)
+        result = apply_marks(content, result, marks, mapping)
     validate_catalogue_plan(content, template, result)
     target = output / "template"
     target.mkdir(parents=True, exist_ok=True)

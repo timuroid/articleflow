@@ -91,7 +91,8 @@ def _drawing_rule(drawing):
     return node, bindings
 
 
-def extract_catalogue(source: Path, annotations: dict, definitions: dict, output: Path) -> dict:
+def extract_catalogue(source: Path, annotations: dict, definitions: dict, output: Path,
+                      source_observation: bool = False) -> dict:
     if output.exists() and any(output.iterdir()):
         raise DocumentError("OUTPUT_NOT_EMPTY")
     parts = load_package(source)
@@ -225,7 +226,7 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
         "limitations": ["Alternative selection rules require confirmation", "No new LLM evaluation", "Opaque mathematical payload retains its internal appearance", "No unseen transfer validation"],
     }
     content = {
-        "schema_version": VERSION, "protocol": "explicit-catalogue-oracle-structured-payload",
+        "schema_version": VERSION, "protocol": "source_docx_I3" if source_observation else "explicit-catalogue-oracle-structured-payload",
         "root_namespaces": root.nsmap, "root_attributes": dict(root.attrib),
         "structure": tree, "blocks": blocks, "objects": objects,
         "payload_sha256": digest((content_dir / "payload.zip").read_bytes()),
@@ -233,15 +234,15 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
     dump(template_dir / "rules.json", template)
     dump(content_dir / "content.json", content)
     plan = {
-        "schema_version": VERSION, "provenance": "source_oracle",
+        "schema_version": VERSION, "provenance": "source_observations_I3" if source_observation else "source_oracle",
         "template_sha256": digest((template_dir / "rules.json").read_bytes()),
         "input_sha256": digest((content_dir / "content.json").read_bytes()),
         "blocks": block_plan, "layout": layout_plan, "objects": object_plan,
         "section_style": section,
     }
-    dump(output / "oracle-plan.json", plan)
+    dump(output / ("source-observations.json" if source_observation else "oracle-plan.json"), plan)
     manifest = {
-        "schema_version": VERSION, "mode": "oracle_renderer_control", "model_calls": 0,
+        "schema_version": VERSION, "mode": "source_observations_I3" if source_observation else "oracle_renderer_control", "model_calls": 0,
         "eligible_for_model_benchmark": False, "strict_I1_eligible": False,
         "blocks": len(blocks), "roles": len(roles), "catalogue_counts": {k: len(v) for k, v in catalogue.styles.items()},
         "source_text_runs": len(root.xpath(".//w:body//w:r[not(ancestor::m:oMath)]", namespaces=NS)),

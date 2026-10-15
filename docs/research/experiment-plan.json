@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3",
   "experiment_id": "articleflow-template-study-001",
-  "status": "context_rules_improve_replay_unresolved_template_conditions",
+  "status": "I3_exact_on_specimen_original_I1_gate_unresolved",
   "corpus_ids": [
     "pilot-001"
   ],
@@ -80,7 +80,7 @@
   "monetary_budget": {
     "stage_cap_usd": "5",
     "user_reported_account_budget_usd": "9",
-    "api_actual_usd": "2.5089958",
+    "api_actual_usd": "2.787404085",
     "unsettled_reserved_usd": "0",
     "includes_historical_baseline": true,
     "ledger_scope": "one shared pilot-001 ledger"
@@ -123,6 +123,15 @@
       "trials": "rules-006-results.csv",
       "mode": "offline_replay",
       "new_model_calls": 0
+    },
+    {
+      "id": "source-aware-007",
+      "summary": "source-aware-007-summary.json",
+      "report": "source-aware-007.md",
+      "trials": "source-aware-007-results.csv",
+      "protocol": "I3_source_docx",
+      "new_model_calls": 20,
+      "strict_I1_pass": false
     }
   ],
   "model_registry": "models.json",
@@ -143,5 +152,11 @@
     "oracle_exact_trials": 10,
     "model_calls": 0,
     "strict_I1_eligible": false
-  }
+  },
+  "I3_limitations": [
+    "same_specimen_as_template_preparation",
+    "source_formatting_explicitly_available",
+    "compatible_style_resources_required",
+    "unseen_real_transfer_not_evaluated"
+  ]
 }

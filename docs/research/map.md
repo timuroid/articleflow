@@ -15,6 +15,9 @@
 | [planner-005.md](planner-005.md) | Выбор вариантов моделью, все попытки, стоимость и контроль неоднозначности |
 | [planner-005-summary.json](planner-005-summary.json) | Агрегаты model trials 0.5 и доказательные ограничения |
 | [planner-005-results.csv](planner-005-results.csv) | Диагностическая попытка и замороженная серия модели |
+| [source-aware-007.md](source-aware-007.md) | Отдельное применение к исходному DOCX, source marks и свежие role-only серии |
+| [source-aware-007-summary.json](source-aware-007-summary.json) | Две серии I3 по 10/10, бюджет, ограничения и проверки |
+| [source-aware-007-results.csv](source-aware-007-results.csv) | Все 20 свежих попыток, токены, стоимость и exact metrics |
 | [rules-006.md](rules-006.md) | Условия выбора, сохранение индексов, абляции и replay без API |
 | [rules-006-summary.json](rules-006-summary.json) | Покрытие правил, неоднозначные группы, результаты и бюджет |
 | [rules-006-results.csv](rules-006-results.csv) | Все повторные сборки и отдельная запись невалидного исходного плана |
@@ -24,3 +27,5 @@
 Вверх: [общая карта](../map.md). Схемы и понимание задачи: [концепция](../product/concept.md). Формат хранения: [TemplatePackage](../tech/template-package.md). Формат ответа модели: [DocumentPlan](../tech/document-plan.md).
 
 Состояние: выполнен диагностический LLM-пилот 0.3 и точный oracle-контроль сборщика 0.4 на одном предоставленном DOCX. В 0.4 все 10 свежих сборок совпали по пикселям; в [0.5](planner-005.md) модельный выбор дал 0/10 полных совпадений. В [0.6](rules-006.md) повторные сборки с правилами и source indices дали content exact 9/9, exact pixels 0/9 без новых вызовов модели. Строгий I1 и независимый transfer не пройдены. Ключи, рукописи, исходные выделения и ответы моделей не хранятся в этой папке. Код и команды: [каталог 0.4](../tech/catalogue-renderer.md), [runner 0.3](../tech/research-prototype.md).
+
+Текущий дополнительный результат: [I3 0.7](source-aware-007.md) дал по 10/10 полных совпадений у Sol и Luna, с исходным оформлением во входе. Это не меняет прежнее непрохождение I1/I2 и не является unseen transfer.

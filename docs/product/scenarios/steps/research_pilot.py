@@ -16,6 +16,51 @@ from articleflow.catalogue import extract_catalogue, render_catalogue
 from articleflow.docx_engine import content_fingerprint
 from articleflow.planner import aliases, compile_compact
 from articleflow.context_rules import fit_rules, apply_context_rules, extract_indices, transform_plan
+from articleflow.semantic_marks import extract_marks
+from articleflow.source_aware import format_source, ROLE_VERSION
+from articleflow.docx_engine import digest
+
+
+@when("выделения восстановлены из отдельного payload исходных marks")
+def restore_source_marks(context):
+    marks = extract_marks(context.source, context.package / "content/content.json")
+    template = json.loads((context.package / "template/rules.json").read_text())
+    any_style = next(iter(template["styles"]["character"]))
+    for block in context.plan["blocks"]:
+        for span in block["spans"]:
+            span["style"] = any_style
+    output = context.root / "marks-output"
+    context.rule_report = transform_plan(context.package / "template", context.package / "content", context.plan, None, None, output, marks)
+    context.target = context.root / "marks-candidate.docx"
+    render_catalogue(output / "template", context.package / "content", json.loads((output / "plan.json").read_text()), context.target)
+
+
+@then("содержание и выделения точны при явно объявленном дополнительном входе")
+def marks_are_explicit(context):
+    metrics = compare_content(context.source, context.target)
+    assert metrics["content_exact"] and metrics["inline_exact"]
+    assert context.rule_report["source_marks_used"]
+    assert not context.rule_report["strict_I1_eligible"]
+
+
+@when("исходный DOCX собран по шаблону с сохранением допустимых вариантов")
+def format_source_i3(context):
+    roles = {"schema_version": ROLE_VERSION, "source_sha256": digest(context.source.read_bytes()),
+             "blocks": [{"id": b["id"], "role": b["role"]} for b in context.plan["blocks"]]}
+    (context.package / "oracle-plan.json").unlink()
+    output = context.root / "source-output"
+    context.source_report = format_source(context.package / "template", context.source, roles, output)
+    context.target = output / "candidate.docx"
+
+
+@then("сборка точна по содержанию и выделениям и отмечена как I3")
+def source_mode_is_explicit(context):
+    metrics = compare_content(context.source, context.target)
+    assert metrics["content_exact"] and metrics["inline_exact"]
+    assert context.source_report["protocol"] == "I3_source_docx"
+    assert context.source_report["source_formatting_used"]
+    assert not context.source_report["strict_I1_eligible"]
+    assert not context.source_report["target_oracle_used"]
 
 
 def temporary_workspace(context):
