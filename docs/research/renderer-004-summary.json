@@ -1,0 +1,167 @@
+{
+  "schema_version": "catalogue-0.4",
+  "experiment_id": "renderer-004",
+  "corpus_id": "pilot-001",
+  "date": "2026-10-15",
+  "mode": "oracle_renderer_control",
+  "status": "exact_on_supplied_specimen",
+  "plan_provenance": "source_oracle",
+  "model_calls": 0,
+  "incremental_api_cost_usd": "0",
+  "cumulative_api_cost_usd": "1.5405222",
+  "strict_I1_eligible": false,
+  "new_model_trial": false,
+  "independent_transfer_evaluated": false,
+  "fresh_assemblies": 10,
+  "pages_per_document": 12,
+  "pixels_per_document": 24067728,
+  "content_exact_trials": 10,
+  "inline_exact_trials": 10,
+  "placements_exact_trials": 10,
+  "pixel_exact_trials": 10,
+  "differing_pixels_all_trials": 0,
+  "catalogue": {
+    "schema_version": "catalogue-0.4",
+    "mode": "oracle_renderer_control",
+    "model_calls": 0,
+    "eligible_for_model_benchmark": false,
+    "strict_I1_eligible": false,
+    "blocks": 178,
+    "roles": 42,
+    "catalogue_counts": {
+      "paragraph": 64,
+      "character": 82,
+      "table": 2,
+      "row": 2,
+      "cell": 6,
+      "section": 1,
+      "drawing": 4
+    },
+    "source_text_runs": 1085,
+    "compiled_text_spans": 391,
+    "discarded_cached_markers": {
+      "lastRenderedPageBreak": 11
+    },
+    "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+    "input_sha256": "b8d46ee4f2e74dc30635b9bfc58b96080c04d905d2bc65e437d801f92b351224"
+  },
+  "baseline_03_differing_pixel_ratio": 0.15527024403799145,
+  "ablations": [
+    {
+      "mode": "paragraph_properties",
+      "content_exact": true,
+      "inline_exact": true,
+      "pixel_exact": false,
+      "differing_pixel_ratio": 0.028556663096740997
+    },
+    {
+      "mode": "inline_properties_and_structure",
+      "content_exact": true,
+      "inline_exact": true,
+      "pixel_exact": false,
+      "differing_pixel_ratio": 0.1526900254149457
+    },
+    {
+      "mode": "both",
+      "content_exact": true,
+      "inline_exact": true,
+      "pixel_exact": true,
+      "differing_pixel_ratio": 0.0
+    }
+  ],
+  "render_profile": {
+    "engine": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+    "os": "Linux",
+    "architecture": "x86_64",
+    "dpi": 144,
+    "color": "RGB",
+    "requested_font_resolution": {
+      "Arial": "Liberation Sans",
+      "Times New Roman": "Liberation Serif",
+      "KaiTi": "OpenAI Sans",
+      "Calibri": "OpenAI Sans"
+    },
+    "libraries": {
+      "lxml": "6.1.1",
+      "python-docx": "1.2.0",
+      "PyMuPDF": "1.26.6",
+      "numpy": "2.3.5",
+      "httpx": "0.28.1"
+    },
+    "field_policy": "LibreOffice default, no external updates; no fields detected in specimen",
+    "word_compatibility": "not tested"
+  },
+  "render_environment_sha256": "e955852e81cbd20c7dc47d0f6ca5e71c73fb19150e5308b63078339ba3873a1d",
+  "golden_page_raster_hashes": [
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "86a4c240af5d18022dbc8483ae54d35100ec457d9605c722c92efbe9a67add3a"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "a4b3c0ddd82693dd72ac651d0ceeca68832454a643e2622e57952edc63fdf731"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "5be517db09db3c1f04036e0776058855137fb0bddf4bb04a6ae45edc328c8ba0"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "95a412df6e3e5fe10696944cb01a8bec455a365df36ccd69caa3d87ce88c27bf"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "b46e512c27bcacbc857f2eb9d1cd4d4313e14050e0c6d2811e65b35f742fcf09"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "45a77053d26eb67541a0e55f5a509e0f655691a0e078c485dae1f6b1eb356e9c"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "aac31ef80216ddda90977f0ec9f8211f66afc54efa06351eff5bbe10c56751e8"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "8dd4df0381aa2dc48d15679ee9fd34cc1b0153a494c4e7b0386e31d2da57d441"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "84df5410f49a83c4aff8605de32856f19cd2e1d3e896b3e5e0ed7bbe13195377"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "468b2dd330f69dc1c141c17bf6d52bf697fdd90271e0d98a5175d60bfcfc114e"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "a776554a230dc16cf5ebb88c81f0b7c93ea7347fa787074dd26cc8099786fe28"
+    },
+    {
+      "width": 1191,
+      "height": 1684,
+      "sha256": "0ad10be0595bdb524a8a197dda89ddd994288de9d57fb1dfb6da2a316dbb7c85"
+    }
+  ],
+  "verification": {
+    "unit_tests_passed": 27,
+    "gherkin_scenarios_passed": 8
+  },
+  "limitations": [
+    "correct style selection supplied by source oracle",
+    "observed variants not confirmed semantic rules",
+    "opaque OMML retains its formatting",
+    "Word and independent real articles untested"
+  ]
+}

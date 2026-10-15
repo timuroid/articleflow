@@ -21,14 +21,20 @@ from .docx_engine import DocumentError, digest, dump, render_roles, compare_cont
 
 def render_pdf(source: Path, output_dir: Path, timeout: int = 90) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="articleflow-lo-") as profile:
+    # Never accept a PDF left by an earlier invocation as this render's output.
+    with tempfile.TemporaryDirectory(prefix=".articleflow-lo-", dir=output_dir) as workspace:
+        profile = Path(workspace) / "profile"
+        fresh_output = Path(workspace) / "pdf"
+        fresh_output.mkdir()
         result = subprocess.run(
-            ["soffice", "-env:UserInstallation=" + Path(profile).as_uri(), "--headless", "--convert-to", "pdf", "--outdir", str(output_dir.resolve()), str(source.resolve())],
+            ["soffice", "-env:UserInstallation=" + profile.resolve().as_uri(), "--headless", "--convert-to", "pdf", "--outdir", str(fresh_output.resolve()), str(source.resolve())],
             capture_output=True, timeout=timeout,
         )
-    target = output_dir / (source.stem + ".pdf")
-    if result.returncode or not target.is_file():
-        raise DocumentError("PDF_RENDER_FAILED")
+        fresh = fresh_output / (source.stem + ".pdf")
+        target = output_dir / (source.stem + ".pdf")
+        if result.returncode or not fresh.is_file():
+            raise DocumentError("PDF_RENDER_FAILED")
+        fresh.replace(target)
     return target
 
 

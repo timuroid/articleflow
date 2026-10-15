@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .docx_engine import inspect_document, lossless_split, lossless_rebuild, compare_content, render_roles, build_template
 from .research import run_trials, render_pdf, compare_pixels, environment_manifest
+from .catalogue import extract_catalogue, render_catalogue, placement_fingerprint
 
 
 def main():
@@ -23,6 +24,12 @@ def main():
     template = commands.add_parser("build-template")
     for name in ["evidence_dir", "annotations", "definitions", "output"]:
         template.add_argument(name, type=Path)
+    catalogue = commands.add_parser("extract-catalogue")
+    for name in ["source", "annotations", "definitions", "output"]:
+        catalogue.add_argument(name, type=Path)
+    rebuild = commands.add_parser("render-catalogue")
+    for name in ["template_dir", "content_dir", "plan", "output"]:
+        rebuild.add_argument(name, type=Path)
     compare = commands.add_parser("compare")
     compare.add_argument("source", type=Path)
     compare.add_argument("candidate", type=Path)
@@ -58,9 +65,14 @@ def main():
         if bool(args.golden_pdf) != bool(args.candidate_pdf):
             parser.error("--golden-pdf and --candidate-pdf must be provided together")
         result = compare_content(args.source, args.candidate)
+        result["placements_exact"] = placement_fingerprint(args.source) == placement_fingerprint(args.candidate)
         if args.golden_pdf:
             result.update(compare_pixels(args.golden_pdf, args.candidate_pdf))
         print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == "extract-catalogue":
+        print(json.dumps(extract_catalogue(args.source, json.loads(args.annotations.read_text()), json.loads(args.definitions.read_text()), args.output), indent=2))
+    elif args.command == "render-catalogue":
+        print(json.dumps(render_catalogue(args.template_dir, args.content_dir, json.loads(args.plan.read_text()), args.output), indent=2))
     elif args.command == "pdf":
         print(render_pdf(args.source, args.output))
     elif args.command == "environment":

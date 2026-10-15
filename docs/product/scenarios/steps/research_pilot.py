@@ -12,6 +12,8 @@ from articleflow.docx_engine import (
 )
 from articleflow.docx_engine import DocumentError
 from articleflow.research import one_model_call, plan_schema, finalize_hybrid_trial, validate_model_choice
+from articleflow.catalogue import extract_catalogue, render_catalogue
+from articleflow.docx_engine import content_fingerprint
 
 
 def temporary_workspace(context):
@@ -140,3 +142,68 @@ def check_release(context):
 def old_release_rejected(context):
     assert context.error == "MODEL_TOO_OLD"
     assert not context.http_client_created
+
+
+@given("извлечены отдельные каталог, содержимое и контрольный план")
+def extract_catalogue_fixture(context):
+    context.package = context.root / "catalogue"
+    extract_catalogue(context.source, {"b-000001": "body"}, {"roles": {"body": "Синтетический абзац"}}, context.package)
+    context.plan = json.loads((context.package / "oracle-plan.json").read_text())
+    context.expected_payload = content_fingerprint(context.source)
+
+
+@when("исходный DOCX удалён и документ собран по каталогу")
+def assemble_without_source(context):
+    context.source.unlink()
+    context.target = context.root / "rebuilt.docx"
+    context.record = render_catalogue(context.package / "template", context.package / "content", context.plan, context.target)
+
+
+@then("содержание совпадает с сохранённым отпечатком")
+def assembled_payload(context):
+    assert content_fingerprint(context.target) == context.expected_payload
+
+
+@then("сборка не объявляется успехом модели")
+def oracle_not_model(context):
+    assert context.record["model_calls"] == 0
+    assert context.record["plan_provenance"] == "source_oracle"
+    assert not context.record["strict_I1_pass"]
+
+
+@when("исследователь читает правила каталога")
+def read_catalogue_rules(context):
+    context.rules_text = (context.package / "template/rules.json").read_text()
+    context.rules = json.loads(context.rules_text)
+
+
+@then("в правилах нет текста статьи и идентификаторов её блоков")
+def no_specimen_assignments(context):
+    assert "Определение" not in context.rules_text
+    assert "b-000001" not in context.rules_text
+    assert "blocks" not in context.rules
+
+
+@then("роли содержат только допустимые варианты свойств")
+def catalogue_alternatives(context):
+    role = context.rules["roles"]["body"]
+    assert role["paragraph_styles"]
+    assert role["character_styles"]
+    assert set(role["paragraph_styles"]) <= set(context.rules["styles"]["paragraph"])
+
+
+@when("план ссылается на неизвестный вариант абзаца")
+def bad_paragraph_variant(context):
+    context.plan["blocks"][0]["paragraph_style"] = "not-in-catalogue"
+    context.target = context.root / "bad-result.docx"
+    context.error = None
+    try:
+        render_catalogue(context.package / "template", context.package / "content", context.plan, context.target)
+    except DocumentError as exc:
+        context.error = str(exc)
+
+
+@then("сборщик отклоняет план до создания DOCX")
+def no_invalid_docx(context):
+    assert context.error == "PLAN_STYLE_ROLE"
+    assert not context.target.exists()

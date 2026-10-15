@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3",
   "experiment_id": "articleflow-template-study-001",
-  "status": "diagnostic_pilot_complete_strict_study_pending",
+  "status": "oracle_renderer_exact_model_selection_pending",
   "corpus_ids": [
     "pilot-001"
   ],
@@ -94,11 +94,12 @@
     "human_review"
   ],
   "blockers": [
-    "role_template_not_pixel_exact_with_oracle",
-    "renderer_retains_source_geometry_not_strict_I1",
     "model_inline_semantics_not_exact",
     "unseen_transfer_corpus_not_provided",
-    "Word_and_target_fonts_not_validated"
+    "Word_and_target_fonts_not_validated",
+    "catalogue_variant_selection_not_automated",
+    "opaque_math_payload_not_strict_I1",
+    "new_model_plan_contract_not_evaluated"
   ],
   "results": [
     {
@@ -118,5 +119,13 @@
       "openai/gpt-6.1-sol": 10
     },
     "historical_model_excluded_from_new_candidates": "openai/gpt-4.1"
+  },
+  "renderer_control": {
+    "id": "renderer-004",
+    "summary": "renderer-004-summary.json",
+    "results": "renderer-004-results.csv",
+    "oracle_exact_trials": 10,
+    "model_calls": 0,
+    "strict_I1_eligible": false
   }
 }

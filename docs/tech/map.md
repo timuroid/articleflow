@@ -20,6 +20,7 @@
 | [security.md](security.md) | Доступ, секреты, недоверенные DOCX и удаление |
 | [testing.md](testing.md) | Стратегия тестирования и корпус |
 | [research-prototype.md](research-prototype.md) | Реализованный CLI 0.3, формат диагностического шаблона, запуск и ограничения |
+| [catalogue-renderer.md](catalogue-renderer.md) | Каталог 0.4, полные варианты оформления, новый body и точный oracle-контроль |
 | [operations.md](operations.md) | Конфигурация, окружения и наблюдаемость |
 | [roadmap.md](roadmap.md) | Порядок реализации и критерии выхода |
 | [contracts/map.md](contracts/map.md) | Машиночитаемые примеры и схемы |

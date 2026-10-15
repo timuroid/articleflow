@@ -1,0 +1,11 @@
+experiment_id,repeat,mode,model_calls,pages,content_exact,inline_exact,placements_exact,pixel_exact,differing_pixels,incremental_api_cost_usd,strict_I1_eligible
+renderer-004,1,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,2,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,3,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,4,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,5,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,6,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,7,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,8,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,9,source_oracle,0,12,True,True,True,True,0,0,False
+renderer-004,10,source_oracle,0,12,True,True,True,True,0,0,False
