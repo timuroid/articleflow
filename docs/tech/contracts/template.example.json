@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "template_id": "00000000-0000-4000-8000-000000000001",
+  "version_id": "00000000-0000-4000-8000-000000000002",
+  "version_number": 1,
+  "status": "approved",
+  "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "page_rules": {
+    "rule_id": "page-1",
+    "width_twips": 11906,
+    "height_twips": 16838,
+    "margins_twips": {"top": 1134, "bottom": 1134, "left": 1701, "right": 850},
+    "columns": 1,
+    "origin": "observed",
+    "evidence_block_ids": ["b-000001"],
+    "confirmation": "confirmed"
+  },
+  "role_rules": [
+    {
+      "rule_id": "body-1",
+      "role": "body",
+      "properties": {
+        "font_family": "Times New Roman",
+        "font_size_half_points": 24,
+        "alignment": "justify",
+        "space_after_twips": 0,
+        "first_line_indent_twips": 709
+      },
+      "origin": "observed",
+      "evidence_block_ids": ["b-000010", "b-000011"],
+      "confirmation": "confirmed"
+    }
+  ],
+  "structure_policy": {"required_roles": [], "order": "preserve", "unknown_role": "review"},
+  "object_policy": {"omml": "preserve", "inline_images": "preserve", "ole": "reject"},
+  "unconfigured_role_policy": "preserve_if_compatible",
+  "limitations": ["Пример задаёт только основной текст; остальные роли не имеют целевого оформления"]
+}

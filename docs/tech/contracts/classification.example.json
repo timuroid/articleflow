@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "document_id": "doc-synthetic-001",
+  "chunk_id": "chunk-001",
+  "assignments": [
+    {
+      "block_id": "b-000001",
+      "role": "title",
+      "confidence": 0.94,
+      "evidence_block_ids": ["b-000001", "b-000002"],
+      "reason": "Первый крупный абзац перед блоком авторов"
+    },
+    {
+      "block_id": "b-000002",
+      "role": "authors",
+      "confidence": 0.91,
+      "evidence_block_ids": ["b-000002"],
+      "reason": "Перечень имён непосредственно после названия"
+    }
+  ]
+}

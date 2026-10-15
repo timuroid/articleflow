@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "job_id": "00000000-0000-4000-8000-000000000003",
+  "state": "completed_with_warnings",
+  "template_version_id": "00000000-0000-4000-8000-000000000002",
+  "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "output_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "tool_versions": {"parser": "0.1-example", "renderer": "0.1-example", "validator": "0.1-example"},
+  "summary": {"blockers": 0, "warnings": 1, "unchecked_rules": 1},
+  "integrity_checks": [
+    {"code": "TEXT_PAYLOAD_EQUAL", "status": "passed"},
+    {"code": "OBJECT_PAYLOAD_EQUAL", "status": "passed"},
+    {"code": "RELATIONSHIPS_VALID", "status": "passed"}
+  ],
+  "applied_operations": [
+    {
+      "operation_id": "op-1",
+      "kind": "set_paragraph_style",
+      "target_block_ids": ["b-000010"],
+      "rule_id": "body-1",
+      "before": {"font_size_half_points": 28},
+      "after": {"font_size_half_points": 24}
+    }
+  ],
+  "findings": [
+    {
+      "code": "VISUAL_LAYOUT_UNCHECKED",
+      "severity": "warning",
+      "check_status": "unchecked",
+      "block_ids": [],
+      "rule_id": null,
+      "message": "Разбивка на страницы в Microsoft Word не проверена автоматически",
+      "next_action": "Откройте DOCX и проверьте переносы таблиц и подписи"
+    }
+  ]
+}
