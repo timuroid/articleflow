@@ -7,6 +7,7 @@
     {"id": "openai/gpt-6.1-sol", "release_date": "2026-09-29", "source": "https://developers.openai.com/api/docs/changelog", "source_type": "official_release_log", "role": "primary"},
     {"id": "openai/gpt-6-luna", "release_date": "2026-09-22", "source": "https://developers.openai.com/api/docs/changelog", "source_type": "official_release_log", "role": "cheaper_candidate"},
     {"id": "openai/gpt-6-sol", "release_date": "2026-09-22", "source": "https://developers.openai.com/api/docs/changelog", "source_type": "official_release_log", "role": "optional_comparison"},
-    {"id": "openai/gpt-6-astra", "release_date": "2026-09-03", "source": "https://developers.openai.com/api/docs/changelog", "source_type": "official_release_log", "role": "expensive_reference_not_scheduled"}
+    {"id": "openai/gpt-6-astra", "release_date": "2026-09-03", "source": "https://developers.openai.com/api/docs/changelog", "source_type": "official_release_log", "role": "expensive_reference_not_scheduled"},
+    {"id": "qwen/qwen3.8-27b", "release_date": "2026-08-14", "source": "https://github.com/QwenLM/Qwen3.8/blob/main/README.md#news", "source_type": "official_release_log", "role": "open_weight_comparison", "architecture": "dense", "language_model_parameters_billions": 27, "model_card": "https://huggingface.co/Qwen/Qwen3.8-27B"}
   ]
 }

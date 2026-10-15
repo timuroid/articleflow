@@ -21,6 +21,7 @@
 | PRD-013 | SC-035–SC-038 | [TemplatePackage](../tech/template-package.md), [DocumentPlan](../tech/document-plan.md) |
 | PRD-014 | SC-039–SC-041 | [Режимы LLM](../tech/llm.md) |
 | PRD-015 | SC-042–SC-045 | [Бенчмарк](../research/benchmark.md) |
+| PRD-014, PRD-015, PRD-017 | SC-041–SC-045, SC-053 | Дополнительные измерения Qwen: [008 medium](../research/qwen-008.md), [009 без reasoning](../research/qwen-009.md); это отчёты I3, а не прохождение продуктового или I1 gate |
 | PRD-016 | SC-046–SC-052 | [Batch и ZIP](../tech/batch-processing.md) |
 | PRD-017 | SC-053 | [Методы исследования](../research/methods.md) |
 | PRD-005 | SC-055 | [Прототип](../tech/research-prototype.md), сохранность верхних/нижних индексов |

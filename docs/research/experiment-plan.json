@@ -9,7 +9,8 @@
     "openai/gpt-6.1-sol",
     "openai/gpt-6-luna",
     "openai/gpt-6-sol",
-    "openai/gpt-6-astra"
+    "openai/gpt-6-astra",
+    "qwen/qwen3.8-27b"
   ],
   "first_phase": {
     "extractor": "E-MANUAL",
@@ -80,8 +81,8 @@
   "monetary_budget": {
     "stage_cap_usd": "5",
     "user_reported_account_budget_usd": "9",
-    "api_actual_usd": "2.787404085",
-    "unsettled_reserved_usd": "0",
+    "api_actual_usd": "3.059363045",
+    "unsettled_reserved_usd": "0.07327168",
     "includes_historical_baseline": true,
     "ledger_scope": "one shared pilot-001 ledger"
   },
@@ -132,6 +133,24 @@
       "protocol": "I3_source_docx",
       "new_model_calls": 20,
       "strict_I1_pass": false
+    },
+    {
+      "id": "qwen-008",
+      "summary": "qwen-008-summary.json",
+      "report": "qwen-008.md",
+      "trials": "qwen-008-results.csv",
+      "protocol": "I3_source_docx",
+      "new_model_calls": 10,
+      "strict_I1_pass": false
+    },
+    {
+      "id": "qwen-009",
+      "summary": "qwen-009-summary.json",
+      "report": "qwen-009.md",
+      "trials": "qwen-009-results.csv",
+      "protocol": "I3_source_docx",
+      "new_model_calls": 10,
+      "strict_I1_pass": false
     }
   ],
   "model_registry": "models.json",
@@ -158,5 +177,51 @@
     "source_formatting_explicitly_available",
     "compatible_style_resources_required",
     "unseen_real_transfer_not_evaluated"
-  ]
+  ],
+  "qwen_comparison": {
+    "id": "qwen-008",
+    "model": "qwen/qwen3.8-27b",
+    "protocol": "I3_source_docx",
+    "runner_version": "0.7.0",
+    "planned_attempts": 10,
+    "reasoning_effort": "medium",
+    "max_tokens": 8192,
+    "same_inputs_as": "source-aware-007",
+    "new_unseen_documents": 0,
+    "conservative_series_reserve_usd": "0.36636080",
+    "baseline_api_actual_usd": "2.787404085",
+    "status": "completed",
+    "report": "qwen-008.md",
+    "actual_attempts": 10,
+    "observed_full_matches": 6,
+    "api_cost_usd": "0.161924865",
+    "summary": "qwen-008-summary.json",
+    "trials": "qwen-008-results.csv",
+    "api_cost_complete": false,
+    "unsettled_reserved_usd": "0.03663608"
+  },
+  "qwen_no_thinking": {
+    "id": "qwen-009",
+    "model": "qwen/qwen3.8-27b",
+    "protocol": "I3_source_docx",
+    "reasoning_effort": "none",
+    "max_tokens": 8192,
+    "planned_attempts": 10,
+    "status": "completed",
+    "trigger": "008 first five attempts: three exact and two finish_reason=length",
+    "adaptive_configuration": true,
+    "replaces_previous_failures": false,
+    "same_inputs_as": "source-aware-007",
+    "new_unseen_documents": 0,
+    "report": "qwen-009.md",
+    "baseline_api_actual_usd": "2.949328950",
+    "baseline_unsettled_reserved_usd": "0.03663608",
+    "actual_attempts": 10,
+    "observed_full_matches": 9,
+    "api_cost_usd": "0.110034095",
+    "summary": "qwen-009-summary.json",
+    "trials": "qwen-009-results.csv",
+    "api_cost_complete": false,
+    "unsettled_reserved_usd": "0.03663560"
+  }
 }

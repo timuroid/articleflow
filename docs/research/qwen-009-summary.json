@@ -1,0 +1,238 @@
+{
+  "schema_version": "qwen-comparison-009",
+  "date": "2026-10-15",
+  "experiment_id": "qwen-009",
+  "status": "completed",
+  "runner_version": "0.7.0",
+  "adaptive_configuration": true,
+  "registration_trigger": "008 first five attempts: three exact and two finish_reason=length",
+  "protocol": "I3_source_docx",
+  "strict_I1_pass": false,
+  "source_formatting_used": true,
+  "target_oracle_used_by_application": false,
+  "unseen_real_transfer_evaluated": false,
+  "template_status": "research_draft",
+  "same_inputs_and_schema_as_008": true,
+  "model": {
+    "model": "qwen/qwen3.8-27b",
+    "release_date": "2026-08-14",
+    "reasoning_effort": "none",
+    "attempts": 10,
+    "full_matches": 9,
+    "exact_pixels": 9,
+    "content_exact": 9,
+    "inline_exact": 9,
+    "roles_exact": 9,
+    "placements_exact": 9,
+    "api_cost_usd": "0.110034095",
+    "api_cost_complete": false,
+    "unsettled_reserved_usd": "0.03663560",
+    "mean_api_cost_usd": null,
+    "api_latency_median_ms": 94789.0,
+    "api_latency_min_ms": 26514,
+    "api_latency_max_ms": 145541,
+    "statuses": {
+      "evaluated": 9,
+      "http_error": 1
+    },
+    "reasoning_tokens_per_trial": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      null,
+      0,
+      0
+    ],
+    "reasoning_disabled_confirmed_by_usage": false,
+    "reasoning_disabled_on_all_reported_usage": true,
+    "usage_reported_attempts": 9,
+    "providers": {
+      "Darkbloom": 10
+    },
+    "resolved_models": {
+      "qwen/qwen3.8-27b": 9,
+      "unknown": 1
+    },
+    "source_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+    "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+    "input_sha256": "b8d46ee4f2e74dc30635b9bfc58b96080c04d905d2bc65e437d801f92b351224",
+    "rules_sha256": "fe477e6d4aba43dc5c59877b6c7b0fa677aeeceb29223331c7ca4ed5474ace62",
+    "prompt_sha256": "e22754167d1fb2f9f6cf7eb6f60162fd3463bd69266a4e066fa628f2e6470cda",
+    "schema_sha256": "a0ae5e8ba69f6bb2c3d52cdb1a5adc706acfd20b333af032ed6c7dd53f844793",
+    "max_tokens": 8192,
+    "protocol": "I3_source_docx",
+    "pricing": {
+      "prompt": "0.00000024",
+      "completion": "0.0000022",
+      "input_cache_read": "0.00000005"
+    },
+    "release": {
+      "id": "qwen/qwen3.8-27b",
+      "release_date": "2026-08-14",
+      "source": "https://github.com/QwenLM/Qwen3.8/blob/main/README.md#news",
+      "source_type": "official_release_log",
+      "role": "open_weight_comparison",
+      "architecture": "dense",
+      "language_model_parameters_billions": 27,
+      "model_card": "https://huggingface.co/Qwen/Qwen3.8-27B"
+    }
+  },
+  "medium_baseline": {
+    "model": "qwen/qwen3.8-27b",
+    "release": {
+      "id": "qwen/qwen3.8-27b",
+      "release_date": "2026-08-14",
+      "source": "https://github.com/QwenLM/Qwen3.8/blob/main/README.md#news",
+      "source_type": "official_release_log",
+      "role": "open_weight_comparison",
+      "architecture": "dense",
+      "language_model_parameters_billions": 27,
+      "model_card": "https://huggingface.co/Qwen/Qwen3.8-27B"
+    },
+    "attempts": 10,
+    "full_matches": 6,
+    "exact_pixels": 6,
+    "content_exact": 6,
+    "inline_exact": 6,
+    "placements_exact": 6,
+    "roles_exact": 6,
+    "statuses": {
+      "evaluated": 6,
+      "incomplete": 3,
+      "http_error": 1
+    },
+    "api_cost_usd": "0.161924865",
+    "api_cost_complete": false,
+    "unsettled_reserved_usd": "0.03663608",
+    "mean_api_cost_usd": null,
+    "usage_reported_attempts": 9,
+    "api_latency_median_ms": 140049.0,
+    "api_latency_min_ms": 26575,
+    "api_latency_max_ms": 159884,
+    "reasoning_tokens_min": 4666,
+    "reasoning_tokens_max": 6229,
+    "completion_tokens_min": 7522,
+    "completion_tokens_max": 8192,
+    "cached_input_tokens_total": 8192,
+    "providers": {
+      "Darkbloom": 10
+    },
+    "resolved_models": {
+      "qwen/qwen3.8-27b": 9,
+      "unknown": 1
+    },
+    "source_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+    "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+    "input_sha256": "b8d46ee4f2e74dc30635b9bfc58b96080c04d905d2bc65e437d801f92b351224",
+    "rules_sha256": "fe477e6d4aba43dc5c59877b6c7b0fa677aeeceb29223331c7ca4ed5474ace62",
+    "prompt_sha256": "e22754167d1fb2f9f6cf7eb6f60162fd3463bd69266a4e066fa628f2e6470cda",
+    "schema_sha256": "a0ae5e8ba69f6bb2c3d52cdb1a5adc706acfd20b333af032ed6c7dd53f844793",
+    "reasoning_effort": "medium",
+    "max_tokens": 8192,
+    "protocol": "I3_source_docx"
+  },
+  "openai_baselines": [
+    {
+      "model": "openai/gpt-6.1-sol",
+      "release_date": "2026-09-29",
+      "attempts": 10,
+      "full_matches": 10,
+      "exact_pixels": 10,
+      "content_exact": 10,
+      "inline_exact": 10,
+      "roles_exact": 10,
+      "api_cost_usd": "0.2627206",
+      "mean_api_cost_usd": "0.02627206",
+      "api_latency_median_ms": 28298.5,
+      "source_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+      "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+      "rules_sha256": "fe477e6d4aba43dc5c59877b6c7b0fa677aeeceb29223331c7ca4ed5474ace62",
+      "prompt_sha256": "e22754167d1fb2f9f6cf7eb6f60162fd3463bd69266a4e066fa628f2e6470cda",
+      "schema_sha256": "a0ae5e8ba69f6bb2c3d52cdb1a5adc706acfd20b333af032ed6c7dd53f844793",
+      "reasoning_effort": "medium",
+      "max_tokens": 8192
+    },
+    {
+      "model": "openai/gpt-6-luna",
+      "release_date": "2026-09-22",
+      "attempts": 10,
+      "full_matches": 10,
+      "exact_pixels": 10,
+      "content_exact": 10,
+      "inline_exact": 10,
+      "roles_exact": 10,
+      "api_cost_usd": "0.015687685",
+      "mean_api_cost_usd": "0.0015687685",
+      "api_latency_median_ms": 19270.5,
+      "source_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+      "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+      "rules_sha256": "fe477e6d4aba43dc5c59877b6c7b0fa677aeeceb29223331c7ca4ed5474ace62",
+      "prompt_sha256": "e22754167d1fb2f9f6cf7eb6f60162fd3463bd69266a4e066fa628f2e6470cda",
+      "schema_sha256": "a0ae5e8ba69f6bb2c3d52cdb1a5adc706acfd20b333af032ed6c7dd53f844793",
+      "reasoning_effort": "medium",
+      "max_tokens": 8192
+    }
+  ],
+  "incremental_api_cost_usd": "0.110034095",
+  "cumulative_api_cost_usd": "3.059363045",
+  "both_qwen_series_api_cost_usd": "0.271958960",
+  "both_qwen_series_cost_complete": false,
+  "unsettled_reserved_usd": "0.07327168",
+  "stage_cap_usd": "5",
+  "ledger_records": 71,
+  "verification": {
+    "unit_tests_passed": 57,
+    "gherkin_scenarios_passed": 14
+  },
+  "first_response_serialization": {
+    "qwen-008": {
+      "characters": 6871,
+      "newlines": 2,
+      "compact_characters": 6869
+    },
+    "qwen-009": {
+      "characters": 11505,
+      "newlines": 715,
+      "compact_characters": 6869
+    },
+    "first_parsed_plans_equal": true
+  },
+  "code_provenance": {
+    "code_commit": "aae0d3a5071d74b94b5ac95af0b9a8ade4d354bb",
+    "files": {
+      "src/articleflow/source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+      "src/articleflow/source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+      "src/articleflow/research.py": "dce8c6edc00f7bcaa5517638ea8fee16fe784a245e13ff645fca991163294b44",
+      "src/articleflow/catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00",
+      "src/articleflow/docx_engine.py": "249ae028f6f4d204edbd5f88a4334e446917054c5a6dd7fd2e70c384ccad5e60"
+    },
+    "changes_to_code_at_launch": false
+  },
+  "renderer": {
+    "engine": "LibreOfficeDev",
+    "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+    "os": "Linux",
+    "font_manifest_hash": "9462a36e6d312fbb003d60b9195a4e4f226d0e9036ea0e9f5ff1c1059e180f21",
+    "raster_dpi": 144,
+    "color_mode": "RGB",
+    "field_policy": "LibreOffice default, no external updates; no fields detected in specimen",
+    "baseline_repeats": 10
+  },
+  "failures": [
+    {
+      "repeat": 8,
+      "status": "http_error",
+      "http_status": 429,
+      "error_code": "HTTP_429",
+      "finish_reason": null,
+      "role_errors": null,
+      "unresolved": null,
+      "limit_source": "upstream_provider_shared_pool",
+      "retry_after_seconds": 2
+    }
+  ]
+}
