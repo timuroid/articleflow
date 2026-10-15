@@ -15,12 +15,52 @@ from articleflow.research import one_model_call, plan_schema, finalize_hybrid_tr
 from articleflow.catalogue import extract_catalogue, render_catalogue
 from articleflow.docx_engine import content_fingerprint
 from articleflow.planner import aliases, compile_compact
+from articleflow.context_rules import fit_rules, apply_context_rules, extract_indices, transform_plan
 
 
 def temporary_workspace(context):
     temp = tempfile.TemporaryDirectory()
     context.add_cleanup(temp.cleanup)
     context.root = Path(temp.name)
+
+
+@when("к плану применяются правила без подходящего условия для абзаца")
+def context_without_rule(context):
+    template = json.loads((context.package / "template/rules.json").read_text())
+    content = json.loads((context.package / "content/content.json").read_text())
+    rules, _ = fit_rules(template, content, context.plan, context.plan["template_sha256"])
+    rules["rules"] = []
+    context.transformed, context.rule_report = apply_context_rules(template, content, context.plan, rules)
+
+
+@then("исходный выбор сохраняется с явной необходимостью проверки")
+def context_needs_review(context):
+    assert context.transformed["blocks"] == context.plan["blocks"]
+    assert context.rule_report["needs_review"]
+    assert len(context.rule_report["unresolved"]) == 1
+
+
+@when("потерянный планом индекс восстановлен из отдельного научного payload")
+def restore_declared_indices(context):
+    template = json.loads((context.package / "template/rules.json").read_text())
+    semantics = extract_indices(context.source, context.package / "content/content.json")
+    normal = next(key for key, raw in template["styles"]["character"].items() if "vertAlign" not in str(raw))
+    for span in context.plan["blocks"][0]["spans"]:
+        if "vertAlign" in str(template["styles"]["character"][span["style"]]):
+            span["style"] = normal
+    output = context.root / "with-indices"
+    context.rule_report = transform_plan(context.package / "template", context.package / "content", context.plan, None, semantics, output)
+    plan = json.loads((output / "plan.json").read_text())
+    context.target = context.root / "candidate.docx"
+    render_catalogue(output / "template", context.package / "content", plan, context.target)
+
+
+@then("научное содержание сохранено и результат не назван реконструкцией из чистого текста")
+def indices_are_explicit(context):
+    assert compare_content(context.source, context.target)["content_exact"]
+    assert context.rule_report["source_indices_used"]
+    assert not context.rule_report["strict_I1_eligible"]
+    assert context.rule_report["new_model_calls"] == 0
 
 
 @given("синтетический абзац содержит два одинаковых термина")

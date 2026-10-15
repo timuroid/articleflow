@@ -9,6 +9,8 @@ from .research import run_trials, render_pdf, compare_pixels, environment_manife
 from .catalogue import extract_catalogue, render_catalogue, placement_fingerprint
 from .planner import model_view, compile_compact
 from .planner_research import run_catalogue_trials
+from .context_rules import fit_rules, extract_indices, transform_plan
+from .docx_engine import digest, dump
 
 
 def main():
@@ -48,6 +50,17 @@ def main():
     planner_trials.add_argument("--max-tokens", type=int, default=24000)
     planner_trials.add_argument("--reasoning-effort", default="medium")
     planner_trials.add_argument("--cap-usd", default="5")
+    fit = commands.add_parser("fit-context-rules")
+    for name in ["template", "content", "oracle", "output"]:
+        fit.add_argument(name, type=Path)
+    indices = commands.add_parser("extract-indices")
+    for name in ["source", "content", "output"]:
+        indices.add_argument(name, type=Path)
+    contextual = commands.add_parser("apply-context-rules")
+    for name in ["template_dir", "content_dir", "plan", "output"]:
+        contextual.add_argument(name, type=Path)
+    contextual.add_argument("--rules", type=Path)
+    contextual.add_argument("--indices", type=Path)
     compare = commands.add_parser("compare")
     compare.add_argument("source", type=Path)
     compare.add_argument("candidate", type=Path)
@@ -101,6 +114,18 @@ def main():
         options = vars(args).copy()
         options.pop("command")
         run_catalogue_trials(**options)
+    elif args.command == "fit-context-rules":
+        raw = args.template.read_bytes()
+        rules, audit = fit_rules(json.loads(raw), json.loads(args.content.read_text()), json.loads(args.oracle.read_text()), digest(raw))
+        dump(args.output, rules)
+        print(json.dumps(audit, indent=2))
+    elif args.command == "extract-indices":
+        dump(args.output, extract_indices(args.source, args.content))
+    elif args.command == "apply-context-rules":
+        report = transform_plan(args.template_dir, args.content_dir, json.loads(args.plan.read_text()),
+            json.loads(args.rules.read_text()) if args.rules else None,
+            json.loads(args.indices.read_text()) if args.indices else None, args.output)
+        print(json.dumps({k: report[k] for k in ["mode", "new_model_calls", "strict_I1_eligible", "needs_review"]}, indent=2))
     elif args.command == "pdf":
         print(render_pdf(args.source, args.output))
     elif args.command == "environment":

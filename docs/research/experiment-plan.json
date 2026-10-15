@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3",
   "experiment_id": "articleflow-template-study-001",
-  "status": "catalogue_model_gate_failed_rules_need_conditions",
+  "status": "context_rules_improve_replay_unresolved_template_conditions",
   "corpus_ids": [
     "pilot-001"
   ],
@@ -99,7 +99,9 @@
     "Word_and_target_fonts_not_validated",
     "opaque_math_payload_not_strict_I1",
     "catalogue_model_gate_not_passed",
-    "variant_conditions_not_confirmed"
+    "variant_conditions_not_confirmed",
+    "74_paragraphs_ambiguous_in_context_rules",
+    "observed_rules_not_independently_validated"
   ],
   "results": [
     {
@@ -113,6 +115,14 @@
       "summary": "planner-005-summary.json",
       "report": "planner-005.md",
       "trials": "planner-005-results.csv"
+    },
+    {
+      "id": "rules-006",
+      "summary": "rules-006-summary.json",
+      "report": "rules-006.md",
+      "trials": "rules-006-results.csv",
+      "mode": "offline_replay",
+      "new_model_calls": 0
     }
   ],
   "model_registry": "models.json",

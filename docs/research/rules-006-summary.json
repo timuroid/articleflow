@@ -1,0 +1,87 @@
+{
+  "schema_version": "context-rules-0.6",
+  "experiment_id": "rules-006",
+  "date": "2026-10-15",
+  "method": "post_hoc_offline_replay",
+  "new_model_calls": 0,
+  "incremental_api_cost_usd": "0",
+  "cumulative_api_cost_usd": "2.5089958",
+  "unsettled_reserved_usd": "0",
+  "prior_model_attempts": 10,
+  "replayed_valid_plans": 9,
+  "prior_invalid_plan_not_repaired": 1,
+  "training_audit": {
+    "rules": 85,
+    "single_observation_rules": 71,
+    "ambiguous_groups": 11,
+    "ambiguous_observations": 74,
+    "by_kind": {
+      "paragraph": {
+        "rules": 66,
+        "resolved_training_items": 104,
+        "ambiguous_training_items": 74
+      },
+      "layout": {
+        "rules": 15,
+        "resolved_training_items": 31,
+        "ambiguous_training_items": 0
+      },
+      "drawing": {
+        "rules": 4,
+        "resolved_training_items": 4,
+        "ambiguous_training_items": 0
+      }
+    }
+  },
+  "ambiguous_paragraphs_by_role": {
+    "author_identifier": 6,
+    "body_ru": 13,
+    "heading_ru": 6,
+    "reference_en": 20,
+    "reference_ru": 20,
+    "figure_caption_en": 2,
+    "spacer": 7
+  },
+  "source_indices": {
+    "ranges": 18,
+    "characters": 24
+  },
+  "combined": {
+    "content_exact": 9,
+    "inline_exact": 0,
+    "pixel_exact": 0,
+    "placements_exact": 9,
+    "paragraph_style_correct": {
+      "min": 135,
+      "max": 137
+    },
+    "layout_correct": {
+      "min": 31,
+      "max": 31
+    },
+    "object_style_correct": {
+      "min": 4,
+      "max": 4
+    },
+    "differing_pixel_ratio": {
+      "min": 0.061682639923469305,
+      "max": 0.11876434701273007
+    },
+    "median_differing_pixel_ratio": 0.06672844233572857,
+    "needs_review": 9
+  },
+  "oracle_index_control": {
+    "content_exact": true,
+    "inline_exact": true,
+    "pixel_exact": true,
+    "differing_pixel_ratio": 0.0
+  },
+  "strict_I1_eligible": false,
+  "independent_transfer_evaluated": false,
+  "same_specimen_fitted_and_evaluated": true,
+  "verification": {
+    "unit_tests_passed": 43,
+    "gherkin_scenarios_passed": 12
+  },
+  "render_profile_reference": "renderer-004-summary.json"
+}

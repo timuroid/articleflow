@@ -1,0 +1,13 @@
+repeat,mode,status,previous_error,new_model_calls,source_indices_used,content_exact,protected_vertical_exact,inline_exact,inline_character_accuracy,placements_exact,paragraph_style_correct,paragraph_style_total,layout_correct,layout_total,object_style_correct,object_style_total,pixel_exact,differing_pixel_ratio,previous_pixel_ratio,candidate_pages,changed_by_rule,unresolved,needs_review
+1,rules_only,evaluated,,0,False,False,False,False,0.9992877492877493,True,135,178,31,31,4,4,False,0.06707317782550974,0.10641677519373662,12,22,74,True
+1,indices_only,evaluated,,0,True,True,True,False,0.9992877492877493,True,115,178,31,31,2,4,False,0.10637954691859572,0.10641677519373662,12,0,0,True
+1,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,135,178,31,31,4,4,False,0.06679969958111542,0.10641677519373662,12,22,74,True
+2,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,135,178,31,31,4,4,False,0.06679969958111542,0.1254117546949176,12,23,74,True
+3,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,137,178,31,31,4,4,False,0.06662656317206178,0.11545992209983427,12,27,74,True
+4,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,135,178,31,31,4,4,False,0.061682639923469305,0.12036657552387163,12,24,74,True
+5,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,135,178,31,31,4,4,False,0.06672844233572857,0.12499397533493814,12,23,74,True
+6,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,137,178,31,31,4,4,False,0.06662656317206178,0.10372462244878287,12,24,74,True
+7,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,137,178,31,31,4,4,False,0.06872925437748008,0.12646706826668475,12,25,74,True
+8,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,137,178,31,31,4,4,False,0.06662656317206178,0.10302617679574906,12,28,74,True
+9,combined,evaluated,,0,True,True,True,False,0.9992877492877493,True,137,178,31,31,4,4,False,0.11876434701273007,0.1402839104713166,12,24,74,True
+10,not_replayed,previous_plan_invalid,QUOTE_OVERLAP,0,,,,,,,,,,,,,,,,,,,

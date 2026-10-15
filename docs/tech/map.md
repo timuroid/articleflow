@@ -20,6 +20,7 @@
 | [security.md](security.md) | Доступ, секреты, недоверенные DOCX и удаление |
 | [testing.md](testing.md) | Стратегия тестирования и корпус |
 | [research-prototype.md](research-prototype.md) | Реализованный CLI 0.3, формат диагностического шаблона, запуск и ограничения |
+| [context-rules.md](context-rules.md) | Контекстные правила 0.6, неоднозначность и сохранение научных индексов |
 | [compact-planner.md](compact-planner.md) | План 0.5: выбор моделью полных вариантов, точные цитаты и bounded trials |
 | [catalogue-renderer.md](catalogue-renderer.md) | Каталог 0.4, полные варианты оформления, новый body и точный oracle-контроль |
 | [operations.md](operations.md) | Конфигурация, окружения и наблюдаемость |
