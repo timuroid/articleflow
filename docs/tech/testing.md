@@ -35,3 +35,11 @@ Feature-файлы находятся в [product/scenarios](../product/scenario
 Предлагаемый CI: проверка документации/схем → type/lint → unit/contract → package corpus → integration → минимальный E2E. Live LLM не запускается на каждый commit. Реальные документы и model payloads не выгружаются в публичные CI artifacts. На изменение renderer/parser/validator выполняется весь regression corpus, на изменение UI — соответствующие пользовательские пути.
 
 Выпуск требует критериев [приёмки](../product/acceptance.md). Если новый редкий объект нельзя сохранить, тест фиксирует отказ или review, а не безусловный success. Улучшение процентной автоматизации не оправдывает ослабление проверки содержания.
+
+## Исследовательский и пакетный контур v0.2
+
+Проверять связность синтетических input/template/DocumentPlan, Unicode offsets (включая emoji/combining marks), overlapping spans, неоднозначный emphasis, caption binding и повторную вставку label. Изменённый scientific text в G-FULL обязан блокироваться независимо от визуального сходства.
+
+Strict tests измеряют реальные SDK/API attempts: invalid response, timeout и context overflow не запускают repair/chunks. Recovery после неопределённого внешнего вызова не производит скрытый повтор. Golden leakage проверяется запретом target styles/pages/offsets в student resources и отдельным rebuild adapter.
+
+Pixel benchmark запускается по [протоколу](../research/benchmark.md) только в зафиксированной render-среде; parser проверка Mermaid/JSON не считается испытанием DOCX. Для batch нужны 100/200/300-item tests с rejected uploads, review, одинаковыми именами, потерей worker, budget pause, частичным ZIP, cleanup и отзывом архивов. Сначала mock нагрузка; платное качество оценивается отдельно с разрешённым бюджетом.

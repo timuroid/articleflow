@@ -1,0 +1,43 @@
+# DocumentPlan: ответ небольшой модели
+
+## Назначение
+
+G-PLAN превращает задачу «расписать текст и все свойства» в компактное описание соответствий. Model input содержит неизменяемые TextBlocks, AssetInventory и compiled TemplatePackage. Model output содержит роли существующих блоков, inline spans, object bindings и требуемые разрешённые labels. Детальные свойства code получает из style IDs. G-FULL с повторением всего текста остаётся отдельным benchmark method.
+
+Нормативная ограниченная схема: [document-plan.schema.json](contracts/document-plan.schema.json); связанный синтетический вход: [article-input.example.json](contracts/article-input.example.json); ответ: [document-plan.example.json](contracts/document-plan.example.json). Схема v0.2 покрывает только профиль paragraph + inline image + caption + labels, не все разновидности DOCX. Расширение на таблицы/notes может использовать сохранённый IR и не должно происходить через бесконтрольное добавление полей.
+
+## Контракт ссылок и spans
+
+TextBlock: ID, immutable text и payload hash. Диапазоны — Unicode code points, полуоткрытый `[start,end)`, относительно точной строки `text` соответствующего блока. Никакой NFC/NFKC, trim или замены пробелов после выдачи ID. Python indexes и JavaScript UTF-16 offsets различаются; UI должен явно конвертировать code points. Span не должен разрывать grapheme cluster, surrogate representation или защищённую formula/field boundary.
+
+Например, `Энтропия` занимает 8 code points, поэтому `[0,8)`; emoji может занимать несколько UTF-16 units и несколько code points в составном grapheme. Валидатор проверяет границы отдельно, а не полагается только на integer type JSON Schema. Текст остаётся в source block: модель не копирует его в output.
+
+В одном block может быть несколько spans. Непересекающиеся разрешены; одинаковый диапазон с совместимыми стилями может объединяться по правилам compiler. Частичные пересечения или конфликтующие значения одного свойства дают review/error. Даже корректный диапазон не доказывает правильную semantic role: это измеряется отдельно на benchmark.
+
+Все spans, включая label source spans, отсчитываются от неизменяемого входа. Вставка префикса не сдвигает их смысл: compiler строит source-to-output offset map и только затем назначает стили в выходном тексте. Нельзя последовательно применить offset к уже изменённой строке без mapping. Повтор одинаковой операции по operation ID не добавляет label вторично.
+
+## Объекты и labels
+
+Figure binding ссылается на существующий asset, существующий marker и caption block; указывает object rule, а не произвольный URL. Каждый marker должен быть обслужен ровно один раз. Один asset может законно встречаться в нескольких местах, поэтому проверяется occurrence/marker, не только множество asset IDs. Caption может отсутствовать только если правило разрешает; одинаковый caption нельзя бесконтрольно назначить всем изображениям.
+
+`labels` задают label rule ID и block/slot: `reuse_existing` либо `insert_literal`. Для `reuse_existing` source span должен точно содержать разрешённый literal по правилам нормализации label; для вставки span=null. Замена label оформляется отдельным подтверждённым преобразованием будущего расширения и не разрешена ограниченной схемой v0.2.
+
+Literal «Аннотация» может добавляться из шаблона; новая аннотация как научный текст — никогда. Подписи с существующим номером и REF/SEQ не перенумеровываются без соответствующего adapter. Width/crop свойства выбираются из утверждённых правил; если нужен override, он должен быть предусмотрен typed contract, а не произвольным JSON модели.
+
+## Проверки до renderer
+
+1. JSON Schema, schema version и ожидаемые input ID/template version ID совпадают.
+2. Все требуемые text block IDs покрыты ровно один раз, нет чужих/дублированных IDs.
+3. role/style/object/label IDs существуют в выбранной версии и совместимы с типом target.
+4. Все span boundaries валидны; для стиля есть semantic rule, конфликты разрешены детерминированно либо блокируют выполнение.
+5. Asset refs и marker bindings полны, caption association допустима, байты доступны по исходному checksum.
+6. Labels не дублируются, не подменяют научный payload и не используют отсутствующий allowlist entry.
+7. Порядок и mandatory roles соответствуют профилю. Операция удаления текста не может быть скомпилирована из плана.
+
+Схема проверяет форму, runtime validator — отношения и диапазоны. На строгом one-pass invalid ответ завершает неуспешный прогон; repair не вызывается. В другом режиме разрешён bounded loop с отдельным usage и маркировкой результата.
+
+## Два способа renderer
+
+`patch_source`: изменяет исходный OOXML с сохранением связанных частей, нужен для production и I3. `rebuild_neutral`: создаёт новый пакет из нейтрального IR и разрешённых assets, нужен для R/I0–I2. У обоих общий plan/compiler и правила, но разные coverage limitations. Если rebuild не поддерживает часть объекта, прогон не подменяется patch_source и не считается восстановлением из stripped input.
+
+Ответ student сохраняется вместе с планом compiled operations, версиями и hashes. Повтор renderer без модели — replay, а не один из десяти новых model trials.

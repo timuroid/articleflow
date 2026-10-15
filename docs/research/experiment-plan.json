@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.2",
+  "experiment_id": "articleflow-template-study-001",
+  "status": "planned_not_run",
+  "corpus_ids": [],
+  "model_candidates": [],
+  "first_phase": {
+    "extractor": "E-MANUAL",
+    "template_representation": "T-BUNDLE",
+    "input_protocol": "I1",
+    "application_method": "G-PLAN",
+    "profile": "strict_one_pass",
+    "render_mode": "rebuild_neutral"
+  },
+  "comparisons": {
+    "extraction": [
+      "E-MANUAL",
+      "E-RULES",
+      "E-ONCE",
+      "E-LOOP"
+    ],
+    "representations": [
+      "T-PROSE",
+      "T-JSON",
+      "T-BUNDLE",
+      "T-DOCX"
+    ],
+    "application": [
+      "G-RULES",
+      "G-FULL",
+      "G-PLAN",
+      "G-LOOP"
+    ],
+    "input_protocols": [
+      "I0",
+      "I1",
+      "I2",
+      "I3"
+    ]
+  },
+  "repeats_per_cell": 10,
+  "application_response_cache": false,
+  "strict_api_attempts": 1,
+  "strict_model_calls": 1,
+  "strict_repair_calls": 0,
+  "human_edits_in_trial": 0,
+  "extractor_call_cap": 5,
+  "bounded_application_model_call_cap": 3,
+  "bounded_application_http_attempt_cap": 4,
+  "render_profile": {
+    "engine": null,
+    "version": null,
+    "os": null,
+    "font_manifest_hash": null,
+    "raster_dpi": 144,
+    "color_mode": "RGB",
+    "field_policy": null,
+    "baseline_repeats": 10
+  },
+  "strict_gate": {
+    "schema_valid": true,
+    "content_exact": true,
+    "rules_pass": true,
+    "pixel_exact": true,
+    "same_page_count": true,
+    "same_page_sizes": true
+  },
+  "transfer": {
+    "required": true,
+    "independent_goldens": true,
+    "freeze_before_test": true
+  },
+  "monetary_budget": null,
+  "cost_includes": [
+    "template_preparation",
+    "application_failures",
+    "all_retries",
+    "rendering",
+    "validation",
+    "human_review"
+  ],
+  "blockers": [
+    "corpus_not_provided",
+    "models_not_selected",
+    "render_environment_not_fixed",
+    "budget_not_set"
+  ],
+  "results": []
+}

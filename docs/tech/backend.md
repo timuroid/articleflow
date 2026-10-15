@@ -33,3 +33,9 @@ HTTP принимает поток с лимитом; сохраняет кар�
 Outbox publisher, job worker, lease reaper, retention cleanup и usage reconciler — отдельные процессы/задачи одного приложения. Их метрики и health checks независимы. Cleanup имеет bounded batch size, идемпотентные DELETE и retry для временных сбоев storage. Ошибка cleanup не возвращает доступ к tombstoned документу.
 
 Для parsing/rendering worker subprocess запускается без сетевого доступа с ограничениями CPU/memory/time. LLM-вызов идёт через gateway в процессе, которому разрешён нужный endpoint. Увеличение worker concurrency ограничено памятью DOCX-пакета и бюджетом провайдера, а не только CPU.
+
+## TemplatePackage и batch v0.2
+
+`template_compiler` создаёт runtime JSON и style resources из одной canonical версии, проверяет hashes и не передаёт evidence student. `article_planner` получает immutable input protocol и profile; gate strict one-pass действует ниже SDK retries, а не только в UI. `document_engine` принимает проверенный DocumentPlan и исполняет выбранный patch/rebuild adapter.
+
+`batches` отвечает за sealed manifest, materialization jobs, fairness и budget pause. `exports` строит ZIP из фиксированного snapshot, проверяет hashes и права на каждый member, а также каскадный отзыв при удалении. Эти процессы не являются model calls и имеют независимые deadlines/идемпотентность. Данные и состояния описаны в [batch-processing](batch-processing.md); сбой export не отменяет уже готовые DOCX.

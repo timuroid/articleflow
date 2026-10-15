@@ -12,7 +12,7 @@
 
 Операция `FormattingOperation` включает `operation_id`, allowlisted `kind`, `target_block_ids`, `rule_id`, `expected_before_hash`, `properties`, `requires_confirmation`. План хранит source hash, template hash, mapping hash и renderer version. Перед исполнением проверяются все hashes и зависимости.
 
-Разрешённые виды v0.1: `set_paragraph_style`, `set_paragraph_properties`, `set_run_font_defaults`, `set_section_geometry`, `set_table_properties`, `resize_inline_image`. `reorder_blocks` включается только после отдельной реализации проверок диапазонов/ссылок и явного решения редактора; базовый MVP не обязан его поддерживать и вместо этого возвращает review. Удаление/вставка текста, выполнение кода и загрузка URL не входят в DSL операций.
+Разрешённые виды v0.2: `set_paragraph_style`, `set_paragraph_properties`, `set_run_font_defaults`, `set_character_style_span`, `bind_caption`, `insert_approved_label`, `set_section_geometry`, `set_table_properties`, `resize_inline_image`. Они компилируются из [DocumentPlan](document-plan.md) и [TemplatePackage](template-package.md). `reorder_blocks` включается после реализации проверки ссылок и явного решения редактора; иначе review. Вставка научного текста, произвольное удаление, исполнение кода и загрузка URL запрещены. Label вставляется только из allowlist с provenance.
 
 ## OOXML-преобразования
 
@@ -29,6 +29,6 @@
 
 ## Ограничения
 
-Текст и медиа из образца не участвуют в рендеринге статьи. Шаблон поставляет только проверенные свойства и разрешённые static элементы; static элементы в MVP выключены, чтобы избежать переноса чужого авторства и колонтитулов. Сборка «открыть образец и заменить весь текст» не допускается.
+Научный текст и медиа образца не участвуют в рендеринге статьи. Шаблон поставляет правила и подтверждённые служебные literals, например «Ключевые слова:». Сборка «открыть образец и заменить весь текст» не допускается. В `patch_source` копируется новая исходная статья, в benchmark `rebuild_neutral` создаётся свежий пакет без target formatting.
 
 Операции применяются атомарно на уровне нового пакета. При ошибке частично собранный DOCX остаётся временным диагностическим объектом, не пользовательским результатом. Повтор с тем же планом должен дать одинаковые fingerprints научного содержания и эффективного оформления. ZIP timestamps и generated metadata исключаются из такого сравнения.

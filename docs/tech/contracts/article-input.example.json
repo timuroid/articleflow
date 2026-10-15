@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.2",
+  "input_id": "input-synthetic-001",
+  "protocol": "I1",
+  "offset_unit": "unicode_code_point",
+  "normalization": "none",
+  "blocks": [
+    {
+      "id": "b-000001",
+      "text": "Энтропия — мера неопределённости."
+    },
+    {
+      "id": "b-000002",
+      "text": "Рисунок 1 — Зависимость энтропии от температуры."
+    },
+    {
+      "id": "b-000003",
+      "text": "энтропия; температура"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "asset-001",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "mime_type": "image/png",
+      "intrinsic_width_px": 800,
+      "intrinsic_height_px": 600
+    }
+  ],
+  "markers": [
+    {
+      "marker_id": "m-000001",
+      "asset_id": "asset-001",
+      "before_block_id": "b-000002"
+    }
+  ],
+  "note": "Синтетическая иллюстрация контракта; hash условный, binary asset не приложен. Target formatting отсутствует."
+}

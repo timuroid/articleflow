@@ -43,3 +43,9 @@ Publish выполняет compare-and-swap: state=running, актуальные
 ## Повтор
 
 Replay_plan использует сохранённый validated plan, source/template hashes и совместимый renderer. Reanalyze выполняет новый model run и может отличаться. Если версия движка изменилась, replay проверяет совместимость; иначе возвращает `REPLAY_INCOMPATIBLE`, а не незаметно пересчитывает план. Все новые jobs связаны parent_job_id, имеют отдельные состояния и бюджет.
+
+## Согласование с one-pass и batch
+
+Infrastructure recovery может повторить чистый parser/renderer по checkpoint. Если strict job уже начал внешний вызов и его исход неизвестен, takeover не вызывает модель снова внутри того же trial: состояние завершается с `CALL_OUTCOME_UNKNOWN`. Если сохранён validated ответ, можно продолжить программные этапы без нового вызова. Counter/reservation пишутся до dispatch; crash до/после HTTP не даёт права обещать exactly-once billing.
+
+При review strict trial считается не прошедшим критерий; ручное продолжение сохраняет job history, увеличивает human_edits и снимает strict eligibility. Пользователь может закончить обработку, но она уже не засчитывается как one-pass success. Batch не меняет Job state machine: owns manifests/queue slots и отпускает слот на needs_review. Архив имеет отдельные состояния и не переводит failed job в completed. Полный контракт — [batch-processing](batch-processing.md).

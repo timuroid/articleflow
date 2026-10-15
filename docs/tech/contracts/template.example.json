@@ -1,38 +1,123 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
+  "document_profile": "scientific_article",
   "template_id": "00000000-0000-4000-8000-000000000001",
   "version_id": "00000000-0000-4000-8000-000000000002",
   "version_number": 1,
   "status": "approved",
-  "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "provenance": {
+    "origin": "manual",
+    "confirmation": "confirmed",
+    "evidence_storage": "separate",
+    "note": "Синтетические правила, не извлечены из реального DOCX"
+  },
   "page_rules": {
     "rule_id": "page-1",
     "width_twips": 11906,
     "height_twips": 16838,
-    "margins_twips": {"top": 1134, "bottom": 1134, "left": 1701, "right": 850},
-    "columns": 1,
-    "origin": "observed",
-    "evidence_block_ids": ["b-000001"],
-    "confirmation": "confirmed"
+    "margins_twips": {
+      "top": 1134,
+      "bottom": 1134,
+      "left": 1701,
+      "right": 850
+    },
+    "columns": 1
+  },
+  "paragraph_styles": {
+    "body-style": {
+      "font_family": "Times New Roman",
+      "font_size_half_points": 24,
+      "alignment": "justify",
+      "space_after_twips": 0,
+      "first_line_indent_twips": 709
+    },
+    "caption-style": {
+      "font_family": "Times New Roman",
+      "font_size_half_points": 22,
+      "alignment": "center",
+      "space_after_twips": 120
+    },
+    "keywords-style": {
+      "font_family": "Times New Roman",
+      "font_size_half_points": 24,
+      "alignment": "left"
+    }
   },
   "role_rules": [
     {
       "rule_id": "body-1",
-      "role": "body",
-      "properties": {
-        "font_family": "Times New Roman",
-        "font_size_half_points": 24,
-        "alignment": "justify",
-        "space_after_twips": 0,
-        "first_line_indent_twips": 709
-      },
-      "origin": "observed",
-      "evidence_block_ids": ["b-000010", "b-000011"],
-      "confirmation": "confirmed"
+      "role_id": "body",
+      "paragraph_style_id": "body-style"
+    },
+    {
+      "rule_id": "caption-1",
+      "role_id": "figure_caption",
+      "paragraph_style_id": "caption-style"
+    },
+    {
+      "rule_id": "keywords-1",
+      "role_id": "keywords",
+      "paragraph_style_id": "keywords-style"
     }
   ],
-  "structure_policy": {"required_roles": [], "order": "preserve", "unknown_role": "review"},
-  "object_policy": {"omml": "preserve", "inline_images": "preserve", "ole": "reject"},
+  "character_styles": {
+    "term-definition": {
+      "bold": true
+    },
+    "foreign-term": {
+      "italic": true
+    }
+  },
+  "semantic_rules": [
+    {
+      "rule_id": "define-term",
+      "condition": "Термин является определяемым понятием в данной конструкции определения",
+      "target": "term_span_only",
+      "character_style_id": "term-definition",
+      "on_ambiguity": "review"
+    },
+    {
+      "rule_id": "foreign-expression",
+      "condition": "Подтверждённый иностранный термин в основном тексте",
+      "target": "term_span_only",
+      "character_style_id": "foreign-term",
+      "on_ambiguity": "preserve"
+    }
+  ],
+  "label_rules": [
+    {
+      "rule_id": "keywords-prefix",
+      "literal": "Ключевые слова: ",
+      "slot": "paragraph_start",
+      "allowed_role_ids": [
+        "keywords"
+      ],
+      "policy": "reuse_if_present_else_insert",
+      "on_ambiguous_prefix": "review"
+    }
+  ],
+  "object_rules": [
+    {
+      "rule_id": "figure-inline",
+      "kind": "inline_image",
+      "alignment": "center",
+      "max_width": "content_width",
+      "preserve_aspect_ratio": true,
+      "crop": "preserve_if_supplied_else_none",
+      "caption_role_id": "figure_caption",
+      "caption_position": "after",
+      "caption_text_policy": "preserve_source_including_number"
+    }
+  ],
+  "structure_policy": {
+    "required_roles": [],
+    "order": "preserve",
+    "unknown_role": "review"
+  },
   "unconfigured_role_policy": "preserve_if_compatible",
-  "limitations": ["Пример задаёт только основной текст; остальные роли не имеют целевого оформления"]
+  "renderer_profile_ref": "renderer-profile-synthetic-001",
+  "limitations": [
+    "Пример ограничен body, caption, keywords и inline image; не полная схема TemplatePackage",
+    "Literal не генерирует научный текст; нумерация подписи остаётся исходной"
+  ]
 }

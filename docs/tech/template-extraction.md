@@ -34,10 +34,12 @@
 
 ## Формат профиля
 
-`TemplateSpec` содержит schema version, template/version IDs, source hash, page rules, role rules, structure policy, object policy, unsupported policy и список ограничений. Пример с ограниченным набором полей — [template.example.json](contracts/template.example.json). Пример объясняет контракт, но не заменяет будущую полную JSON Schema и validation.
+`TemplateSpec` v0.2 хранит canonical paragraph/character/semantic/object/label rules и входит в [TemplatePackage](template-package.md) вместе с renderer profile и compiled resources. [template.example.json](contracts/template.example.json) показывает связанные правила term spans и captions; это иллюстрация, не полная JSON Schema. Evidence отделено от compiled student rules.
 
 Нужен baseline «сохранить оформление неизвестного блока», но только когда блок не препятствует целевому правилу. Если его ширина несовместима с новыми полями, fallback не делает преобразование безопасным: требуется review.
 
 ## Изменения шаблона
+
+В первом исследовательском срезе пакет готовит сильная модель/исследователь и проверяет редактор. Это позволяет сначала измерить применение. E-ONCE/E-LOOP сравниваются позже по [протоколу](../research/methods.md); дорогая подготовка считается на версию шаблона, а не на каждую статью.
 
 Новая статья-образец создаёт новую версию наблюдений. Существующие ручные правила не перезаписываются автоматически: редактор видит diff и принимает изменения. Для MVP достаточно ручного создания нового черновика; интеллектуальное слияние нескольких образцов отложено. Привязанные jobs всегда сохраняют точный approved version ID.

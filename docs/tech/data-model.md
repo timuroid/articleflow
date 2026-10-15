@@ -22,6 +22,13 @@
 | UsageLedger | job_id, request_id, status, reserved_cost, actual_cost, token_counts | reserved/settled/unknown; не терять unknown после timeout |
 | AuditEvent | id, workspace_id, actor_id, action, entity_id, at, safe_metadata | Без рукописей и секретов |
 | OutboxEvent | id, aggregate_id, event_type, payload, published_at | Создаётся в транзакции изменения Job |
+| TemplatePackageManifest | template_version_id, schema_version, manifest_hash, resources, compiler_version | Immutable; runtime resources отделены от evidence |
+| ApplicationProfile | id, version, method, input_protocol, model_config_version, call_limits, render_mode | Strict не получает скрытых fallback/retries |
+| Batch | id, workspace_id, template_version_id, profile_id, state, generation, sealed_manifest_ref, budget | Item set и template hash фиксируются при seal |
+| BatchItem | id, batch_id, ordinal, client_item_id, upload_id, document_id, current_job_id, upload_error | Rejected upload остаётся в manifest |
+| BatchExport | id, batch_id, generation, revision, snapshot_ref, artifact_id, state, partial | Immutable snapshot; queued/running/completed/failed/revoked |
+| ExportMember | export_id, document_id, artifact_id | Индекс зависимостей для отзыва ZIP при удалении |
+| ExperimentRun | id, manifest_ref, input/template/model/render hashes, measurements_ref | Fresh trial отдельно от replay; private artifacts вне Git |
 
 Связи: Workspace → Documents/Templates/Jobs; Template → TemplateVersions; Job → Document и (для форматирования) TemplateVersion; Job → Attempts/Reviews/Artifacts/Usage. Все внешние ключи workspace-bound проверяются составными ограничениями или эквивалентной обязательной серверной проверкой. Нельзя сослаться на template version другого пространства.
 
@@ -30,6 +37,8 @@
 `revision` черновика меняется при каждом PATCH. API требует If-Match текущей revision, иначе `409 REVISION_CONFLICT`. Утверждение создаёт immutable snapshot в той же сущности версии, фиксирует approved_at/approved_by и compiled_hash. Дальнейший draft получает новый version ID/number. Архивирование не меняет утверждённый spec.
 
 Job фиксирует source hash, template version/hash, plan hash и версии tooling. Состояния изменяются compare-and-swap по state_version. Lease token препятствует записи старого worker после takeover. Artifact key включает job ID и attempt ID; публикация выбирает только валидную текущую попытку.
+
+Job v0.2 также фиксирует profile version, input protocol, render mode, counters calls/attempts и optional batch/item/generation. Для batch job действует unique(batch_id, item_id, generation). ExportMember строится по точному snapshot перед выдачей ZIP; tombstone любого member отзывает export независимо от его URL.
 
 ## Object storage
 

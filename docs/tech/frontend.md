@@ -27,3 +27,9 @@ Preview строится из безопасного IR: текст экрани
 ## Ошибки и доступность
 
 Различать transport error и failed job. На 401 восстановить сессию; на 404 показать недоступность ресурса без раскрытия чужого имени. Form errors связаны с полями, error summary получает фокус. Вопросы имеют текстовые labels, уведомления не исчезают раньше чтения, действия доступны без drag-and-drop. Frontend tests проверяют полный путь загрузки/review/download и stale revision, а не внутреннее устройство компонентов.
+
+## Пакеты и выделения v0.2
+
+Добавляются modules batches/exports и редактор character rules. Multi-file upload ограничивает параллельность (предложение 3 uploads), хранит item IDs и не держит в памяти все bytes сотен DOCX. Server state восстанавливается по batch ID; client pending file handles после перезагрузки могут потребовать повторного выбора только незагруженных файлов.
+
+Batch rows виртуализированы, показывают реальные states каждого item и счётчики сервера. Download ZIP создаёт async export с partial flag; повторное нажатие использует тот же idempotency key. UI не обещает готовность архива по завершению только одного job. Для term spans UI переводит Unicode code point offsets в UTF-16/DOM positions; изменение отображения не меняет исходную строку.

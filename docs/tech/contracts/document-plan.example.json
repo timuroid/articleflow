@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.2",
+  "input_id": "input-synthetic-001",
+  "template_version_id": "00000000-0000-4000-8000-000000000002",
+  "blocks": [
+    {
+      "block_id": "b-000001",
+      "role_id": "body",
+      "spans": [
+        {
+          "start": 0,
+          "end": 8,
+          "semantic_rule_id": "define-term",
+          "character_style_id": "term-definition"
+        }
+      ]
+    },
+    {
+      "block_id": "b-000002",
+      "role_id": "figure_caption",
+      "spans": []
+    },
+    {
+      "block_id": "b-000003",
+      "role_id": "keywords",
+      "spans": []
+    }
+  ],
+  "figures": [
+    {
+      "asset_id": "asset-001",
+      "marker_id": "m-000001",
+      "caption_block_id": "b-000002",
+      "object_rule_id": "figure-inline"
+    }
+  ],
+  "labels": [
+    {
+      "block_id": "b-000003",
+      "label_rule_id": "keywords-prefix",
+      "action": "insert_literal",
+      "source_span": null
+    }
+  ]
+}
