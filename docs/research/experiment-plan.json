@@ -1,9 +1,16 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "experiment_id": "articleflow-template-study-001",
-  "status": "planned_not_run",
-  "corpus_ids": [],
-  "model_candidates": [],
+  "status": "diagnostic_pilot_complete_strict_study_pending",
+  "corpus_ids": [
+    "pilot-001"
+  ],
+  "model_candidates": [
+    "openai/gpt-6.1-sol",
+    "openai/gpt-6-luna",
+    "openai/gpt-6-sol",
+    "openai/gpt-6-astra"
+  ],
   "first_phase": {
     "extractor": "E-MANUAL",
     "template_representation": "T-BUNDLE",
@@ -48,13 +55,13 @@
   "bounded_application_model_call_cap": 3,
   "bounded_application_http_attempt_cap": 4,
   "render_profile": {
-    "engine": null,
-    "version": null,
-    "os": null,
-    "font_manifest_hash": null,
+    "engine": "LibreOfficeDev",
+    "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+    "os": "Linux",
+    "font_manifest_hash": "9462a36e6d312fbb003d60b9195a4e4f226d0e9036ea0e9f5ff1c1059e180f21",
     "raster_dpi": 144,
     "color_mode": "RGB",
-    "field_policy": null,
+    "field_policy": "LibreOffice default, no external updates; no fields detected in specimen",
     "baseline_repeats": 10
   },
   "strict_gate": {
@@ -70,7 +77,14 @@
     "independent_goldens": true,
     "freeze_before_test": true
   },
-  "monetary_budget": null,
+  "monetary_budget": {
+    "stage_cap_usd": "5",
+    "user_reported_account_budget_usd": "9",
+    "api_actual_usd": "1.5405222",
+    "unsettled_reserved_usd": "0",
+    "includes_historical_baseline": true,
+    "ledger_scope": "one shared pilot-001 ledger"
+  },
   "cost_includes": [
     "template_preparation",
     "application_failures",
@@ -80,10 +94,29 @@
     "human_review"
   ],
   "blockers": [
-    "corpus_not_provided",
-    "models_not_selected",
-    "render_environment_not_fixed",
-    "budget_not_set"
+    "role_template_not_pixel_exact_with_oracle",
+    "renderer_retains_source_geometry_not_strict_I1",
+    "model_inline_semantics_not_exact",
+    "unseen_transfer_corpus_not_provided",
+    "Word_and_target_fonts_not_validated"
   ],
-  "results": []
+  "results": [
+    {
+      "id": "pilot-001",
+      "summary": "pilot-001-summary.json",
+      "report": "pilot-001.md",
+      "trials": "results.csv"
+    }
+  ],
+  "model_registry": "models.json",
+  "model_release_after": "2026-06-30",
+  "diagnostic_pilot": {
+    "protocol": "I1-text-to-model/I3-object-layout-to-renderer",
+    "strict_I1_eligible": false,
+    "models_completed": {
+      "openai/gpt-4.1": 10,
+      "openai/gpt-6.1-sol": 10
+    },
+    "historical_model_excluded_from_new_candidates": "openai/gpt-4.1"
+  }
 }
