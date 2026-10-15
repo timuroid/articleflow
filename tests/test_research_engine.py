@@ -140,6 +140,16 @@ class PlanTests(unittest.TestCase):
 
 
 class BudgetTests(unittest.TestCase):
+    def test_cache_write_price_is_reserved_before_any_http_call(self):
+        with tempfile.TemporaryDirectory() as temp, patch("articleflow.research.httpx.Client") as client:
+            base = Path(temp)
+            with self.assertRaisesRegex(DocumentError, "BUDGET_EXCEEDED"):
+                one_model_call(model="synthetic", messages=[], schema=plan_schema(["body"]),
+                    pricing={"prompt": "0.000001", "completion": "0", "input_cache_write": "0.0001"},
+                    key_file=None, run_dir=base / "run", ledger=base / "ledger.json", cap_usd="0.1", max_tokens=1)
+            client.assert_not_called()
+            self.assertFalse((base / "run/request.json").exists())
+
     def test_budget_rejects_nonfinite_and_negative_values(self):
         with tempfile.TemporaryDirectory() as temp:
             for amount, cap in [("-1", "5"), ("1", "NaN"), ("1", "0")]:

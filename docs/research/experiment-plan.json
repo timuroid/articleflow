@@ -1,7 +1,7 @@
 {
   "schema_version": "0.3",
   "experiment_id": "articleflow-template-study-001",
-  "status": "oracle_renderer_exact_model_selection_pending",
+  "status": "catalogue_model_gate_failed_rules_need_conditions",
   "corpus_ids": [
     "pilot-001"
   ],
@@ -80,7 +80,7 @@
   "monetary_budget": {
     "stage_cap_usd": "5",
     "user_reported_account_budget_usd": "9",
-    "api_actual_usd": "1.5405222",
+    "api_actual_usd": "2.5089958",
     "unsettled_reserved_usd": "0",
     "includes_historical_baseline": true,
     "ledger_scope": "one shared pilot-001 ledger"
@@ -97,9 +97,9 @@
     "model_inline_semantics_not_exact",
     "unseen_transfer_corpus_not_provided",
     "Word_and_target_fonts_not_validated",
-    "catalogue_variant_selection_not_automated",
     "opaque_math_payload_not_strict_I1",
-    "new_model_plan_contract_not_evaluated"
+    "catalogue_model_gate_not_passed",
+    "variant_conditions_not_confirmed"
   ],
   "results": [
     {
@@ -107,6 +107,12 @@
       "summary": "pilot-001-summary.json",
       "report": "pilot-001.md",
       "trials": "results.csv"
+    },
+    {
+      "id": "planner-005",
+      "summary": "planner-005-summary.json",
+      "report": "planner-005.md",
+      "trials": "planner-005-results.csv"
     }
   ],
   "model_registry": "models.json",

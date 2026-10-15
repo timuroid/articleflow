@@ -7,6 +7,8 @@ from pathlib import Path
 from .docx_engine import inspect_document, lossless_split, lossless_rebuild, compare_content, render_roles, build_template
 from .research import run_trials, render_pdf, compare_pixels, environment_manifest
 from .catalogue import extract_catalogue, render_catalogue, placement_fingerprint
+from .planner import model_view, compile_compact
+from .planner_research import run_catalogue_trials
 
 
 def main():
@@ -30,6 +32,22 @@ def main():
     rebuild = commands.add_parser("render-catalogue")
     for name in ["template_dir", "content_dir", "plan", "output"]:
         rebuild.add_argument(name, type=Path)
+    view = commands.add_parser("planner-input")
+    for name in ["template_dir", "content_dir", "output"]:
+        view.add_argument(name, type=Path)
+    compile_ = commands.add_parser("compile-plan")
+    for name in ["template_dir", "content_dir", "response", "output"]:
+        compile_.add_argument(name, type=Path)
+    planner_trials = commands.add_parser("catalogue-trials")
+    for name in ["template_dir", "content_dir", "oracle_path", "source", "golden_pdf", "catalogue", "registry", "output", "ledger"]:
+        planner_trials.add_argument(name, type=Path)
+    planner_trials.add_argument("--model", default="openai/gpt-6.1-sol")
+    planner_trials.add_argument("--key-file", type=Path)
+    planner_trials.add_argument("--first", type=int, default=1)
+    planner_trials.add_argument("--repeats", type=int, default=1)
+    planner_trials.add_argument("--max-tokens", type=int, default=24000)
+    planner_trials.add_argument("--reasoning-effort", default="medium")
+    planner_trials.add_argument("--cap-usd", default="5")
     compare = commands.add_parser("compare")
     compare.add_argument("source", type=Path)
     compare.add_argument("candidate", type=Path)
@@ -73,6 +91,16 @@ def main():
         print(json.dumps(extract_catalogue(args.source, json.loads(args.annotations.read_text()), json.loads(args.definitions.read_text()), args.output), indent=2))
     elif args.command == "render-catalogue":
         print(json.dumps(render_catalogue(args.template_dir, args.content_dir, json.loads(args.plan.read_text()), args.output), indent=2))
+    elif args.command == "planner-input":
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(model_view(args.template_dir, args.content_dir), ensure_ascii=False, indent=2))
+    elif args.command == "compile-plan":
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(compile_compact(args.template_dir, args.content_dir, json.loads(args.response.read_text())), ensure_ascii=False, indent=2))
+    elif args.command == "catalogue-trials":
+        options = vars(args).copy()
+        options.pop("command")
+        run_catalogue_trials(**options)
     elif args.command == "pdf":
         print(render_pdf(args.source, args.output))
     elif args.command == "environment":

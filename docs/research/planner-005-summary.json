@@ -1,0 +1,169 @@
+{
+  "schema_version": "compact-0.5",
+  "experiment_id": "planner-005",
+  "date": "2026-10-15",
+  "model": "openai/gpt-6.1-sol",
+  "release_date": "2026-09-29",
+  "model_source": "https://developers.openai.com/api/docs/changelog",
+  "series_configuration": {
+    "model": "openai/gpt-6.1-sol",
+    "release": {
+      "id": "openai/gpt-6.1-sol",
+      "release_date": "2026-09-29",
+      "source": "https://developers.openai.com/api/docs/changelog",
+      "source_type": "official_release_log",
+      "role": "primary"
+    },
+    "reasoning_effort": "medium",
+    "max_tokens": 24000,
+    "template_sha256": "37e894674f993d926ca593f3a57f36a12907d5d52691425bb18e3463bc09efac",
+    "input_sha256": "b8d46ee4f2e74dc30635b9bfc58b96080c04d905d2bc65e437d801f92b351224",
+    "prompt_sha256": "e817eab34f5e8e5fdb63211f4f0682678bfa96f88f6b7999ea0dd6e49f77b00c",
+    "schema_sha256": "2b6cbdb12922a8cc2f986c83a216ae58728d3a835bf616119a9179d8a096ce86",
+    "pricing": {
+      "prompt": "0.000002",
+      "completion": "0.00001",
+      "web_search": "0.01",
+      "input_cache_read": "0.0000001",
+      "input_cache_write": "0.0000025",
+      "overrides": [
+        {
+          "min_prompt_tokens": 272000,
+          "prompt": "0.000004",
+          "completion": "0.000015",
+          "input_cache_read": "0.0000002",
+          "input_cache_write": "0.000005"
+        }
+      ]
+    },
+    "protocol": "catalogue_choices_structured_payload",
+    "strict_I1_eligible": false
+  },
+  "diagnostic_a": {
+    "attempts": 1,
+    "status_counts": {
+      "validation_failed": 1
+    },
+    "error_codes": {
+      "PLAN_CHARACTER_STYLE": 1
+    },
+    "api_cost_usd": "0.170321"
+  },
+  "frozen_series_b": {
+    "attempts": 10,
+    "evaluated": 9,
+    "status_counts": {
+      "evaluated": 9,
+      "validation_failed": 1
+    },
+    "error_codes": {
+      "none": 9,
+      "QUOTE_OVERLAP": 1
+    },
+    "observed_full_matches": 0,
+    "pixel_exact_trials": 0,
+    "content_exact_trials": 0,
+    "placements_exact_trials": 9,
+    "roles_exact_trials": 9,
+    "checks_passed_trials": {
+      "paragraphs": 9,
+      "math": 9,
+      "tables": 9,
+      "media": 9,
+      "links": 9,
+      "relationships": 9,
+      "notes": 9,
+      "protected_vertical": 0
+    },
+    "paragraph_style_correct": {
+      "min": 115,
+      "max": 119
+    },
+    "paragraph_style_total": 178,
+    "character_style_correct": {
+      "min": 26181,
+      "max": 27885
+    },
+    "character_style_total": 33696,
+    "layout_correct": {
+      "min": 25,
+      "max": 31
+    },
+    "layout_total": 31,
+    "object_style_correct": {
+      "min": 2,
+      "max": 2
+    },
+    "object_style_total": 4,
+    "candidate_pages": {
+      "min": 12,
+      "max": 12
+    },
+    "differing_pixel_ratio": {
+      "min": 0.10302617679574906,
+      "max": 0.1402839104713166
+    },
+    "inline_character_accuracy": {
+      "min": 0.9992877492877493,
+      "max": 0.9992877492877493
+    },
+    "api_cost_usd": "0.7981526",
+    "latency_ms": {
+      "min": 74313,
+      "max": 87246
+    },
+    "prompt_tokens": {
+      "min": 45192,
+      "max": 45192
+    },
+    "identical_request_sha256": "9377002172caebfe9e0691a90ad82662fb7cf8ed53e3108f9fcb872539d75719",
+    "distinct_generation_ids": 10,
+    "cached_prompt_trials": 9
+  },
+  "total_new_api_calls": 11,
+  "incremental_api_cost_usd": "0.9684736",
+  "cumulative_api_cost_usd": "2.5089958",
+  "unsettled_reserved_usd": "0",
+  "stage_cap_usd": "5",
+  "strict_I1_eligible": false,
+  "independent_transfer_evaluated": false,
+  "smaller_model_run": false,
+  "minimum_model_selected": false,
+  "ambiguity_control": {
+    "same_model_input": true,
+    "model_input_sha256": "32ede23bfecf4dfe70580c45fac9005aec67e8d5454f9a602ba19996869ce844",
+    "different_source_assignments": true,
+    "model_calls": 0,
+    "golden_pages": 1,
+    "candidate_pages": 1,
+    "pages_equal": true,
+    "page_sizes_equal": true,
+    "pixel_exact": false,
+    "differing_pixel_ratio": 0.005574536211791114,
+    "mae": 0.8870124859708193,
+    "matched_page_diagnostics": [
+      {
+        "page": 1,
+        "same_size": true,
+        "pixel_exact": false,
+        "differing_pixels": 10808
+      }
+    ]
+  },
+  "verification": {
+    "unit_tests_passed": 36,
+    "gherkin_scenarios_passed": 10
+  },
+  "limitations": [
+    "one specimen with known roles and observed variants",
+    "opaque formula payload retains formatting",
+    "no independent article or Microsoft Word evaluation",
+    "repeated same-document input benefits from provider prompt caching"
+  ],
+  "first_evaluated_inline_errors_by_flag": {
+    "bold": 21,
+    "vertical": 2,
+    "italic": 3
+  },
+  "render_profile_reference": "renderer-004-summary.json"
+}

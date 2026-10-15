@@ -1,0 +1,12 @@
+configuration,repeat,model,status,error_code,role_correct,role_total,paragraph_style_correct,paragraph_style_total,character_style_correct,character_style_total,layout_correct,layout_total,object_style_correct,object_style_total,content_exact,protected_vertical_exact,inline_exact,inline_character_accuracy,placements_exact,pixel_exact,differing_pixel_ratio,candidate_pages,observed_full_match,api_attempts,repair_calls,cost_usd,latency_ms
+diagnostic_A,1,openai/gpt-6.1-sol,validation_failed,PLAN_CHARACTER_STYLE,,,,,,,,,,,,,,,,,,,False,1,0,0.170321,87738
+frozen_B,1,openai/gpt-6.1-sol,evaluated,,178,178,115,178,26181,33696,31,31,2,4,False,False,False,0.9992877492877493,True,False,0.10641677519373662,12,False,1,0,0.1781385,78834
+frozen_B,2,openai/gpt-6.1-sol,evaluated,,178,178,116,178,26181,33696,29,31,2,4,False,False,False,0.9992877492877493,True,False,0.1254117546949176,12,False,1,0,0.0659849,79772
+frozen_B,3,openai/gpt-6.1-sol,evaluated,,178,178,117,178,27819,33696,26,31,2,4,False,False,False,0.9992877492877493,True,False,0.11545992209983427,12,False,1,0,0.0711149,84057
+frozen_B,4,openai/gpt-6.1-sol,evaluated,,178,178,115,178,26181,33696,29,31,2,4,False,False,False,0.9992877492877493,True,False,0.12036657552387163,12,False,1,0,0.0720949,87246
+frozen_B,5,openai/gpt-6.1-sol,evaluated,,178,178,115,178,26408,33696,30,31,2,4,False,False,False,0.9992877492877493,True,False,0.12499397533493814,12,False,1,0,0.0716849,83464
+frozen_B,6,openai/gpt-6.1-sol,evaluated,,178,178,117,178,27819,33696,29,31,2,4,False,False,False,0.9992877492877493,True,False,0.10372462244878287,12,False,1,0,0.0711449,82826
+frozen_B,7,openai/gpt-6.1-sol,evaluated,,178,178,119,178,27807,33696,26,31,2,4,False,False,False,0.9992877492877493,True,False,0.12646706826668475,12,False,1,0,0.0698549,82223
+frozen_B,8,openai/gpt-6.1-sol,evaluated,,178,178,117,178,27885,33696,25,31,2,4,False,False,False,0.9992877492877493,True,False,0.10302617679574906,12,False,1,0,0.0664349,74313
+frozen_B,9,openai/gpt-6.1-sol,evaluated,,178,178,117,178,27819,33696,29,31,2,4,False,False,False,0.9992877492877493,True,False,0.1402839104713166,12,False,1,0,0.0661549,75356
+frozen_B,10,openai/gpt-6.1-sol,validation_failed,QUOTE_OVERLAP,,,,,,,,,,,,,,,,,,,False,1,0,0.0655449,76099

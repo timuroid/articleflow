@@ -142,7 +142,9 @@ def one_model_call(*, model: str, messages: list, schema: dict, pricing: dict, k
     # UTF-8 byte bound plus framing margin; max_tokens includes reasoning.
     # This pilot uses text-only OpenAI routes with no tools or extra fees.
     prompt_bound = len(body) + 4096
-    reserve = Decimal(prompt_bound) * Decimal(pricing["prompt"]) + Decimal(max_tokens) * Decimal(pricing["completion"])
+    # Cache writes can cost more than ordinary input; do not budget on hit rates.
+    input_rate = max(Decimal(str(pricing.get(key) or "0")) for key in ["prompt", "input_cache_read", "input_cache_write"])
+    reserve = Decimal(prompt_bound) * input_rate + Decimal(max_tokens) * Decimal(pricing["completion"])
     reserve_budget(ledger, reserve, Decimal(cap_usd), request_id)
     dump(run_dir / "request.json", payload)
     meta = {"requested_model": model, "api_attempts": 1, "model_calls": 1, "repair_calls": 0, "application_cache_hit": False, "human_edits": 0, "request_sha256": digest(body), "reserved_usd": str(reserve), "status": "started", "temperature": temperature, "reasoning_effort": reasoning_effort, "max_tokens": max_tokens}

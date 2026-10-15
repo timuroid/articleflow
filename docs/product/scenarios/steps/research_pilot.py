@@ -14,12 +14,64 @@ from articleflow.docx_engine import DocumentError
 from articleflow.research import one_model_call, plan_schema, finalize_hybrid_trial, validate_model_choice
 from articleflow.catalogue import extract_catalogue, render_catalogue
 from articleflow.docx_engine import content_fingerprint
+from articleflow.planner import aliases, compile_compact
 
 
 def temporary_workspace(context):
     temp = tempfile.TemporaryDirectory()
     context.add_cleanup(temp.cleanup)
     context.root = Path(temp.name)
+
+
+@given("синтетический абзац содержит два одинаковых термина")
+def repeated_terms(context):
+    temporary_workspace(context)
+    context.source = context.root / "source.docx"
+    doc = Document()
+    p = doc.add_paragraph()
+    p.add_run("Термин и ")
+    p.add_run("Термин").bold = True
+    p.add_run(".")
+    doc.save(context.source)
+    context.package = context.root / "package"
+    extract_catalogue(context.source, {"b-000001": "body"}, {"roles": {"body": "Текст"}}, context.package)
+    rules = json.loads((context.package / "template/rules.json").read_text())
+    oracle = json.loads((context.package / "oracle-plan.json").read_text())
+    reverse = {g: {v: k for k, v in items.items()} for g, items in aliases(rules).items()}
+    b = oracle["blocks"][0]
+    context.response = {"blocks": [{"id": b["id"], "role": "body", "paragraph": reverse["paragraph"][b["paragraph_style"]],
+        "character": reverse["character"][b["spans"][0]["style"]],
+        "marks": [{"text": "Термин", "occurrence": 2, "style": reverse["character"][b["spans"][1]["style"]]}]}],
+        "layout": [], "objects": [], "section": reverse["section"][oracle["section_style"]]}
+
+
+@when("компактный план выделяет второе вхождение термина")
+def compile_repeated_term(context):
+    plan = compile_compact(context.package / "template", context.package / "content", context.response)
+    context.target = context.root / "candidate.docx"
+    render_catalogue(context.package / "template", context.package / "content", plan, context.target)
+
+
+@then("содержание и выделения собранного документа совпадают")
+def repeated_term_matches(context):
+    result = compare_content(context.source, context.target)
+    assert result["content_exact"] and result["inline_exact"]
+
+
+@when("компактный план ссылается на отсутствующую цитату")
+def compile_missing_quote(context):
+    context.response["blocks"][0]["marks"][0]["text"] = "Термин с ошибкой"
+    context.error = None
+    try:
+        compile_compact(context.package / "template", context.package / "content", context.response)
+    except DocumentError as exc:
+        context.error = str(exc)
+
+
+@then("компилятор отклоняет цитату без создания документа")
+def missing_quote_rejected(context):
+    assert context.error == "QUOTE_NOT_FOUND"
+    assert not (context.root / "candidate.docx").exists()
 
 
 @given("создан синтетический DOCX с выделением и верхним индексом")
