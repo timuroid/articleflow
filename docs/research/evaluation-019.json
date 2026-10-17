@@ -1,0 +1,3129 @@
+{
+  "series": "019",
+  "date": "2026-10-17",
+  "data_scope": "synthetic-v1 development; private reference conservation only",
+  "regression": {
+    "series": "019",
+    "dataset": "synthetic-v1 development regression",
+    "model_calls": 0,
+    "rows": [
+      {
+        "id": "north-03-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.07431608298793435,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 2,
+          "candidate_pages": 2,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            },
+            {
+              "page": 2,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "north-04-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.07251875000656582,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 2,
+          "candidate_pages": 2,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            },
+            {
+              "page": 2,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "east-03-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.0728775419993326,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 1,
+          "candidate_pages": 1,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "east-04-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.0710759999928996,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 1,
+          "candidate_pages": 1,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "south-03-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.07457695802440867,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 2,
+          "candidate_pages": 2,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            },
+            {
+              "page": 2,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "south-04-source",
+        "role_correct": 22,
+        "role_total": 22,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.07600516700767912,
+        "status": "draft",
+        "missing": [],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 0,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true,
+        "pixels": {
+          "golden_pages": 2,
+          "candidate_pages": 2,
+          "pages_equal": true,
+          "page_sizes_equal": true,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0,
+          "mae": 0.0,
+          "matched_page_diagnostics": [
+            {
+              "page": 1,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            },
+            {
+              "page": 2,
+              "same_size": true,
+              "pixel_exact": true,
+              "differing_pixels": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": "north-missing",
+        "role_correct": 20,
+        "role_total": 20,
+        "role_accuracy": 1.0,
+        "roles_exact": true,
+        "confusions": {},
+        "seconds": 0.0723224579996895,
+        "status": "draft",
+        "missing": [
+          "authors",
+          "abstract_practical"
+        ],
+        "legacy_018": {
+          "payload_exact": false,
+          "tbl_exact": false,
+          "oMath_exact": true,
+          "drawing_exact": true,
+          "hyperlink_exact": false,
+          "non_document_parts_exact": false,
+          "placeholder_count": 2,
+          "all_payload_checks": false,
+          "application_reimport": true,
+          "application_reimport_error": null
+        },
+        "scientific_payload_exact": true
+      }
+    ],
+    "manifest_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+    "implementation_sha256": {
+      "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+      "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+      "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+      "structure017.py": "f64fb2bd3e6c89e06dd8b9827e6ed790ce35f379b9e2cc791940bba6c3bfaf9c",
+      "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+      "typography019.py": "ba3f1228a2ab9a5beda1676d2660201663c726d4f475411c5d5dee561e609467",
+      "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+      "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+      "model019.py": "d1027d58b548df20594897464a81b5d16a29f6ad0301e321c4a602e10e766212",
+      "web017.py": "0e95e9ae46eb43a3cad6dd4a499ff4e8368beb240624608486494a716e0adb36",
+      "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+      "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+      "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+      "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+      "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+      "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+      "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+    },
+    "protocol_sha256": "130e85b95ffd6d221f2d0ea2738b090cdfd25335df49069e89bc5c6201727851",
+    "aggregate": {
+      "roles_correct": 152,
+      "roles_total": 152,
+      "documents_roles_exact": 7,
+      "scientific_payload_exact": 7,
+      "pixel_exact": 6
+    }
+  },
+  "verification": {
+    "fonts": {
+      "families": {
+        "Arial": true,
+        "Times New Roman": true
+      },
+      "exact": true,
+      "renderer_fonts": {
+        "Arial": [
+          "Arial-BoldItalicMT",
+          "Arial-BoldMT",
+          "Arial-ItalicMT",
+          "ArialMT"
+        ],
+        "Times New Roman": [
+          "TimesNewRomanPS-BoldItal",
+          "TimesNewRomanPS-BoldMT",
+          "TimesNewRomanPS-ItalicMT",
+          "TimesNewRomanPSMT"
+        ]
+      }
+    },
+    "permutations": [
+      {
+        "order": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          0,
+          3,
+          1,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          0,
+          3,
+          2,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          0,
+          2,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          0,
+          3,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          2,
+          0,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          3,
+          0,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          1,
+          3,
+          2,
+          0
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          0,
+          1,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          0,
+          3,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          1,
+          0,
+          3
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          1,
+          3,
+          0
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          3,
+          0,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          2,
+          3,
+          1,
+          0
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          0,
+          1,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          0,
+          2,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          1,
+          0,
+          2
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          2,
+          0,
+          1
+        ],
+        "correct": true,
+        "content": true
+      },
+      {
+        "order": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "correct": true,
+        "content": true
+      }
+    ],
+    "render_stability": {
+      "repeats": 3,
+      "equal": true,
+      "hashes": [
+        [
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "618c71b33651be0482a53309d7a8862edab2bd624f1d22c9401f40ec0bf87b0b"
+          },
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "1a508023dc3db93617dde3088084ee10b5247d43b0eb4a0450f8c7d1b91989c7"
+          }
+        ],
+        [
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "618c71b33651be0482a53309d7a8862edab2bd624f1d22c9401f40ec0bf87b0b"
+          },
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "1a508023dc3db93617dde3088084ee10b5247d43b0eb4a0450f8c7d1b91989c7"
+          }
+        ],
+        [
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "618c71b33651be0482a53309d7a8862edab2bd624f1d22c9401f40ec0bf87b0b"
+          },
+          {
+            "width": 1191,
+            "height": 1684,
+            "sha256": "1a508023dc3db93617dde3088084ee10b5247d43b0eb4a0450f8c7d1b91989c7"
+          }
+        ]
+      ]
+    },
+    "private_reference": {
+      "source_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+      "status": "draft",
+      "missing": [],
+      "source_blocks": 157,
+      "questions_count": 3,
+      "pixels": {
+        "golden_pages": 12,
+        "candidate_pages": 12,
+        "pages_equal": true,
+        "page_sizes_equal": true,
+        "pixel_exact": false,
+        "differing_pixel_ratio": 0.01551745972864576,
+        "mae": 2.510640223289876,
+        "matched_page_diagnostics": [
+          {
+            "page": 1,
+            "same_size": true,
+            "pixel_exact": false,
+            "differing_pixels": 373470
+          },
+          {
+            "page": 2,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 3,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 4,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 5,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 6,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 7,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 8,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 9,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 10,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 11,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 12,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          }
+        ]
+      },
+      "legacy_content": {
+        "payload_exact": true,
+        "tbl_exact": true,
+        "oMath_exact": true,
+        "drawing_exact": true,
+        "hyperlink_exact": true,
+        "non_document_parts_exact": true,
+        "placeholder_count": 0,
+        "all_payload_checks": true,
+        "application_reimport": true,
+        "application_reimport_error": null
+      }
+    },
+    "batches": [
+      {
+        "count": 1,
+        "http_status": 202,
+        "wall_seconds": 2.459302667004522,
+        "statuses": {
+          "draft": 1
+        },
+        "job_count_exact": true,
+        "final_blocked": true,
+        "draft_zip_valid": true,
+        "zip_manifest_count": 1,
+        "zip_results_count": 0
+      },
+      {
+        "count": 20,
+        "http_status": 202,
+        "wall_seconds": 1.9538911660201848,
+        "statuses": {
+          "draft": 20
+        },
+        "job_count_exact": true,
+        "final_blocked": true,
+        "draft_zip_valid": true,
+        "zip_manifest_count": 20,
+        "zip_results_count": 0
+      },
+      {
+        "count": 200,
+        "http_status": 202,
+        "wall_seconds": 19.332117709011072,
+        "statuses": {
+          "draft": 200
+        },
+        "job_count_exact": true,
+        "final_blocked": true,
+        "draft_zip_valid": true,
+        "zip_manifest_count": 200,
+        "zip_results_count": 0
+      },
+      {
+        "count": 201,
+        "http_status": 400,
+        "wall_seconds": 0.07448562499484979
+      }
+    ],
+    "private_reference_final": {
+      "status": "draft",
+      "questions_count": 3,
+      "missing": [],
+      "pixels": {
+        "golden_pages": 12,
+        "candidate_pages": 12,
+        "pages_equal": true,
+        "page_sizes_equal": true,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0,
+        "mae": 0.0,
+        "matched_page_diagnostics": [
+          {
+            "page": 1,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 2,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 3,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 4,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 5,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 6,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 7,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 8,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 9,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 10,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 11,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 12,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          }
+        ]
+      }
+    }
+  },
+  "model_series": {
+    "qwen-initial": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "c9f99f2254e627e7e7f24f9fa0a684366e84f5ba926af79239caf91239c86bf0",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002013395",
+          "reserve_usd": "0.01338040",
+          "seconds": 15.081288208020851,
+          "role_correct": 21,
+          "role_total": 22,
+          "role_accuracy": 0.9545454545454546,
+          "roles_exact": false,
+          "confusions": {
+            "body->editorial": 1
+          },
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.0008682996583640965,
+            "mae": 0.1255439649309648,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 3483
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "b6cac2f561612bdcc217accbfa8b71bd8a94925223930ed3c9e914324f9e20f0",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002011265",
+          "reserve_usd": "0.01338040",
+          "seconds": 15.701419874996645,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "e4d0a958cdbf6a9f7e0e246e1f28eec287c4c3bf2f93b8be9ac499593a9ff571",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002013255",
+          "reserve_usd": "0.01337656",
+          "seconds": 15.584124124987284,
+          "role_correct": 21,
+          "role_total": 22,
+          "role_accuracy": 0.9545454545454546,
+          "roles_exact": false,
+          "confusions": {
+            "body->editorial": 1
+          },
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.0017106724822550763,
+            "mae": 0.2736916421857518,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 3431
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "0e8c9a56ae9813c44d3c2dd4ed2dd8ac3557e7165dbf84caae664867cf5a8d53",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00201357",
+          "reserve_usd": "0.01337656",
+          "seconds": 14.921093374985503,
+          "role_correct": 21,
+          "role_total": 22,
+          "role_accuracy": 0.9545454545454546,
+          "roles_exact": false,
+          "confusions": {
+            "body->editorial": 1
+          },
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.0017106724822550763,
+            "mae": 0.2736916421857518,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 3431
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "3f6fe1906a8bb81887b87c5616549f4d0cac0ef0fd7f7b436d17a61fcf8efc52",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00201322",
+          "reserve_usd": "0.01339216",
+          "seconds": 15.161584541987395,
+          "role_correct": 21,
+          "role_total": 22,
+          "role_accuracy": 0.9545454545454546,
+          "roles_exact": false,
+          "confusions": {
+            "body->editorial": 1
+          },
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.0007354246316893726,
+            "mae": 0.11366448881257092,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 2950
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "bbe85c5b0805ad0c9014abbab87e5d2f5b11a72c6e0930d326c4eae9eb352b90",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002013885",
+          "reserve_usd": "0.01339216",
+          "seconds": 15.170354125002632,
+          "role_correct": 21,
+          "role_total": 22,
+          "role_accuracy": 0.9545454545454546,
+          "roles_exact": false,
+          "confusions": {
+            "body->editorial": 1
+          },
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.0007354246316893726,
+            "mae": 0.11366448881257092,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 2950
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "ec89432958b789334209bbfa8a599a4689b0423564650db86424f10d7899369b",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_CONTEXT",
+          "http_status": 200,
+          "cost_usd": "0.00183133",
+          "reserve_usd": "0.01302664",
+          "seconds": 13.940596790984273
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 1,
+      "pixel_exact": 1,
+      "cost_usd": "0.013909920",
+      "median_seconds": 15.161584541987395,
+      "frozen": {
+        "model": "qwen/qwen3.8-27b",
+        "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1
+      }
+    },
+    "luna-initial": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "c38fcf051889c923b9d69249c1fd337fe94f91177e8481ceff49823436e94a5b",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005628",
+          "reserve_usd": "0.00762350",
+          "seconds": 3.766438125021523,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "f58e51ab29f19dd2e2bb80e2d9d3bd20ede6483d816b7348739098d10176ea04",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000563675",
+          "reserve_usd": "0.00762350",
+          "seconds": 3.3784623329993337,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "f02d3820cd2e2644d9694276a1ea95385b4b0b776b7010cc15f205cdad273f27",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000564425",
+          "reserve_usd": "0.00761950",
+          "seconds": 3.4274996659951285,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "030b7a47a6bf88a62615ae6319f8d00bfdf8f5d0eb6c968860a5ed7ba02589bc",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000564675",
+          "reserve_usd": "0.00761950",
+          "seconds": 5.56095416599419,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "a37457bf47aee90cdde155f305df648659e9d813131127a57e8a120ce517e5aa",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000563425",
+          "reserve_usd": "0.00763575",
+          "seconds": 3.5392052920069546,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "a6fafc32cd84e228e388f38b77048d5677823b50099f848d4e568562b0515d2b",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000564925",
+          "reserve_usd": "0.00763575",
+          "seconds": 4.209090041986201,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "8bf51f217ae088aa6e52d8955ba0984302e833bc8a39c2107a21b21c04ad27fb",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000515175",
+          "reserve_usd": "0.00725500",
+          "seconds": 3.6375557919964194,
+          "role_correct": 20,
+          "role_total": 20,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "draft",
+          "missing": [
+            "authors",
+            "abstract_practical"
+          ],
+          "scientific_payload_exact": true
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 7,
+      "pixel_exact": 6,
+      "cost_usd": "0.003899100",
+      "median_seconds": 3.6375557919964194,
+      "frozen": {
+        "model": "openai/gpt-6-luna",
+        "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1
+      }
+    },
+    "sol-initial": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "78d90095f991c1c3bbe10c9002ff16208090bc017cac2efe441d2a9695ff53f5",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152475",
+          "seconds": 0.6899427080061287
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "0dbe46104407561375becc0ff38f72da15728ac73cdc5ca9a9c10d2617412d77",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152475",
+          "seconds": 0.5818635000032373
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "ad6b5bfe888ed78948518338987be38c965c8923d29cbbde3ccc6f9f899c8309",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152395",
+          "seconds": 0.7094877079944126
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "f958761534d9e3bb6ac22d95d0bf0fc554ca1345707593ed0a1c4b34b7980c65",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152395",
+          "seconds": 0.597279375011567
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "59b32d61fe8e2ef415d544c017dea49d5d3881952eba4402b2d555a5edc36ea3",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152720",
+          "seconds": 0.8845450000080746
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "23e448365b63da5d85042ef6f795a7b879ded23a6e9d5b8e22673451eb52bb70",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.152720",
+          "seconds": 0.6724892500205897
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "openai/gpt-6.1-sol",
+          "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+          "request_sha256": "0593ef9b44eeb1f58cbc99ea240e17ab20254777a098c93cbbb16eb5ff0e6717",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "PROVIDER_HTTP_400",
+          "http_status": 400,
+          "cost_usd": null,
+          "reserve_usd": "0.145105",
+          "seconds": 0.6543249590031337
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 0,
+      "pixel_exact": 0,
+      "cost_usd": "0",
+      "median_seconds": 0.6724892500205897,
+      "frozen": {
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "39442434ae1b746863c1cf8b7861b048f6913ab41c2a6d1993cc51042116ae27",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1
+      }
+    },
+    "qwen-v2": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "33d3e28b715132e4ccf43904b2e39e56b8d66953a4de2236bcb05509489a8686",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.002017415",
+          "reserve_usd": "0.01344784",
+          "seconds": 15.12758249999024
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "6dea793ac668671398dbeea00ac8c06ba72b989164142ff52e24017ebe182bc2",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.002017485",
+          "reserve_usd": "0.01344784",
+          "seconds": 15.143294875015272
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "7445adb98243d83f9ffa97d573604b913443e3c7abf79bff8849f46d89050f22",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002012875",
+          "reserve_usd": "0.01344400",
+          "seconds": 9.582775959017454,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "6fc008ca2a9a194137a04190a1c46802c2314c3fccacbdc32383e2a5e1cd027c",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.00201759",
+          "reserve_usd": "0.01344400",
+          "seconds": 9.913723750010831
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "dc70a5644fe806039d0a252d41f98784a021ecfb5dcd3c75e8257f889d534121",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.00201724",
+          "reserve_usd": "0.01345960",
+          "seconds": 9.711903041985352
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "564b4210a5cdaacdf8d192a2535da8bcdd04fea5f293433a9240ec2493152ae3",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.002017905",
+          "reserve_usd": "0.01345960",
+          "seconds": 9.500190624996321
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "f33ee628d40f6b117a3d099f8b5e36a64e2635580462043563b4ecf22b2de925",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "MODEL_PLAN_ROLE",
+          "http_status": 200,
+          "cost_usd": "0.00183535",
+          "reserve_usd": "0.01309408",
+          "seconds": 9.184599000000162
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 1,
+      "pixel_exact": 1,
+      "cost_usd": "0.013935860",
+      "median_seconds": 9.711903041985352,
+      "frozen": {
+        "model": "qwen/qwen3.8-27b",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1,
+        "implementation_sha256": {
+          "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+          "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+          "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+          "structure017.py": "ae99c1dbabce2e99217e625f1f1ecbf626b28f97f8ba992071f358232549e048",
+          "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+          "typography019.py": "925a8aa231a6d172a50138ff58d64867ff7a45c765645529d538ec41e502ab49",
+          "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+          "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+          "model019.py": "93a47fa05af08cdb2e66537fb244c6be31a05cb8cc5cd0fff9d4083d0c29556c",
+          "web017.py": "ab1419633b43ed4e3afedc8479ec6c405203a31b91fa94c99bf0cba980e75877",
+          "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+          "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+          "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+          "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+          "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+          "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+          "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+          "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+        },
+        "evaluator_sha256": "583a821993d6c2b29617e1cd4f799aa3f1f24a2861dce73fd1554fbe323cfbf1",
+        "reasoning_effort": "none"
+      }
+    },
+    "luna-v2": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "4e3a631f628d53c18f44a4294f2fa4aaa7d0dc557b14af3935a5af25f60b01b4",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000570675",
+          "reserve_usd": "0.00769750",
+          "seconds": 3.985007000010228,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "6fa471cd260f3bd157041b6431ad06767eba7922c5dfe143e0334fdb6ecfd148",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00057155",
+          "reserve_usd": "0.00769750",
+          "seconds": 3.8340722499997355,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "d392798521caa0ee58ff62ca78a61ed7a253c61f58c576126afed46e24ca7a27",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005723",
+          "reserve_usd": "0.00769350",
+          "seconds": 3.7914134999737144,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "e52415f1cf87db6ebf44c7498d080fea7fe44a2ec7afd9a788938f410a976853",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00057255",
+          "reserve_usd": "0.00769350",
+          "seconds": 3.9399338329967577,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "413269acb9b9b8a11ba47146051459fa913a2840e1f17a36be43ab8dfcffb100",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005713",
+          "reserve_usd": "0.00770975",
+          "seconds": 4.172922166006174,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "8b219172b2b6509f3e511b60c1b0614b1bf16de76d651c5822f8922e8129e71e",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005728",
+          "reserve_usd": "0.00770975",
+          "seconds": 3.842507374996785,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "7efb17d43811ebd96789d19952baa97c96e19168195c472d1370067796c4bfef",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00052305",
+          "reserve_usd": "0.00732900",
+          "seconds": 7.336570124985883,
+          "role_correct": 20,
+          "role_total": 20,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "draft",
+          "missing": [
+            "authors",
+            "abstract_practical"
+          ],
+          "scientific_payload_exact": true
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 7,
+      "pixel_exact": 6,
+      "cost_usd": "0.003954225",
+      "median_seconds": 3.9399338329967577,
+      "frozen": {
+        "model": "openai/gpt-6-luna",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1,
+        "implementation_sha256": {
+          "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+          "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+          "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+          "structure017.py": "ae99c1dbabce2e99217e625f1f1ecbf626b28f97f8ba992071f358232549e048",
+          "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+          "typography019.py": "925a8aa231a6d172a50138ff58d64867ff7a45c765645529d538ec41e502ab49",
+          "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+          "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+          "model019.py": "d1027d58b548df20594897464a81b5d16a29f6ad0301e321c4a602e10e766212",
+          "web017.py": "0e95e9ae46eb43a3cad6dd4a499ff4e8368beb240624608486494a716e0adb36",
+          "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+          "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+          "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+          "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+          "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+          "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+          "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+          "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+        },
+        "evaluator_sha256": "583a821993d6c2b29617e1cd4f799aa3f1f24a2861dce73fd1554fbe323cfbf1",
+        "reasoning_effort": "none"
+      }
+    },
+    "teacher-student/student": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "4e3a631f628d53c18f44a4294f2fa4aaa7d0dc557b14af3935a5af25f60b01b4",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021751",
+          "reserve_usd": "0.00769750",
+          "seconds": 4.2182034170255065,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "6fa471cd260f3bd157041b6431ad06767eba7922c5dfe143e0334fdb6ecfd148",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021758",
+          "reserve_usd": "0.00769750",
+          "seconds": 3.85911970800953,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "d392798521caa0ee58ff62ca78a61ed7a253c61f58c576126afed46e24ca7a27",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021764",
+          "reserve_usd": "0.00769350",
+          "seconds": 4.011477458989248,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "e52415f1cf87db6ebf44c7498d080fea7fe44a2ec7afd9a788938f410a976853",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021766",
+          "reserve_usd": "0.00769350",
+          "seconds": 3.775778209004784,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "413269acb9b9b8a11ba47146051459fa913a2840e1f17a36be43ab8dfcffb100",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021756",
+          "reserve_usd": "0.00770975",
+          "seconds": 4.201098249992356,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "8b219172b2b6509f3e511b60c1b0614b1bf16de76d651c5822f8922e8129e71e",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00021768",
+          "reserve_usd": "0.00770975",
+          "seconds": 4.106218500004616,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "7efb17d43811ebd96789d19952baa97c96e19168195c472d1370067796c4bfef",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00019806",
+          "reserve_usd": "0.00732900",
+          "seconds": 3.8943700840172824,
+          "role_correct": 20,
+          "role_total": 20,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "draft",
+          "missing": [
+            "authors",
+            "abstract_practical"
+          ],
+          "scientific_payload_exact": true
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 7,
+      "pixel_exact": 6,
+      "cost_usd": "0.00150369",
+      "median_seconds": 4.011477458989248,
+      "frozen": {
+        "model": "openai/gpt-6-luna",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1,
+        "implementation_sha256": {
+          "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+          "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+          "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+          "structure017.py": "ae99c1dbabce2e99217e625f1f1ecbf626b28f97f8ba992071f358232549e048",
+          "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+          "typography019.py": "925a8aa231a6d172a50138ff58d64867ff7a45c765645529d538ec41e502ab49",
+          "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+          "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+          "model019.py": "d1027d58b548df20594897464a81b5d16a29f6ad0301e321c4a602e10e766212",
+          "web017.py": "0e95e9ae46eb43a3cad6dd4a499ff4e8368beb240624608486494a716e0adb36",
+          "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+          "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+          "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+          "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+          "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+          "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+          "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+          "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+        },
+        "evaluator_sha256": "15d0ebcd03adf5a12870c38366a90cf2a03c318c90a966d089a956e069c48a3e",
+        "reasoning_effort": "none"
+      }
+    },
+    "qwen-final": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "995c1cc45be0aa4ae89ffca8318286f2c00a5392546c71d987acf7fac241ed86",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002017555",
+          "reserve_usd": "0.01345144",
+          "seconds": 9.467614332999801,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "17af03fadca87bfff5f0c504dcc69ff783fcb4a583303d96fc100c049918d215",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002017625",
+          "reserve_usd": "0.01345144",
+          "seconds": 9.688204749982106,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "94b2bcefad86d945f83731b6a7b5cf499c1711a10503e8707c80572cb4f04b79",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002017415",
+          "reserve_usd": "0.01344760",
+          "seconds": 40.33138995800982,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "678c3bc4bd63a06929fc4714cda3c5203ba43d9e334363a3091d101acc0c8606",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00201773",
+          "reserve_usd": "0.01344760",
+          "seconds": 16.355223542021122,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "68df1458ef0de51c5a22f27da1ebe34250d53537451c26211a78001f9f51606e",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00201738",
+          "reserve_usd": "0.01346320",
+          "seconds": 17.221718707995024,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "5462cf20ef76390c1c95f217e79a6cfe2815c9ccfd7d739a0a48f667d6f60b7a",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.002018045",
+          "reserve_usd": "0.01346320",
+          "seconds": 15.7360299580032,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "qwen/qwen3.8-27b",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "f46eb74cc3165a221c77c0cc96d3d1f9d532c6f313761b19ef97b9af9d06dfc9",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00183549",
+          "reserve_usd": "0.01309768",
+          "seconds": 31.428013333003037,
+          "role_correct": 20,
+          "role_total": 20,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "draft",
+          "missing": [
+            "authors",
+            "abstract_practical"
+          ],
+          "scientific_payload_exact": true
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 7,
+      "pixel_exact": 6,
+      "cost_usd": "0.013941240",
+      "median_seconds": 16.355223542021122,
+      "frozen": {
+        "model": "qwen/qwen3.8-27b",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1,
+        "implementation_sha256": {
+          "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+          "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+          "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+          "structure017.py": "ae99c1dbabce2e99217e625f1f1ecbf626b28f97f8ba992071f358232549e048",
+          "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+          "typography019.py": "925a8aa231a6d172a50138ff58d64867ff7a45c765645529d538ec41e502ab49",
+          "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+          "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+          "model019.py": "d1027d58b548df20594897464a81b5d16a29f6ad0301e321c4a602e10e766212",
+          "web017.py": "0e95e9ae46eb43a3cad6dd4a499ff4e8368beb240624608486494a716e0adb36",
+          "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+          "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+          "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+          "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+          "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+          "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+          "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+          "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+        },
+        "evaluator_sha256": "15d0ebcd03adf5a12870c38366a90cf2a03c318c90a966d089a956e069c48a3e",
+        "reasoning_effort": "none"
+      }
+    },
+    "luna-release": {
+      "rows": [
+        {
+          "id": "north-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "3249121be1b82653721f42701cb61d9688c192b5031fbf3f4e028cefb28c6144",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.000587675",
+          "reserve_usd": "0.00782875",
+          "seconds": 3.885704790998716,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "d51a149a81c1a41a93244080c89528f0e86ac3ecb656f69553d541b7e06add09",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00058855",
+          "reserve_usd": "0.00782875",
+          "seconds": 4.196920917020179,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "5ccc82d41f7913c3a5463ef30230c40d122705360c1d6e8cac58e3934aff27f4",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005893",
+          "reserve_usd": "0.00782475",
+          "seconds": 3.6906915419967845,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "east-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "c44572b2f5cb1994f6fe951d48cea1eff9842620c60c07f369d9da326f404521",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00058955",
+          "reserve_usd": "0.00782475",
+          "seconds": 3.905409792001592,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-03-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "a9333ed9637288aaba3bc60f7b1d731f7d4bba7f137b34e4b058441aaf6880b9",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005883",
+          "reserve_usd": "0.00784100",
+          "seconds": 3.8701903329929337,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "south-04-source",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "3877eff8c937ab88f1baec801bad360d7d0537cabf5dd65e362737c2b1db8e91",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.0005898",
+          "reserve_usd": "0.00784100",
+          "seconds": 4.524313958012499,
+          "role_correct": 22,
+          "role_total": 22,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "ready",
+          "missing": [],
+          "scientific_payload_exact": true,
+          "pixels": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "north-missing",
+          "repeat": 1,
+          "model": "openai/gpt-6-luna",
+          "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+          "request_sha256": "61eb501660e30a22194e54a55cff264c34b454237f8a369fa3a9bebf85cb921b",
+          "api_attempts": 1,
+          "repair_calls": 0,
+          "status": "valid",
+          "http_status": 200,
+          "cost_usd": "0.00053855",
+          "reserve_usd": "0.00744825",
+          "seconds": 3.9757098330010194,
+          "role_correct": 20,
+          "role_total": 20,
+          "role_accuracy": 1.0,
+          "roles_exact": true,
+          "confusions": {},
+          "compiler_status": "draft",
+          "missing": [
+            "authors",
+            "abstract_practical"
+          ],
+          "scientific_payload_exact": true
+        }
+      ],
+      "attempts": 7,
+      "roles_exact": 7,
+      "pixel_exact": 6,
+      "cost_usd": "0.004071725",
+      "median_seconds": 3.905409792001592,
+      "frozen": {
+        "model": "openai/gpt-6-luna",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "corpus_sha256": "0d3782333d6a8b1a740bceff2de1bb013a25559f332fdf8c3af512b2c99063e0",
+        "repeats": 1,
+        "implementation_sha256": {
+          "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+          "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+          "docx_engine.py": "638847014fc5afe1152628e73bf5331f5e413ea0ecc5cd54ed0b729f53d722ba",
+          "structure017.py": "f64fb2bd3e6c89e06dd8b9827e6ed790ce35f379b9e2cc791940bba6c3bfaf9c",
+          "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+          "typography019.py": "ba3f1228a2ab9a5beda1676d2660201663c726d4f475411c5d5dee561e609467",
+          "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+          "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+          "model019.py": "d1027d58b548df20594897464a81b5d16a29f6ad0301e321c4a602e10e766212",
+          "web017.py": "0e95e9ae46eb43a3cad6dd4a499ff4e8368beb240624608486494a716e0adb36",
+          "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+          "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+          "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+          "fonts019.py": "ed86e0bf3a1ec5cfaa3838c0b2a5a3ebbc5d75e52ce59311b9053abe5366fa41",
+          "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+          "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+          "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+          "catalogue.py": "f70be5a9987fec8034928cd6229d9ffaaccadb18bbbefdef97895ea940e92b00"
+        },
+        "evaluator_sha256": "15d0ebcd03adf5a12870c38366a90cf2a03c318c90a966d089a956e069c48a3e",
+        "reasoning_effort": "none"
+      }
+    }
+  },
+  "extractor": {
+    "rows": [
+      {
+        "id": "north-01",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "8a642800780dafea892b642d5e7c866fc69fe7616563151e3e41ed06e75b6961",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.0105685",
+        "reserve_usd": "0.148825",
+        "seconds": 6.9003937499946915
+      },
+      {
+        "id": "north-02",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "5ccaee68e6a53411bf3cd491a9cba5cea1d51acfb48bdb90f01fef21cc999aef",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.0105485",
+        "reserve_usd": "0.148825",
+        "seconds": 6.251935665990459
+      },
+      {
+        "id": "east-01",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "c12df142fae907d105a57f50267d196850a72a7f651e8cd8a10df25a66dfd6d0",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.010436",
+        "reserve_usd": "0.147795",
+        "seconds": 6.12956162498449
+      },
+      {
+        "id": "east-02",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "664e60c91c31c58c78bad37500cff65768e54e401bcc34090919f74b695adeb2",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.010486",
+        "reserve_usd": "0.147795",
+        "seconds": 5.891541083023185
+      },
+      {
+        "id": "south-01",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "05a94309068aec6f7c0c284d8c6b06b5130b3d4c6bfb7fcd2fe669c3e60647c4",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.010441",
+        "reserve_usd": "0.148310",
+        "seconds": 6.115763584006345
+      },
+      {
+        "id": "south-02",
+        "model": "openai/gpt-6.1-sol",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "e27cea0f992e857325c9fd68ed42432b10e4220eede5a0902738cde1f523d584",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.0104235",
+        "reserve_usd": "0.148310",
+        "seconds": 6.186748333013384
+      }
+    ]
+  },
+  "budget": {
+    "attempts": 62,
+    "confirmed_cost": "0.118119260",
+    "unknown_reserve": "1.060285",
+    "baseline": {
+      "usage_usd": "7.956670174",
+      "available_usd": "3.309577851",
+      "at": "2026-10-17T08:27:14.007138+00:00"
+    },
+    "additional_cap": "3",
+    "now": {
+      "usage_usd": "8.074250884",
+      "available_usd": "3.191997141",
+      "at": "2026-10-17T08:47:12.091758+00:00"
+    }
+  }
+}

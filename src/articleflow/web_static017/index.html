@@ -32,7 +32,7 @@
           <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
           <label for="template-files">Эталоны DOCX, до 10 файлов</label>
           <input id="template-files" name="files" type="file" accept=".docx" multiple required>
-          <p class="help">Исходные файлы хранятся на этом сервере. Анализ текста внешней моделью отключён.</p>
+          <p class="help">Исходные файлы хранятся на этом сервере. Отправка текста внешней модели доступна только с вашим отдельным согласием.</p>
           <button type="submit" class="button primary">Извлечь наблюдения</button>
         </form>
         <div id="template-list" class="stack" aria-live="polite"></div>
@@ -47,9 +47,13 @@
           <label for="batch-files">Статьи DOCX, до 200 файлов</label>
           <input id="batch-files" name="files" type="file" accept=".docx" multiple required>
           <p class="help">Не более 25 МиБ на файл. Исходники и все ревизии остаются доступны.</p>
+          <label><input type="checkbox" name="use_llm" value="true" id="use-llm"> Определить роли небольшой моделью</label>
+          <label><input type="checkbox" name="consent_external" value="true" id="external-consent"> Разрешаю отправить текст этих статей в OpenRouter</label>
+          <p class="help">Один вызов на документ. Расходы ограничены общим бюджетом; ошибки модели сохраняются в отчёте.</p>
           <button type="submit" class="button primary">Начать обработку</button>
         </form>
-        <div id="batch-view" class="stack" aria-live="polite"></div>
+        <div id="batch-history" class="stack"></div>
+      <div id="batch-view" class="stack" aria-live="polite"></div>
       </section>
     </div>
 
@@ -58,6 +62,6 @@
       <div id="job-view" class="empty">Выберите статью из пакета, чтобы увидеть вопросы, блоки и файлы.</div>
     </section>
   </main>
-  <footer class="footer">ArticleFlow Web 017 · Локальный режим восстановления · Структурный просмотр не показывает страницы Word.</footer>
+  <footer class="footer">ArticleFlow · Восстановление 019 · Структурный просмотр не показывает страницы Word.</footer>
 </body>
 </html>

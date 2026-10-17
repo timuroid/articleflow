@@ -26,9 +26,12 @@ def render_pdf(source: Path, output_dir: Path, timeout: int = 90) -> Path:
         profile = Path(workspace) / "profile"
         fresh_output = Path(workspace) / "pdf"
         fresh_output.mkdir()
+        environment = dict(os.environ)
+        if environment.get("ARTICLEFLOW_FONTCONFIG"):
+            environment["FONTCONFIG_FILE"] = environment["ARTICLEFLOW_FONTCONFIG"]
         result = subprocess.run(
-            ["soffice", "-env:UserInstallation=" + profile.resolve().as_uri(), "--headless", "--convert-to", "pdf", "--outdir", str(fresh_output.resolve()), str(source.resolve())],
-            capture_output=True, timeout=timeout,
+            [os.environ.get("ARTICLEFLOW_SOFFICE", "soffice"), "-env:UserInstallation=" + profile.resolve().as_uri(), "--headless", "--convert-to", "pdf", "--outdir", str(fresh_output.resolve()), str(source.resolve())],
+            capture_output=True, timeout=timeout, env=environment,
         )
         fresh = fresh_output / (source.stem + ".pdf")
         target = output_dir / (source.stem + ".pdf")

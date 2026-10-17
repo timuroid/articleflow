@@ -1,5 +1,8 @@
 const api = '/api/v017';
-const state = { csrf: '', templates: [], batchId: null, timer: null };
+const state = { csrf: '', templates: [], batchId: null, timer: null, llm: false };
+
+const roleLabels = {udc:'УДК',title:'Название статьи',authors:'Авторы',affiliation:'Организация',city:'Город',email:'Электронная почта',abstract_heading:'Заголовок аннотации',abstract_problem:'Постановка проблемы',abstract_goal:'Цель',abstract_results:'Результаты',abstract_practical:'Практическая значимость',abstract_remainder:'Неразобранная часть аннотации',keywords:'Ключевые слова','keywords.heading':'Заголовок ключевых слов',body:'Основной текст','body.table':'Таблицы','body.table_caption':'Подписи таблиц','body.figure':'Иллюстрации','body.figure_caption':'Подписи иллюстраций',editorial:'Редакторские заметки',__base__:'Основное оформление документа',__document__:'Размер страницы и поля'};
+const roleName = role => roleLabels[role] || (role.startsWith('body.heading.') ? `Заголовок уровня ${role.split('.').pop()}` : role);
 const $ = (id) => document.getElementById(id);
 const node = (tag, className = '', value = '') => {
   const item = document.createElement(tag);
@@ -10,7 +13,11 @@ const node = (tag, className = '', value = '') => {
 const button = (label, onClick, className = 'button') => {
   const item = node('button', className, label);
   item.type = 'button';
-  item.addEventListener('click', onClick);
+  item.addEventListener('click', async () => {
+    item.disabled = true; item.setAttribute('aria-busy', 'true');
+    try { await onClick(); } catch (error) { message(error.message, true); }
+    finally { item.disabled = false; item.removeAttribute('aria-busy'); }
+  });
   return item;
 };
 const message = (value, error = false) => {
@@ -64,38 +71,73 @@ async function showTemplate(id) {
   target.replaceChildren(node('h3', '', `${item.name} · версия ${item.version}`));
   const spec = item.spec;
   target.append(node('p', '', `Эталонов: ${spec.samples.length}. При разных вариантах оформления выберите правило вручную.`));
+  if (state.llm) {
+    const consentLabel = node('label');
+    const consent = node('input'); consent.type = 'checkbox';
+    consentLabel.append(consent, document.createTextNode(' Разрешаю передать текст эталонов в OpenRouter для анализа ролей'));
+    const analyze = button('Проверить смысловые роли моделью', async () => {
+      if (!consent.checked) { message('Для анализа нужно разрешение на отправку текста эталонов.', true); return; }
+      analyze.disabled = true; target.setAttribute('aria-busy', 'true'); message('Модель анализирует эталоны. Это может занять несколько минут.');
+      try { await request(`/templates/${id}/analyze`, { method: 'POST', body: JSON.stringify({ consent_external: true }) }); await loadTemplates(); await showTemplate(id); message('Создана новая версия наблюдений. Проверьте различия.'); }
+      catch (error) { message(`Анализ не завершён: ${error.message}`, true); }
+      finally { analyze.disabled = false; target.removeAttribute('aria-busy'); }
+    });
+    target.append(consentLabel, analyze);
+  }
   if (item.approved) {
     target.append(node('p', '', 'Версия утверждена и неизменяема. Она доступна для новых пакетов.'));
     return;
   }
+  target.append(node('h4', '', 'Обязательные сведения'));
+  const required = {};
+  for (const role of ['title','authors','affiliation','city','email','abstract_problem','abstract_goal','abstract_results','abstract_practical','keywords']) {
+    const label = node('label'); const input = node('input'); input.type = 'checkbox';
+    input.checked = (spec.structure?.required || []).includes(role); required[role] = input;
+    label.append(input, document.createTextNode(' '+roleName(role))); target.append(label);
+  }
   const choices = {};
   for (const [role, variants] of Object.entries(spec.variants || {})) {
-    const label = node('label', '', `Роль: ${role}`);
+    const label = node('label', '', roleName(role));
     const select = node('select');
-    select.setAttribute('aria-label', `Вариант оформления для ${role}`);
+    select.setAttribute('aria-label', `Вариант оформления: ${roleName(role)}`);
     if (Object.keys(variants).length > 1) {
       const empty = node('option', '', 'Выберите вариант');
       empty.value = '';
       select.append(empty);
     }
     for (const [key, names] of Object.entries(variants)) {
-      const option = node('option', '', `${key} · ${[...new Set(names)].join(', ')}`);
+      const option = node('option', '', `Вариант ${Object.keys(variants).indexOf(key)+1} · ${[...new Set(names)].join(', ')}`);
       option.value = key;
       select.append(option);
     }
     choices[role] = select;
     target.append(label, select);
+    const details = node('details'); details.append(node('summary', '', 'Свойства вариантов и исходные блоки'));
+    for (const key of Object.keys(variants)) {
+      const value = spec.styles?.[role]?.[key] || {};
+      const raw = (value.pPr || '') + (value.rPr || '') + (value.section || '');
+      const xml = new DOMParser().parseFromString('<properties>' + raw + '</properties>', 'application/xml');
+      const properties = [...xml.querySelectorAll('*')].filter(e => e.attributes.length && !['pPr','rPr','sectPr'].includes(e.localName)).map(e => `${e.localName}: ${[...e.attributes].filter(a=>!a.name.startsWith('xmlns')).map(a=>`${a.localName}=${a.value}`).join(', ')}`).filter(t=>!t.endsWith(': '));
+      const evidence = spec.samples.flatMap(s => s.observations.filter(o=>o.role===role && o.style_key===key).map(o=>`${s.name} / ${o.block_id}`));
+      details.append(node('p', 'help', `${key}: ${properties.join('; ')}. Источники: ${evidence.join(', ') || [...new Set(variants[key])].join(', ')}`));
+    }
+    target.append(details);
   }
   target.append(button('Утвердить новую версию', async () => {
     const selected = Object.fromEntries(Object.entries(choices).map(([role, select]) => [role, select.value]));
     if (Object.values(selected).some((value) => !value)) { message('Выберите вариант для каждой спорной роли.', true); return; }
     try {
-      const result = await request(`/templates/${id}/approve`, { method: 'POST', body: JSON.stringify({ selected }) });
+      const result = await request(`/templates/${id}/approve`, { method: 'POST', body: JSON.stringify({ selected, required: Object.keys(required).filter(role=>required[role].checked) }) });
       message(`Утверждена версия ${result.version}.`);
       await loadTemplates();
       await showTemplate(id);
     } catch (error) { message(`Не удалось утвердить шаблон: ${error.message}`, true); }
   }, 'button primary'));
+}
+async function loadBatches() {
+  const rows = await request('/batches'); const target = $('batch-history'); target.replaceChildren();
+  if (rows.length) target.append(node('h3', '', 'Недавние пакеты'));
+  for (const row of rows) target.append(button(`${row.template_name} · ${row.job_count} файлов · ${new Date(row.created_at).toLocaleString('ru-RU')}`, async () => { state.batchId = row.id; await renderBatch(row.id); }));
 }
 async function renderBatch(id) {
   const batch = await request(`/batches/${id}`);
@@ -157,6 +199,14 @@ async function renderJob(id) {
     for (const text of questions) list.append(node('li', '', text));
     questionPane.append(list);
   } else questionPane.append(node('p', '', 'Блокирующих вопросов нет. Проверьте DOCX визуально.'));
+  const suppliedInputs = {};
+  const supplied = JSON.parse(job.supplied_json || '{}');
+  for (const slot of [...new Set([...(job.report?.missing || []), ...Object.keys(supplied)])]) {
+    const label = node('label', '', `Заполнить: ${roleName(slot)}`);
+    const input = node('textarea'); input.maxLength = 10000; input.value = supplied[slot] || '';
+    input.setAttribute('aria-label', `Сведения для ${roleName(slot)}`); suppliedInputs[slot] = input;
+    questionPane.append(label, input);
+  }
   const blockPane = node('div');
   blockPane.append(node('h3', '', 'Исходные блоки и роли'));
   const blocks = node('div', 'blocks');
@@ -167,7 +217,7 @@ async function renderJob(id) {
     const select = node('select');
     select.setAttribute('aria-label', `Роль блока ${block.id}`);
     for (const role of [...['editorial'], ...['udc','title','authors','affiliation','city','email','abstract_heading','abstract_problem','abstract_goal','abstract_results','abstract_practical','abstract_remainder','keywords','body']]) {
-      const option = node('option', '', role);
+      const option = node('option', '', roleName(role));
       option.value = role;
       select.append(option);
     }
@@ -180,7 +230,7 @@ async function renderJob(id) {
   blockPane.append(button('Сохранить решения и собрать новую ревизию', async () => {
     try {
       const assignments = Object.fromEntries(Object.entries(selectors).map(([bid, select]) => [bid, select.value]));
-      await request(`/jobs/${id}/decisions`, { method: 'PATCH', body: JSON.stringify({ expected_revision: job.revision, assignments }) });
+      await request(`/jobs/${id}/decisions`, { method: 'PATCH', body: JSON.stringify({ expected_revision: job.revision, assignments, supplied: Object.fromEntries(Object.entries(suppliedInputs).filter(([,input])=>input.value.trim()).map(([slot,input])=>[slot,input.value])) }) });
       message('Новая ревизия собрана. Предыдущая сохранена.');
       await renderJob(id);
       if (state.batchId) await renderBatch(state.batchId);
@@ -194,20 +244,26 @@ async function boot() {
   try {
     const config = await request('/config');
     state.csrf = config.csrf_token;
+    state.llm = config.llm_enabled;
+    $('mode').textContent = state.llm ? 'Модель доступна · с проверкой бюджета' : 'Локальная проверка · без модели';
+    $('use-llm').disabled = !state.llm;
+    $('external-consent').disabled = !state.llm;
     const exact = config.font_audit.exact;
     $('font-notice').textContent = exact ? 'Arial и Times New Roman обнаружены. Итоговый DOCX всё равно проверьте визуально.' : 'Точные Arial и Times New Roman пока не подтверждены. Результаты остаются черновиками.';
     if (!exact) $('font-notice').classList.add('warn');
     await loadTemplates();
+    await loadBatches();
   } catch (error) { message(`Приложение недоступно: ${error.message}`, true); }
 }
 $('template-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  const submit = event.currentTarget.querySelector('button[type=submit]');
+  const form = event.currentTarget;
+  const submit = form.querySelector('button[type=submit]');
   submit.disabled = true;
   try {
-    const result = await request('/templates', { method: 'POST', body: new FormData(event.currentTarget) });
+    const result = await request('/templates', { method: 'POST', body: new FormData(form) });
     message('Наблюдения сохранены. Проверьте варианты и утвердите шаблон.');
-    event.currentTarget.reset();
+    form.reset();
     await loadTemplates();
     await showTemplate(result.id);
   } catch (error) { message(`Эталон не обработан: ${error.message}`, true); }
@@ -215,13 +271,15 @@ $('template-form').addEventListener('submit', async (event) => {
 });
 $('batch-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  const submit = event.currentTarget.querySelector('button[type=submit]');
+  const form = event.currentTarget;
+  const submit = form.querySelector('button[type=submit]');
   submit.disabled = true;
   try {
-    const result = await request('/batches', { method: 'POST', body: new FormData(event.currentTarget) });
+    const result = await request('/batches', { method: 'POST', body: new FormData(form) });
     state.batchId = result.id;
+    await loadBatches();
     message('Пакет принят. Статусы появятся ниже.');
-    event.currentTarget.reset();
+    form.reset();
     await renderBatch(result.id);
   } catch (error) { message(`Пакет не принят: ${error.message}`, true); }
   finally { submit.disabled = false; }

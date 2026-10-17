@@ -1,6 +1,6 @@
 """Single-owner Web 017 recovery slice: private FastAPI + SQLite + local files.
 
-The app has no external model calls. Deploy only on loopback behind TLS and
+External model calls require private configuration and per-operation consent. Deploy only on loopback behind TLS and
 owner authentication at the reverse proxy. Manuscript contents stay in data_dir.
 """
 from __future__ import annotations
@@ -11,7 +11,6 @@ import os
 import re
 import secrets
 import sqlite3
-import subprocess
 import threading
 import uuid
 from contextlib import contextmanager
@@ -24,7 +23,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from .docx_engine import DocumentError
-from .structure017 import SLOTS, compile_document, inspect_templates, inventory
+from .structure017 import SLOTS, REQUIRED, compile_document, inspect_templates, inventory
 
 MAX_DOCX = 25 * 1024 * 1024
 MAX_BATCH = 200
@@ -47,18 +46,22 @@ def _safe_name(value: str | None) -> str:
     return name
 
 
-def _font_available(family: str) -> bool:
+def font_audit(families=("Arial", "Times New Roman")) -> dict:
+    from .fonts019 import audit
+    return audit(tuple(families))
+
+
+def model_config():
+    path = os.environ.get("ARTICLEFLOW_MODEL_CONFIG")
+    if not path:
+        return None
     try:
-        result = subprocess.run(["fc-match", "-f", "%{family}\n", family], capture_output=True, text=True, timeout=5, check=True)
-    except (FileNotFoundError, subprocess.SubprocessError):
-        return False
-    actual = result.stdout.splitlines()[0].split(",")[0].strip() if result.stdout else ""
-    return actual.casefold() == family.casefold()
-
-
-def font_audit() -> dict:
-    families = {family: _font_available(family) for family in ("Arial", "Times New Roman")}
-    return {"families": families, "exact": all(families.values())}
+        config = json.loads(Path(path).read_text())
+        if not all(Path(config[k]).is_file() for k in ("key_file", "prompt", "ledger")):
+            return None
+        return config
+    except (OSError, KeyError, ValueError):
+        return None
 
 
 class Store:
@@ -109,6 +112,10 @@ class Store:
                     id TEXT PRIMARY KEY, batch_id TEXT NOT NULL, created_at TEXT NOT NULL,
                     FOREIGN KEY(batch_id) REFERENCES batches(id));
             """)
+            for table, column, declaration in (("jobs", "supplied_json", "TEXT NOT NULL DEFAULT '{}'"),
+                                                ("batches", "use_llm", "INTEGER NOT NULL DEFAULT 0")):
+                if column not in {r[1] for r in con.execute(f"PRAGMA table_info({table})")}:
+                    con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {declaration}")
             con.execute("UPDATE jobs SET status='interrupted' WHERE status IN ('queued','processing')")
         os.chmod(self.db_path, 0o600)
 
@@ -174,13 +181,26 @@ def _process_job(store: Store, job_id: str):
     editorial = folder / "editorial.docx"
     store.execute("UPDATE jobs SET status='processing' WHERE id=?", (job_id,))
     try:
-        report = compile_document(source, output, assignments=json.loads(job["assignments_json"]),
-                                  approved=bool(version["approved"]), fonts_ok=font_audit()["exact"],
-                                  styles=styles, editorial_output=editorial)
+        from .fonts019 import required_fonts
+        assignments = json.loads(job["assignments_json"])
+        contexts, model_meta = {}, None
+        if batch.get("use_llm") and not assignments:
+            from .model019 import plan_document
+            config = model_config()
+            if config is None:
+                raise DocumentError("MODEL_NOT_PROVISIONED")
+            assignments, contexts, model_meta = plan_document(inventory(source)["blocks"], styles, config, folder / "model")
+        fonts = font_audit(required_fonts(styles))
+        report = compile_document(source, output, assignments=assignments, contexts=contexts,
+                                  approved=bool(version["approved"]), fonts_ok=fonts["exact"],
+                                  styles=styles, editorial_output=editorial,
+                                  required=spec.get("structure", {}).get("required", list(REQUIRED)),
+                                  supplied=json.loads(job["supplied_json"]), model_assigned=model_meta is not None)
+        report["model"] = model_meta
         report["template_id"] = batch["template_id"]
         report["template_version"] = batch["template_version"]
         report["revision"] = revision
-        report["font_audit"] = font_audit()
+        report["font_audit"] = fonts
         (folder / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2))
         store.execute("UPDATE jobs SET status=?, report_json=? WHERE id=?", (report["status"], json.dumps(report, ensure_ascii=False), job_id))
     except DocumentError as exc:
@@ -201,10 +221,16 @@ def _process_batch(store: Store, batch_id: str):
 
 
 class Approval(BaseModel):
+    required: list[str] | None = None
     selected: dict[str, str] = Field(default_factory=dict)
 
 
+class ModelConsent(BaseModel):
+    consent_external: bool = False
+
+
 class Decisions(BaseModel):
+    supplied: dict[str, str] = Field(default_factory=dict)
     expected_revision: int
     assignments: dict[str, str] = Field(default_factory=dict)
 
@@ -221,7 +247,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
 
     @app.get("/healthz")
     def healthz():
-        return {"status": "ok", "mode": "local_review_only"}
+        return {"status": "ok", "mode": "model_available" if model_config() else "local_review_only"}
 
     @app.get("/")
     def index():
@@ -238,7 +264,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
     @app.get("/api/v017/config")
     def config():
         return {"csrf_token": store.csrf, "max_docx_bytes": MAX_DOCX, "max_batch_files": MAX_BATCH,
-                "max_template_files": MAX_TEMPLATES, "llm_enabled": False, "font_audit": font_audit()}
+                "max_template_files": MAX_TEMPLATES, "llm_enabled": model_config() is not None, "font_audit": font_audit()}
 
     @app.get("/api/v017/templates")
     def templates():
@@ -278,6 +304,33 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         return {**item, "version": version["version"], "approved": bool(version["approved"]),
                 "spec": json.loads(version["spec_json"])}
 
+    @app.post("/api/v017/templates/{template_id}/analyze", dependencies=[Depends(csrf)])
+    def analyze_template(template_id: str, body: ModelConsent):
+        config = model_config()
+        if not body.consent_external or config is None:
+            raise HTTPException(400, "MODEL_CONSENT_OR_CONFIG_REQUIRED")
+        from .model019 import plan_document
+        config = dict(config)
+        config["model"] = config.get("extractor_model", config["model"])
+        config["reasoning_effort"] = config.get("extractor_reasoning_effort", config.get("reasoning_effort", "none"))
+        with store.batch_lock:
+            version = _latest(store, template_id)
+            paths = sorted(store.path("templates", template_id, "samples").glob("*.docx"))
+            preliminary = inspect_templates(paths)
+            plans = {}
+            run = store.path("templates", template_id, "analysis", _uid())
+            try:
+                for index, path in enumerate(paths):
+                    inv = inventory(path)
+                    roles, contexts, meta = plan_document(inv["blocks"], preliminary["styles"], config, run / str(index))
+                    plans[inv["source_sha256"]] = {"assignments": roles, "contexts": contexts}
+                spec = inspect_templates(paths, plans)
+            except DocumentError as exc:
+                raise HTTPException(409, str(exc)) from exc
+            store.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
+                          (template_id, version["version"] + 1, json.dumps(spec, ensure_ascii=False), 0, _now()))
+        return {"id": template_id, "version": version["version"] + 1, "spec": spec}
+
     @app.post("/api/v017/templates/{template_id}/approve", dependencies=[Depends(csrf)])
     def approve(template_id: str, body: Approval):
         version = _latest(store, template_id)
@@ -288,6 +341,10 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             if choice not in variants:
                 raise HTTPException(409, {"code": "TEMPLATE_VARIANT_REVIEW", "role": role})
             selected[role] = choice
+        if body.required is not None:
+            if not set(body.required) <= set(SLOTS):
+                raise HTTPException(400, "REQUIRED_SLOT_INVALID")
+            spec.setdefault("structure", {})["required"] = body.required
         spec["selected"] = selected
         spec["approved"] = True
         with store.connect() as con:
@@ -295,8 +352,17 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                         (template_id, version["version"] + 1, json.dumps(spec, ensure_ascii=False), 1, _now()))
         return {"template_id": template_id, "version": version["version"] + 1, "approved": True}
 
+    @app.get("/api/v017/batches")
+    def list_batches():
+        return store.all("""SELECT b.id,b.created_at,t.name AS template_name,COUNT(j.id) AS job_count
+                            FROM batches b JOIN templates t ON t.id=b.template_id
+                            LEFT JOIN jobs j ON j.batch_id=b.id GROUP BY b.id
+                            ORDER BY b.created_at DESC,b.id DESC LIMIT 50""")
+
     @app.post("/api/v017/batches", dependencies=[Depends(csrf)])
-    async def create_batch(background: BackgroundTasks, template_id: str = Form(...), files: list[UploadFile] = File(...)):
+    async def create_batch(background: BackgroundTasks, template_id: str = Form(...), files: list[UploadFile] = File(...), use_llm: bool = Form(False), consent_external: bool = Form(False)):
+        if use_llm and (not consent_external or model_config() is None):
+            raise HTTPException(400, "MODEL_CONSENT_OR_CONFIG_REQUIRED")
         version = _latest(store, template_id)
         if not version["approved"]:
             raise HTTPException(409, "TEMPLATE_NOT_APPROVED")
@@ -314,7 +380,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                 raise HTTPException(400, str(exc)) from exc
             jobs.append((job_id, name))
         with store.connect() as con:
-            con.execute("INSERT INTO batches VALUES (?,?,?,?)", (batch_id, template_id, version["version"], _now()))
+            con.execute("INSERT INTO batches (id,template_id,template_version,created_at,use_llm) VALUES (?,?,?,?,?)", (batch_id, template_id, version["version"], _now(), int(use_llm)))
             for job_id, name in jobs:
                 con.execute("INSERT INTO jobs (id,batch_id,source_name,status,created_at) VALUES (?,?,?,?,?)",
                             (job_id, batch_id, name, "queued", _now()))
@@ -349,12 +415,15 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         known = {b["id"] for b in inventory(store.path("jobs", job_id, "source.docx"))["blocks"]}
         if not set(body.assignments) <= known:
             raise HTTPException(400, "BLOCK_ID_INVALID")
+        if any(k not in SLOTS or not isinstance(v,str) or not v.strip() or len(v)>10000 for k,v in body.supplied.items()):
+            raise HTTPException(400, "SUPPLIED_DATA_INVALID")
         with store.connect() as con:
-            updated = con.execute("UPDATE jobs SET revision=revision+1,assignments_json=?,status='queued' WHERE id=? AND revision=?",
-                                  (json.dumps(body.assignments), job_id, body.expected_revision))
+            updated = con.execute("UPDATE jobs SET revision=revision+1,assignments_json=?,supplied_json=?,status='queued' WHERE id=? AND revision=?",
+                                  (json.dumps(body.assignments), json.dumps(body.supplied), job_id, body.expected_revision))
             if updated.rowcount != 1:
                 raise HTTPException(409, "STALE_REVISION")
-        _process_job(store, job_id)
+        with store.batch_lock:
+            _process_job(store, job_id)
         return {"id": job_id, "revision": body.expected_revision + 1}
 
     @app.get("/api/v017/jobs/{job_id}/files/{kind}")
@@ -375,23 +444,29 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
 
     @app.post("/api/v017/batches/{batch_id}/exports", dependencies=[Depends(csrf)])
     def create_export(batch_id: str):
-        store.one("SELECT id FROM batches WHERE id=?", (batch_id,))
-        jobs = store.all("SELECT * FROM jobs WHERE batch_id=? ORDER BY created_at,id", (batch_id,))
-        export_id = _uid()
-        path = store.path("exports", f"{export_id}.zip")
-        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-        manifest = {"batch_id": batch_id, "created_at": _now(), "jobs": []}
-        with ZipFile(path, "w", ZIP_DEFLATED) as archive:
-            for job in jobs:
-                manifest["jobs"].append({"id": job["id"], "source_name": job["source_name"],
-                                         "status": job["status"], "revision": job["revision"]})
-                if job["status"] == "ready":
-                    result = store.path("jobs", job["id"], "revisions", str(job["revision"]), "result.docx")
-                    archive.write(result, f"results/{job['id']}.docx")
-            archive.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
-        os.chmod(path, 0o600)
-        store.execute("INSERT INTO exports VALUES (?,?,?)", (export_id, batch_id, manifest["created_at"]))
-        return {"id": export_id, "url": f"/api/v017/exports/{export_id}", "manifest": manifest}
+        with store.batch_lock:
+            store.one("SELECT id FROM batches WHERE id=?", (batch_id,))
+            jobs = store.all("SELECT * FROM jobs WHERE batch_id=? ORDER BY created_at,id", (batch_id,))
+            export_id = _uid()
+            path = store.path("exports", f"{export_id}.zip")
+            path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            manifest = {"batch_id": batch_id, "created_at": _now(), "jobs": []}
+            with ZipFile(path, "w", ZIP_DEFLATED) as archive:
+                for job in jobs:
+                    manifest["jobs"].append({"id": job["id"], "source_name": job["source_name"],
+                                             "status": job["status"], "revision": job["revision"]})
+                    report = store.path("jobs", job["id"], "revisions", str(job["revision"]), "report.json")
+                    if report.is_file():
+                        archive.write(report, f"reports/{job['id']}.json")
+                    else:
+                        archive.writestr(f"reports/{job['id']}.json", json.dumps({"status": job["status"], "revision": job["revision"]}))
+                    if job["status"] == "ready":
+                        result = store.path("jobs", job["id"], "revisions", str(job["revision"]), "result.docx")
+                        archive.write(result, f"results/{job['id']}.docx")
+                archive.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
+            os.chmod(path, 0o600)
+            store.execute("INSERT INTO exports VALUES (?,?,?)", (export_id, batch_id, manifest["created_at"]))
+            return {"id": export_id, "url": f"/api/v017/exports/{export_id}", "manifest": manifest}
 
     @app.get("/api/v017/exports/{export_id}")
     def export(export_id: str):

@@ -65,3 +65,7 @@ input[type=file]{padding:8px;font-size:.9rem}
 @media(max-width:900px){.grid,.results-grid{grid-template-columns:1fr}.shell{padding-top:28px}.topbar{padding:0 22px}}
 @media(max-width:560px){.topbar{height:auto;min-height:72px;align-items:flex-start;flex-direction:column;gap:7px;padding:14px 18px}.shell{padding:24px 14px 50px}.panel{padding:18px}.panel-head{gap:12px}.mode{font-size:.75rem}}
 @media(prefers-reduced-motion:reduce){.button{transition:none}}
+.questions label{display:block;margin:16px 0 6px}
+.questions textarea{display:block;width:100%;min-height:104px;resize:vertical;border:1px solid #aebbc8;border-radius:8px;padding:10px 12px;font:inherit;line-height:1.5;background:#fff;color:#172235}
+.review>label{display:block;margin:12px 0 6px}
+input[type=checkbox]{width:18px;height:18px;vertical-align:middle;margin-right:6px}
