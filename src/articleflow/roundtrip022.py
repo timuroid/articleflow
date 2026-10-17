@@ -14,38 +14,41 @@ from .structure017 import inventory, compile_document, suggest_roles
 def neutralize(source, target):
     parts=load_package(source); root=parse_xml(parts['word/document.xml']); body=root.find('w:body',NS)
     resolver=t.Resolver(parts); mapping={}; next_index=0
-    for index,node in enumerate(list(body)):
-        if layout021.empty_paragraph(node):
-            body.remove(node);continue
-        mapping[index]=next_index;next_index+=1
-        for p in node.iter(t.tag('p')):
-            effective,_=resolver.resolve(p)
-            pp=t.prop('pPr')
-            for name in ('numPr','sectPr'):
-                value=t.child(effective,name) if name=='numPr' else p.find('w:pPr/w:sectPr',NS)
-                if value is not None:pp.append(copy.deepcopy(value))
-            for r in p.findall('.//w:r',NS):
-                _,rp=resolver.resolve(p,r);new=t.prop('rPr')
-                for name in ('i','iCs','b','bCs','vertAlign','lang','rtl'):
-                    value=t.child(rp,name)
-                    if value is not None:new.append(copy.deepcopy(value))
-                t._replace(r,'rPr',new)
-            t._replace(p,'pPr',pp)
-        if node.tag==t.tag('tbl'):
-            # Keep table topology, lose widths/row heights/borders from reference.
-            t._replace(node,'tblPr',t.prop('tblPr'))
-            grid=node.find('w:tblGrid',NS)
-            if grid is not None:
-                for col in grid:col.set(t.tag('w'),str(9000//max(1,len(grid))))
-            for row in node.findall('.//w:tr',NS):
-                old=t.child(row,'trPr')
-                if old is not None:row.remove(old)
-            for cell in node.findall('.//w:tc',NS):
-                old=t.child(cell,'tcPr');new=t.prop('tcPr')
-                if old is not None:
-                    for c in old:
-                        if c.tag in {t.tag('gridSpan'),t.tag('vMerge')}:new.append(copy.deepcopy(c))
-                t._replace(cell,'tcPr',new)
+    from .stories026 import roots
+    for storyname,storyroot in [('word/document.xml',body),*roots(parts)[1:]]:
+        for index,node in enumerate(list(storyroot)):
+            if storyname=='word/document.xml' and layout021.empty_paragraph(node) and node.find('w:pPr/w:sectPr',NS) is None:
+                storyroot.remove(node);continue
+            if storyname=='word/document.xml':mapping[index]=next_index;next_index+=1
+            for p in node.iter(t.tag('p')):
+                effective,_=resolver.resolve(p)
+                pp=t.prop('pPr')
+                for name in ('numPr','sectPr'):
+                    value=t.child(effective,name) if name=='numPr' else p.find('w:pPr/w:sectPr',NS)
+                    if value is not None:pp.append(copy.deepcopy(value))
+                for r in p.findall('.//w:r',NS):
+                    _,rp=resolver.resolve(p,r);new=t.prop('rPr')
+                    for name in ('i','iCs','b','bCs','vertAlign','lang','rtl'):
+                        value=t.child(rp,name)
+                        if value is not None:new.append(copy.deepcopy(value))
+                    t._replace(r,'rPr',new)
+                t._replace(p,'pPr',pp)
+            if node.tag==t.tag('tbl'):
+                # Keep table topology, lose widths/row heights/borders from reference.
+                t._replace(node,'tblPr',t.prop('tblPr'))
+                grid=node.find('w:tblGrid',NS)
+                if grid is not None:
+                    for col in grid:col.set(t.tag('w'),str(9000//max(1,len(grid))))
+                for row in node.findall('.//w:tr',NS):
+                    old=t.child(row,'trPr')
+                    if old is not None:row.remove(old)
+                for cell in node.findall('.//w:tc',NS):
+                    old=t.child(cell,'tcPr');new=t.prop('tcPr')
+                    if old is not None:
+                        for c in old:
+                            if c.tag in {t.tag('gridSpan'),t.tag('vMerge')}:new.append(copy.deepcopy(c))
+                    t._replace(cell,'tcPr',new)
+        if storyname!='word/document.xml':parts[storyname]=xml_bytes(storyroot)
     parts['word/document.xml']=xml_bytes(root)
     pp=t.prop('pPr');pp.append(t.prop('spacing',after=0,line=240,lineRule='auto'))
     rp=t.prop('rPr');rp.append(t.prop('rFonts',ascii='Arial',hAnsi='Arial'));rp.append(t.prop('sz',val=22))

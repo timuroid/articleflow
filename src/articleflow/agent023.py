@@ -36,8 +36,8 @@ def question_evidence(questions, samples, labels):
 
 
 def extract_input(source,folder):
-    root=parse_xml(load_package(source)['word/document.xml'])
-    count=len(root.findall('w:body//w:p',NS))
+    from .stories026 import paragraphs
+    count=len(paragraphs(load_package(source)))
     if not 1<=count<=2000: raise DocumentError('AGENT_PARAGRAPH_LIMIT')
     labels={f'b-{i+1:06d}':'unclassified' for i in range(count)}
     extract_catalogue(source,labels,{'roles':{'unclassified':'Unclassified input'}},folder)
@@ -57,7 +57,7 @@ def relabel(extracted, labels, definitions):
     return template,plan
 
 
-def build_package(samples,labels,definitions,destination):
+def build_package(samples,labels,definitions,destination,inline_roles=None):
     destination.mkdir(parents=True,exist_ok=False)
     merged=None;examples=[];sections=set();observed_top=set();spacer_samples=[]
     for document,(sample,assignment) in enumerate(zip(samples,labels),1):
@@ -91,6 +91,11 @@ def build_package(samples,labels,definitions,destination):
              'observed_top_level_roles':sorted(observed_top),'spacers':spacers,'order':order,
              'protocol':'DOCX content and semantic emphasis; no typography input',
              'unresolved_training_groups':len(conflicts),'reference_assignments_included':False}
+    from .stories026 import binding_contract
+    contracts=[s['content']['story_contract'] for s in samples if s['content'].get('story_contract')]
+    if contracts and any(c!=contracts[0] for c in contracts):raise DocumentError('MULTI_REFERENCE_STORY_BINDING_CONFLICT')
+    if contracts:package['story_contract']=contracts[0]
+    if inline_roles:package['inline_roles']=inline_roles
     dump(destination/'rules.json',merged);dump(destination/'semantic.json',package)
     return package,conflicts
 
@@ -102,13 +107,26 @@ def apply(source,template_dir,folder,config,*,caller=call):
     dump(folder/'input-original.json',content)
     package=json.loads((template_dir/'semantic.json').read_text())
     template=json.loads((template_dir/'rules.json').read_text())
-    response,meta=caller(config,student_messages(package['roles'],content),folder/'student',
-                         validate=lambda r:(expand_groups(r,content['blocks'],package['roles']) and r))
+    from .stories026 import binding_contract
+    if package.get('story_contract') and binding_contract(load_package(source))!=package['story_contract']:
+        raise DocumentError('STORY_BINDING_INCOMPATIBLE')
+    from .inline026 import validate as validate_inline, overlay
+    def validate_response(response):
+        if package.get('inline_roles') and (not isinstance(response,dict) or 'inline' not in response):raise DocumentError('INLINE_RESPONSE_REQUIRED')
+        expand_groups(response,content['blocks'],package['roles'])
+        validate_inline(response,content['blocks'],package.get('inline_roles',{}))
+        return response
+    response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles')),folder/'student',
+                         validate=validate_response)
     assignments=expand_groups(response,content['blocks'],package['roles'])
+    from .inline026 import validate as validate_inline, overlay
+    inline=validate_inline(response,content['blocks'],package.get('inline_roles',{}))
+    semantics=rules.semantic_spans(source)
+    if package.get('inline_roles'):semantics=overlay(semantics,inline)
     from .order024 import arrange, expected_source
     content,permutation,moves,order_issues=arrange(content,assignments,package.get('order'),source)
     from .spacers023 import restore
-    content,runtime_assignments,semantics,forced,inserted=restore(content,assignments,rules.semantic_spans(source),package,template)
+    content,runtime_assignments,semantics,forced,inserted=restore(content,assignments,semantics,package,template)
     plan,unresolved=rules.compile_plan(template,content,package,runtime_assignments,semantics,forced)
     unresolved.extend(order_issues)
     if order_issues:plan=None
@@ -164,9 +182,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             samples.append(sample)
             report['extracted_documents']=len(samples);emit()
             for b,p in zip(content['blocks'],plan['blocks']):
-                bid=f'{i}:{b["id"]}';allblocks.append({'id':bid})
+                bid=f'{i}:{b["id"]}';allblocks.append({'id':bid,'text':b['text']})
                 observations.append({'n':len(observations)+1,'document':i+1,'text':b['text'],
-                                     'paragraph_style':p['paragraph_style'],'character_styles':sorted({s['style'] for s in p['spans']})})
+                                     'paragraph_style':p['paragraph_style'],'character_styles':sorted({s['style'] for s in p['spans']}),'style_spans':p['spans']})
             # Style properties are training observations, never sent to the student.
             sample['catalogue']=template['styles']
         if resume_from is not None:
@@ -197,7 +215,13 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             report['stage']='compiling';emit()
             row['teacher']=meta;expanded=expand_groups(response,allblocks)
             labels=[{b['id']:expanded[f'{i}:{b["id"]}'] for b in s['content']['blocks']} for i,s in enumerate(samples)]
-            package,conflicts=build_package(samples,labels,response['roles'],work/'template')
+            from .inline026 import validate as validate_inline, overlay
+            inline=validate_inline(response,allblocks)
+            iteration_samples=[]
+            for i,sample in enumerate(samples):
+                marks={b['id']:inline[f'{i}:{b["id"]}'] for b in sample['content']['blocks']}
+                iteration_samples.append({**sample,'semantics':overlay(sample['semantics'],marks) if response.get('inline_roles') else sample['semantics']})
+            package,conflicts=build_package(iteration_samples,labels,response['roles'],work/'template',response.get('inline_roles'))
             row['conflicting_groups']=len(conflicts);row['questions']=response['questions']
             row['conflict_properties']=sorted({p for c in conflicts for p in c.get('differing_properties',[])})
             from .diagnostics024 import evidence

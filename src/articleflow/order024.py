@@ -101,7 +101,7 @@ and an issue. A caller must not present it as a correctly ordered result.
         if not block['text'] or any(a['kind'] != 'text' for a in block['atoms']):
             return False
         xml = nodes[index]
-        if xml.xpath('.//w:numPr | .//w:bookmarkStart | .//w:bookmarkEnd | .//w:fldChar | .//w:instrText', namespaces=NS):
+        if xml.xpath('.//w:numPr | .//w:bookmarkStart | .//w:bookmarkEnd | .//w:fldChar | .//w:instrText | .//w:sectPr', namespaces=NS):
             return False
         # A style may carry inherited numbering. Conservatively block that style.
         style = xml.find('w:pPr/w:pStyle', NS)

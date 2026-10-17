@@ -380,3 +380,20 @@ def feedback024(c):
 def assert_feedback024(c):
     assert c.feedback024=={'revision':1,'applies':'next_iteration','already_applied':False}
     assert c.stale024==409
+
+@given('модель выделила переменную с несовпадающей цитатой')
+def inline_bad026(c):
+    c.inline026={'inline':[{'paragraph':1,'start':0,'end':1,'role':'variable','quote':'y'}]}
+
+@when('проверяются диапазоны смысловых ролей внутри абзаца')
+def validate_inline026(c):
+    from articleflow.inline026 import validate
+    from articleflow.docx_engine import DocumentError
+    try:validate(c.inline026,[{'id':'b','text':'x'}],{'variable':'Обозначение переменной'})
+    except DocumentError as exc:c.inline_error026=str(exc)
+    else:c.inline_error026=None
+
+@then('план отклонён без исправления цитаты и изменения текста')
+def assert_inline026(c):
+    assert c.inline_error026=='INLINE_QUOTE_MISMATCH'
+    assert c.inline026['inline'][0]['quote']=='y'

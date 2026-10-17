@@ -485,7 +485,8 @@ def emphasis_masks(path: Path) -> list[list[tuple]]:
 
     root = parse_xml(parts["word/document.xml"])
     result = []
-    for p in root.findall(".//w:body//w:p", NS):
+    from .stories026 import paragraphs
+    for p in paragraphs(parts):
         base = {"b": False, "i": False, "vertical": "baseline"}
         apply(base, styles.find("w:docDefaults/w:rPrDefault/w:rPr", NS))
         sid = p.find("w:pPr/w:pStyle", NS)
@@ -528,7 +529,14 @@ def content_fingerprint(path: Path) -> dict:
     for t in body.findall("w:tbl", NS):
         tables.append([[{"text": [paragraph_text(p) for p in c.findall("w:p", NS)], "merge": [shape(x) for x in c.xpath("./w:tcPr/w:gridSpan | ./w:tcPr/w:vMerge", namespaces=NS)]} for c in row.findall("w:tc", NS)] for row in t.findall("w:tr", NS)])
     notes = {name: digest(data) for name, data in parts.items() if name in {"word/footnotes.xml", "word/endnotes.xml"}}
-    return {"paragraphs": paragraphs, "math": math, "tables": tables, "media": {n: digest(v) for n, v in parts.items() if n.startswith("word/media/")}, "links": [dict(h.attrib) for h in root.findall(".//w:hyperlink", NS)], "relationships": digest(parts.get("word/_rels/document.xml.rels", b"")), "notes": notes}
+    from .stories026 import roots
+    stories={name:{"paragraphs":[paragraph_text(p) for p in story.findall('.//w:p',NS)],
+                   "math":[shape(x) for x in story.findall('.//m:oMath',NS)],
+                   "fields":[dict(h.attrib) for h in story.findall('.//w:fldSimple',NS)],
+                   "links":[dict(h.attrib) for h in story.findall('.//w:hyperlink',NS)]}
+             for name,story in roots(parts)[1:]}
+    story_relationships={n:digest(v) for n,v in parts.items() if n.startswith(('word/_rels/header','word/_rels/footer'))}
+    return {"fields":[dict(h.attrib) for h in root.findall('.//w:fldSimple',NS)],"stories":stories,"story_relationships":story_relationships,"paragraphs": paragraphs, "math": math, "tables": tables, "media": {n: digest(v) for n, v in parts.items() if n.startswith("word/media/")}, "links": [dict(h.attrib) for h in root.findall(".//w:hyperlink", NS)], "relationships": digest(parts.get("word/_rels/document.xml.rels", b"")), "notes": notes}
 
 
 def compare_content(source: Path, target: Path) -> dict:

@@ -191,12 +191,12 @@ class CatalogueTests(unittest.TestCase):
         self.assertTrue(compare_content(self.source, target)["checks"]["media"])
         self.assertNotEqual(placement_fingerprint(self.source), placement_fingerprint(target))
 
-    def test_unsupported_header_is_not_silently_carried_as_hidden_layout(self):
+    def test_header_requires_explicit_annotation_coverage(self):
         doc = Document(self.source)
         doc.sections[0].header.paragraphs[0].text = "Unsupported header"
         source = self.root / "with-header.docx"
         doc.save(source)
-        with self.assertRaisesRegex(DocumentError, "CATALOGUE_STORY_UNSUPPORTED"):
+        with self.assertRaisesRegex(DocumentError, "ANNOTATION_COVERAGE"):
             self.extract(source, self.root / "header-package")
 
     def test_failed_conversion_cannot_reuse_stale_pdf(self):

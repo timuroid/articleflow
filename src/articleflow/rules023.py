@@ -23,7 +23,8 @@ def semantic_spans(source):
     root = parse_xml(parts['word/document.xml'])
     resolver = Resolver(parts)
     result = {}
-    for i, p in enumerate(root.findall('w:body//w:p', NS)):
+    from .stories026 import paragraphs
+    for i, p in enumerate(paragraphs(parts)):
         spans = []; offset = 0
         for r in p.xpath('.//w:r[not(ancestor::m:oMath)]', namespaces=NS):
             text = paragraph_text(r)
@@ -48,19 +49,20 @@ def features(content, assignments):
         raise DocumentError('SEMANTIC_COVERAGE')
     result = {'paragraph': {}, 'layout': {}, 'drawing': {}}
     texts={b['id']:b['text'] for b in content['blocks']}
+    boundaries={b['id']:bool(b.get('section_boundary')) for b in content['blocks']}
     def language(text):
         cyr=sum('\u0400'<=c<='\u052f' for c in text)
         latin=sum('a'<=c.lower()<='z' for c in text)
         return 'cyrillic' if cyr>latin else 'latin' if latin else 'other'
     def roles(n):
         return [assignments[n['id']]] if n['kind']=='paragraph' else [r for c in n.get('children',[]) for r in roles(c)]
-    def walk(nodes, depth=0, columns=0, column=0, band='outside'):
+    def walk(nodes, depth=0, columns=0, column=0, band='outside', story_kind='body'):
         visible = [n for n in nodes if n['kind'] != 'marker']
         for i,n in enumerate(visible):
             kind=n['kind']
-            f={'depth': depth, 'columns': columns, 'column': column, 'row_band': band}
+            f={'depth': depth, 'columns': columns, 'column': column, 'row_band': band, 'story_kind':story_kind}
             if kind=='paragraph':
-                f.update(role=assignments[n['id']], previous_kind=visible[i-1]['kind'] if i else 'START',
+                f.update(role=assignments[n['id']],section_boundary=boundaries[n['id']], previous_kind=visible[i-1]['kind'] if i else 'START',
                          next_kind=visible[i+1]['kind'] if i+1<len(visible) else 'END',
                          previous_role=assignments.get(visible[i-1].get('id'),'OBJECT') if i else 'START',
                          next_role=assignments.get(visible[i+1].get('id'),'OBJECT') if i+1<len(visible) else 'END',
@@ -75,11 +77,13 @@ def features(content, assignments):
                 if kind=='table':
                     for j,row in enumerate(children):
                         rb='only' if len(children)==1 else 'first' if j==0 else 'last' if j==len(children)-1 else 'middle'
-                        walk([row],depth+1,f['columns'],0,rb)
+                        walk([row],depth+1,f['columns'],0,rb,story_kind)
                 elif kind=='row':
-                    for j,cell in enumerate(children): walk([cell],depth,len(children),j,band)
-                else: walk(children,depth,columns,column,band)
+                    for j,cell in enumerate(children): walk([cell],depth,len(children),j,band,story_kind)
+                else: walk(children,depth,columns,column,band,story_kind)
     walk(content['structure'])
+    for story in content.get('stories',[]):
+        walk(story['structure'],story_kind='header' if 'header' in story['part'] else 'footer')
     def atoms(sequence):
         for a in sequence:
             yield a
@@ -97,7 +101,7 @@ def training_examples(content, plan, semantics):
     for b in plan['blocks']:
         bid=b['id'];pf=f['paragraph'][bid]
         source=content_by_id[bid]
-        if source['text'] or source['atoms'] or pf['depth']:
+        if source['text'] or source['atoms'] or pf['depth'] or source.get('section_boundary') or pf['story_kind']!='body':
             rows.append({'kind':'paragraph','when':pf,'set':{'style':b['paragraph_style']},'id':bid})
         for span in b['spans']:
             for semantic in semantics[bid]:
@@ -112,7 +116,7 @@ def training_examples(content, plan, semantics):
     return rows
 
 
-ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script'}
+ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind'}
 
 
 def fit(examples):
@@ -121,6 +125,7 @@ def fit(examples):
     for kind in ('paragraph','character','layout','drawing'):
         rows=[r for r in examples if r['kind']==kind]
         coarse=['role'] if kind in ('paragraph','drawing') else ['kind','depth','columns','column','row_band','roles'] if kind=='layout' else ['role','bold','italic','vertical','hyperlink']
+        if kind=='character' and any('inline_role' in r['when'] for r in rows):coarse=coarse+['inline_role']
         groups=defaultdict(list)
         for row in rows: groups[key({k:row['when'][k] for k in coarse})].append(row)
         for condition,group in sorted(groups.items()):

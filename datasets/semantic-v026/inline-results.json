@@ -1,0 +1,32 @@
+{
+  "mode": "known_inline_roles_not_model_trial",
+  "api_attempts": 0,
+  "cases": [
+    {
+      "seed": 2,
+      "split": "train",
+      "status": "rendered_unverified",
+      "unresolved": 0,
+      "pages": 16,
+      "pixel_exact": true
+    },
+    {
+      "seed": 23,
+      "split": "held_out",
+      "status": "rendered_unverified",
+      "unresolved": 0,
+      "pages": 18,
+      "pixel_exact": true
+    },
+    {
+      "seed": 31,
+      "split": "held_out",
+      "status": "rendered_unverified",
+      "unresolved": 0,
+      "pages": 16,
+      "pixel_exact": true
+    }
+  ],
+  "training_documents": 2,
+  "conflicts": 0
+}

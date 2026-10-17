@@ -7,7 +7,7 @@ from .rules023 import key
 
 def boundaries(content,assignments):
     by_id={b['id']:b for b in content['blocks']}
-    def empty(n):return n['kind']=='paragraph' and not by_id[n['id']]['text'] and not by_id[n['id']]['atoms']
+    def empty(n):return n['kind']=='paragraph' and not by_id[n['id']]['text'] and not by_id[n['id']]['atoms'] and not by_id[n['id']].get('section_boundary')
     def label(n):
         if n is None:return 'EDGE'
         if n['kind']=='paragraph':return 'paragraph:'+assignments[n['id']]

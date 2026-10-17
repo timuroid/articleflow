@@ -8,7 +8,7 @@ def expand_groups(response, blocks, roles=None):
     if not isinstance(response,dict) or not isinstance(response.get('groups'),list):
         raise DocumentError('SEMANTIC_RESPONSE_SCHEMA')
     if roles is None:
-        if set(response)!={'roles','groups','questions'} or not isinstance(response['roles'],dict):
+        if set(response) not in ({'roles','groups','questions'},{'roles','groups','questions','inline_roles','inline'}) or not isinstance(response['roles'],dict):
             raise DocumentError('TEACHER_SCHEMA')
         roles=response['roles']
         if not 1<=len(roles)<=80 or any(not re.fullmatch('[a-z][a-z0-9_]{0,63}',k) or not isinstance(v,str) or not 3<=len(v)<=600 for k,v in roles.items()):
@@ -18,7 +18,7 @@ def expand_groups(response, blocks, roles=None):
         for q in response['questions']:
             if not isinstance(q,dict) or set(q)!={'role','question'} or q['role'] not in roles or not isinstance(q['question'],str) or not 3<=len(q['question'])<=600:
                 raise DocumentError('QUESTION_SCHEMA')
-    elif set(response)!={'groups'}:
+    elif set(response) not in ({'groups'},{'groups','inline'}):
         raise DocumentError('STUDENT_SCHEMA')
     result={}
     for group in response['groups']:
@@ -31,6 +31,9 @@ def expand_groups(response, blocks, roles=None):
             if b['id'] in result:raise DocumentError('SEMANTIC_GROUP_OVERLAP')
             result[b['id']]=group['role']
     if set(result)!={b['id'] for b in blocks}:raise DocumentError('SEMANTIC_GROUP_COVERAGE')
+    if 'inline' in response and roles is response.get('roles'):
+        from .inline026 import validate
+        validate(response,blocks)
     return result
 
 
@@ -47,13 +50,18 @@ def teacher_messages(observations, feedback=None, images=()):
       'Conflicting same-context styles are reported; do not memorize accidental differences. '
       'Use observed layout only as training evidence. You may refine semantic definitions after student failures. '
       'Never rewrite article content, never claim success yourself. Read the feedback carefully. '
-      'Descriptions and questions should be in Russian, concise, applicable to unseen text.')
+      'Descriptions and questions should be in Russian, concise, applicable to unseen text. '
+      'You may additionally return BOTH inline_roles (semantic role definitions) and inline (ranges). '
+      'Each inline range is {paragraph,start,end,role,quote}: paragraph is global 1-based, '
+      'start/end are zero-based Unicode character offsets, end exclusive, quote must match exactly. '
+      'Ranges must not overlap; unmarked text is plain. Define roles such as variable or term by meaning, '
+      'never by font, copied text, position or exact symbol. Include surrounding spaces only if semantically justified.')
     text=json.dumps({'observations':observations,'feedback':feedback},ensure_ascii=False)
     content=[{'type':'text','text':text},*[{'type':'image_url','image_url':{'url':image,'detail':'low'}} for image in images]] if images else text
     return [{'role':'system','content':prompt},{'role':'user','content':content}]
 
 
-def student_messages(roles,content):
+def student_messages(roles,content,inline_roles=None):
     from .rules023 import features
     geometry=features(content,{b['id']:'unknown' for b in content['blocks']})['paragraph']
     rows=[{'n':i+1,'text':b['text'],**{k:v for k,v in geometry[b['id']].items() if k!='role'}} for i,b in enumerate(content['blocks'])]
@@ -63,5 +71,6 @@ def student_messages(roles,content):
         'Indices are inclusive, 1-based; cover every paragraph exactly once without overlap. '
         'Group consecutive paragraphs with the same role. Use only the supplied roles, obey their semantic definitions. '
         'Do not rewrite text or infer layout properties. Empty paragraphs also need roles. '
-        'Table depth, columns and row_band describe content structure, not visual style.'},
-        {'role':'user','content':json.dumps({'roles':roles,'paragraphs':rows},ensure_ascii=False,separators=(',',':'))}]
+        'Table depth, columns and row_band describe content structure, not visual style.' +
+        (' Also return inline: ranges {paragraph,start,end,role,quote}. Paragraph is 1-based; offsets are zero-based Unicode characters, end exclusive. Exact quote must match. No overlaps. Unmarked text is plain. Identify supplied inline roles by meaning, never typography.' if inline_roles else '')},
+        {'role':'user','content':json.dumps({'roles':roles,'inline_roles':inline_roles or {},'paragraphs':rows},ensure_ascii=False,separators=(',',':'))}]

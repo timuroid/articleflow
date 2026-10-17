@@ -107,8 +107,15 @@ async function showTemplate(id) {
           for(const group of evidence.groups){
             details.append(node('p','',`${group.kind} · ${group.when.role||'контекст'} · вариантов: ${group.variants??'неизвестно'}`));
             if(group.differing_properties.length)details.append(node('p','help',group.differing_properties.join(', ')));
+            if(Object.keys(group.property_variants||{}).length){
+              const variants=node('details');variants.append(node('summary','','Точные значения вариантов'));
+              for(const [style,values] of Object.entries(group.property_variants)){variants.append(node('strong','',style));for(const [property,value] of Object.entries(values))variants.append(node('p','help',`${property}: ${value}`));}
+              details.append(variants);
+            }
             for(const location of group.locations){
               details.append(node('p','',`Документ ${location.document}, абзац ${location.paragraph}${location.range?`, символы [${location.range.join(', ')})`:''}: ${location.excerpt}`));
+              const fragment=node('p','conflict-fragment');fragment.append(document.createTextNode(location.before||''),node('mark','',location.excerpt),document.createTextNode(location.after||''));details.append(fragment);
+              details.append(button('Уточнить этот вариант',()=>{const pane=target.querySelector('[data-learning-feedback]');const input=pane?.querySelector('textarea')||target.querySelector('[data-template-context]');if(!input){message('Для сохранения уточнения настройте модель и начните новый цикл обучения.',true);return;}if(input){input.value+=`${input.value?'\n':''}Документ ${location.document}, абзац ${location.paragraph}, роль ${group.when.role||group.kind}: `;if(pane)pane.open=true;input.focus();}message('Опишите смысловое условие выбора этого варианта. Номер абзаца служит ссылкой на пример, а не правилом шаблона.');}));
               const link=node('a','','Открыть эталон PDF');link.href=`${api}/template-runs/${runId}/agent-preview/${location.document}/reference`;link.target='_blank';link.rel='noopener';details.append(link);
             }
             if(!group.location_complete)details.append(node('p','help','Места показаны не для всех вариантов; требуется дополнительная диагностика.'));
@@ -180,7 +187,7 @@ async function showTemplate(id) {
     const consent = node('input'); consent.type = 'checkbox';
     consentLabel.append(consent, document.createTextNode(' Разрешаю передать текст эталонов в OpenRouter для анализа ролей'));
     const contextLabel=node('label','','Дополнительные требования к шаблону (необязательно)');
-    const context=node('textarea');context.rows=3;context.maxLength=12000;contextLabel.append(context);
+    const context=node('textarea');context.dataset.templateContext='true';context.rows=3;context.maxLength=12000;contextLabel.append(context);
     const modeLabel=node('label','','Режим извлечения');const mode=node('select');
     for(const [value,text] of [['automatic','Автоматический — без обязательных ответов'],['assisted','С уточнениями — подтвердить требования перед сохранением']]) {const option=node('option','',text);option.value=value;mode.append(option);}modeLabel.append(mode);
     const analyze = button('Создать и проверить шаблон', async () => {

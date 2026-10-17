@@ -96,20 +96,20 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
     if output.exists() and any(output.iterdir()):
         raise DocumentError("OUTPUT_NOT_EMPTY")
     parts = load_package(source)
-    if any(name.startswith(("word/header", "word/footer")) for name in parts):
-        raise DocumentError("CATALOGUE_STORY_UNSUPPORTED")
     for name in ["word/footnotes.xml", "word/endnotes.xml", "word/comments.xml"]:
         if name in parts and parse_xml(parts[name]).find(".//w:t", NS) is not None:
             raise DocumentError("CATALOGUE_STORY_UNSUPPORTED")
     root = parse_xml(parts["word/document.xml"])
     body = root.find("w:body", NS)
-    paragraphs = body.findall(".//w:p", NS)
+    from .stories026 import roots as story_roots
+    stories=story_roots(parts)[1:]
+    paragraphs = body.findall(".//w:p", NS)+[p for _,story in stories for p in story.findall(".//w:p",NS)]
     by_node = {p: f"b-{i + 1:06d}" for i, p in enumerate(paragraphs)}
     if set(annotations) != set(by_node.values()):
         raise DocumentError("ANNOTATION_COVERAGE")
     if not set(annotations.values()) <= set(definitions["roles"]):
         raise DocumentError("ANNOTATION_UNKNOWN_ROLE")
-    if len(root.findall(".//w:sectPr", NS)) != 1 or body.find("w:sectPr", NS) is None:
+    if body.find("w:sectPr", NS) is None:
         raise DocumentError("CATALOGUE_SECTION_PROFILE_UNSUPPORTED")
     catalogue = Catalogue()
     roles = {name: {"description": definitions["roles"][name], "paragraph_styles": set(), "character_styles": set()} for name in sorted(set(annotations.values()))}
@@ -158,8 +158,9 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
                 add_text(sequence, "\t" if tag == "tab" else "\u2011" if tag == "noBreakHyphen" else "\n", run_style)
             elif node.tag == f"{{{W}}}lastRenderedPageBreak":
                 discarded[tag] += 1
-            elif node.tag == f"{{{W}}}hyperlink":
-                item = {"kind": "hyperlink", "attributes": dict(node.attrib), "children": []}
+            elif node.tag in {f"{{{W}}}hyperlink",f"{{{W}}}fldSimple"}:
+                if node.tag==f"{{{W}}}fldSimple" and node.get(f"{{{W}}}instr", "").strip() not in {"PAGE","NUMPAGES"}:raise DocumentError("FIELD_INSTRUCTION_UNSUPPORTED")
+                item = {"kind": "simple_field" if node.tag==f"{{{W}}}fldSimple" else "hyperlink", "attributes": dict(node.attrib), "children": []}
                 sequence.append(item)
                 for child in node:
                     visit(child, item["children"])
@@ -185,7 +186,7 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
             visit(child, atoms)
         if offset != len(paragraph_text(p)):
             raise DocumentError("CATALOGUE_TEXT_COVERAGE")
-        blocks.append({"id": bid, "text": paragraph_text(p), "atoms": atoms})
+        blocks.append({"id": bid, "text": paragraph_text(p), "atoms": atoms, "section_boundary":p.find("w:pPr/w:sectPr",NS) is not None})
         block_plan.append({"id": bid, "role": role, "paragraph_style": pstyle, "spans": spans})
 
     def structure(node):
@@ -206,6 +207,7 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
         return {"kind": group, "id": lid, "children": [c for c in children if c is not None]}
 
     tree = [value for child in body if (value := structure(child)) is not None]
+    story_trees=[{"part":name,"tag":story.tag,"namespaces":story.nsmap,"attributes":dict(story.attrib),"structure":[v for c in story if (v:=structure(c)) is not None]} for name,story in stories]
     section = catalogue.add("section", [body.find("w:sectPr", NS)])
     resources = {name: data for name, data in parts.items() if _is_resource(name)}
     payload = {name: data for name, data in parts.items() if name != "word/document.xml" and not _is_resource(name)}
@@ -225,10 +227,12 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
         "resource_sha256": digest((template_dir / "resources.zip").read_bytes()),
         "limitations": ["Alternative selection rules require confirmation", "No new LLM evaluation", "Opaque mathematical payload retains its internal appearance", "No unseen transfer validation"],
     }
+    from .stories026 import binding_contract
     content = {
+        "story_contract":binding_contract(parts),
         "schema_version": VERSION, "protocol": "source_docx_I3" if source_observation else "explicit-catalogue-oracle-structured-payload",
         "root_namespaces": root.nsmap, "root_attributes": dict(root.attrib),
-        "structure": tree, "blocks": blocks, "objects": objects,
+        "structure": tree, "stories":story_trees, "blocks": blocks, "objects": objects,
         "payload_sha256": digest((content_dir / "payload.zip").read_bytes()),
     }
     dump(template_dir / "rules.json", template)
@@ -280,7 +284,8 @@ def validate_catalogue_plan(content: dict, template: dict, plan: dict) -> None:
         for atom in atoms:
             if atom["kind"] == "text":
                 text.append(atom["text"])
-            elif atom["kind"] == "hyperlink":
+            elif atom["kind"] in {"hyperlink","simple_field"}:
+                if atom["kind"]=="simple_field" and atom["attributes"].get(f"{{{W}}}instr", "").strip() not in {"PAGE","NUMPAGES"}:raise DocumentError("FIELD_INSTRUCTION_UNSUPPORTED")
                 text.append(inspect_atoms(atom["children"]))
             elif atom["kind"] in {"drawing", "math"}:
                 oid = atom["object_id"]
@@ -318,6 +323,7 @@ def validate_catalogue_plan(content: dict, template: dict, plan: dict) -> None:
         if cursor != len(by_id[bid]["text"]):
             raise DocumentError("PLAN_SPAN_COVERAGE")
     structure = list(_walk_structure(content["structure"]))
+    for story in content.get("stories",[]):structure.extend(_walk_structure(story["structure"]))
     paragraph_ids = [n["id"] for n in structure if n["kind"] == "paragraph"]
     if len(paragraph_ids) != len(set(paragraph_ids)) or set(paragraph_ids) != set(by_id):
         raise DocumentError("CONTENT_STRUCTURE_COVERAGE")
@@ -376,6 +382,9 @@ def placement_fingerprint(path: Path) -> list:
         if tag == f"{{{W}}}hyperlink":
             events.append([paragraph, offset, "hyperlink_end"])
     visit(root.find("w:body", NS))
+    from .stories026 import roots
+    for name,story in roots(load_package(path))[1:]:
+        events.append(["story",name]);visit(story)
     return events
 
 
@@ -445,8 +454,9 @@ def render_catalogue(template_dir: Path, content_dir: Path, plan: dict, target: 
                         if a < b:
                             text_run(parent, text[a - offset:b - offset], span["style"])
                     offset = end
-                elif atom["kind"] == "hyperlink":
-                    link = ET.SubElement(parent, f"{{{W}}}hyperlink", atom["attributes"])
+                elif atom["kind"] in {"hyperlink","simple_field"}:
+                    local="fldSimple" if atom["kind"]=="simple_field" else "hyperlink"
+                    link = ET.SubElement(parent, f"{{{W}}}{local}", atom["attributes"])
                     atoms(link, atom["children"])
                 elif atom["kind"] == "marker":
                     parent.append(parse_xml(atom["xml"].encode()))
@@ -493,5 +503,13 @@ def render_catalogue(template_dir: Path, content_dir: Path, plan: dict, target: 
     resources = _read_bundle(template_dir / "resources.zip")
     if "word/document.xml" in payload or "word/document.xml" in resources or set(payload) & set(resources):
         raise DocumentError("BUNDLE_PART_COLLISION")
+    for story in content.get("stories",[]):
+        name=story["part"]
+        if name not in payload or not name.startswith(("word/header","word/footer")) or not name.endswith(".xml"):
+            raise DocumentError("STORY_PART_INVALID")
+        story_root=ET.Element(story["tag"],nsmap={None if k=="null" else k:v for k,v in story["namespaces"].items()})
+        story_root.attrib.update(story["attributes"])
+        build(story_root,story["structure"])
+        payload[name]=xml_bytes(story_root)
     write_package(target, {**payload, **resources, "word/document.xml": xml_bytes(root)})
     return {"renderer": VERSION, "body_rebuilt": True, "source_docx_read": False, "model_calls": 0, "plan_provenance": plan.get("provenance"), "strict_I1_pass": False}

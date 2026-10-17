@@ -43,9 +43,12 @@ def evidence(conflicts, samples, limit=50):
             excerpt = text[span[0]:span[1]] if span else text
             locations.append({'document': document, 'block_id': block['id'],
                               'paragraph': ordinal, 'range': span,
-                              'excerpt': excerpt[:240], 'target': example['set']})
+                              'excerpt': excerpt[:240], 'target': example['set'],
+                              'before':text[max(0,span[0]-80):span[0]] if span else '',
+                              'after':text[span[1]:span[1]+80] if span else ''})
         groups.append({'kind': conflict['kind'], 'when': conflict.get('when', {}),
                        'differing_properties': conflict.get('differing_properties', []),
+                       'property_variants':conflict.get('property_variants',{}),
                        'locations': locations, 'requires_clarification': True,
                        'variants': conflict.get('variants'),
                        'location_complete': bool(locations) and len(locations) == conflict.get('variants')})
@@ -67,6 +70,7 @@ def explain(conflicts, template):
             missing = object()
             changed = sorted(k for k in keys if len({m.get(k, missing) for m in maps}) > 1)
             row['differing_properties'] = changed
+            row['property_variants']={sid:{k:m.get(k,'[отсутствует]') for k in changed} for sid,m in zip(sorted(style_ids),maps)}
             row['equivalence'] = 'not_established'
             row['diagnostic_complete'] = len(style_ids) == conflict.get('variants')
         result.append(row)
