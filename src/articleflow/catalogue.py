@@ -23,7 +23,7 @@ VERSION = "catalogue-0.4"
 GROUPS = {
     "paragraph": ["pPr"], "character": ["rPr"],
     "table": ["tblPr", "tblGrid"], "row": ["trPr"],
-    "cell": ["tcPr"], "section": ["sectPr"], "drawing": ["drawing"],
+    "cell": ["tcPr"], "sdt": ["sdtPr","sdtEndPr"], "sdt_content": [], "section": ["sectPr"], "drawing": ["drawing"],
 }
 RESOURCE_NAMES = {
     "word/styles.xml", "word/settings.xml", "word/webSettings.xml",
@@ -152,9 +152,11 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
                     visit(child, sequence, style)
             elif node.tag == f"{{{W}}}t":
                 add_text(sequence, node.text or "", run_style)
-            elif node.tag in {f"{{{W}}}tab", f"{{{W}}}br", f"{{{W}}}cr", f"{{{W}}}noBreakHyphen"}:
-                if node.tag == f"{{{W}}}br" and node.get(f"{{{W}}}type") not in {None, "textWrapping"}:
-                    raise DocumentError("MANUAL_BREAK_UNSUPPORTED")
+            elif node.tag in {f"{{{W}}}sym",f"{{{W}}}br",f"{{{W}}}fldChar",f"{{{W}}}instrText"}:
+                text=control_text(node)
+                add_text([],text,run_style)
+                sequence.append({"kind":"control","text":text,"xml":_property_xml(node)})
+            elif node.tag in {f"{{{W}}}tab", f"{{{W}}}cr", f"{{{W}}}noBreakHyphen"}:
                 add_text(sequence, "\t" if tag == "tab" else "\u2011" if tag == "noBreakHyphen" else "\n", run_style)
             elif node.tag == f"{{{W}}}lastRenderedPageBreak":
                 discarded[tag] += 1
@@ -196,7 +198,7 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
             return None
         if node.tag in {f"{{{W}}}bookmarkStart", f"{{{W}}}bookmarkEnd"}:
             return {"kind": "marker", "xml": _property_xml(node)}
-        group = {f"{{{W}}}tbl": "table", f"{{{W}}}tr": "row", f"{{{W}}}tc": "cell"}.get(node.tag)
+        group = {f"{{{W}}}tbl": "table", f"{{{W}}}tr": "row", f"{{{W}}}tc": "cell",f"{{{W}}}sdt":"sdt",f"{{{W}}}sdtContent":"sdt_content"}.get(node.tag)
         if group is None:
             raise DocumentError("CATALOGUE_STRUCTURE_UNSUPPORTED")
         lid = f"layout-{len(layout_plan) + 1:06d}"
@@ -273,6 +275,25 @@ def _unique(items, key="id"):
     return result
 
 
+def control_text(node):
+    """Allowlisted intrinsic glyph/control data, never arbitrary OOXML passthrough."""
+    if node.tag==f"{{{W}}}instrText":
+        if len(node) or set(node.attrib)-{"{http://www.w3.org/XML/1998/namespace}space"}:raise DocumentError("CONTENT_CONTROL_INVALID")
+        return "\ufffc"
+    if len(node) or node.text:raise DocumentError("CONTENT_CONTROL_INVALID")
+    if node.tag==f"{{{W}}}fldChar":
+        if set(node.attrib)-{f"{{{W}}}fldCharType",f"{{{W}}}dirty",f"{{{W}}}fldLock"} or node.get(f"{{{W}}}fldCharType") not in {"begin","separate","end"}:raise DocumentError("CONTENT_CONTROL_INVALID")
+        return "\ufffc"
+    if node.tag==f"{{{W}}}br":
+        if set(node.attrib)-{f"{{{W}}}type",f"{{{W}}}clear"} or node.get(f"{{{W}}}type") not in {None,"textWrapping","page","column"} or node.get(f"{{{W}}}clear") not in {None,"none","left","right","all"}:raise DocumentError("CONTENT_CONTROL_INVALID")
+        return "\n"
+    if node.tag==f"{{{W}}}sym":
+        import re
+        if set(node.attrib)!={f"{{{W}}}font",f"{{{W}}}char"} or not node.get(f"{{{W}}}font") or not re.fullmatch(r"[0-9A-Fa-f]{1,4}",node.get(f"{{{W}}}char", "")):raise DocumentError("CONTENT_CONTROL_INVALID")
+        return "\ufffc"
+    raise DocumentError("CONTENT_CONTROL_INVALID")
+
+
 def validate_catalogue_plan(content: dict, template: dict, plan: dict) -> None:
     if any(x.get("schema_version") != VERSION for x in [content, template, plan]):
         raise DocumentError("CATALOGUE_VERSION")
@@ -283,6 +304,9 @@ def validate_catalogue_plan(content: dict, template: dict, plan: dict) -> None:
         text = []
         for atom in atoms:
             if atom["kind"] == "text":
+                text.append(atom["text"])
+            elif atom["kind"] == "control":
+                if control_text(parse_xml(atom["xml"].encode()))!=atom["text"]:raise DocumentError("CONTENT_CONTROL_INVALID")
                 text.append(atom["text"])
             elif atom["kind"] in {"hyperlink","simple_field"}:
                 if atom["kind"]=="simple_field" and atom["attributes"].get(f"{{{W}}}instr", "").strip() not in {"PAGE","NUMPAGES"}:raise DocumentError("FIELD_INSTRUCTION_UNSUPPORTED")
@@ -327,7 +351,7 @@ def validate_catalogue_plan(content: dict, template: dict, plan: dict) -> None:
     paragraph_ids = [n["id"] for n in structure if n["kind"] == "paragraph"]
     if len(paragraph_ids) != len(set(paragraph_ids)) or set(paragraph_ids) != set(by_id):
         raise DocumentError("CONTENT_STRUCTURE_COVERAGE")
-    expected_layout = {n["id"]: n["kind"] for n in structure if n["kind"] in {"table", "row", "cell"}}
+    expected_layout = {n["id"]: n["kind"] for n in structure if n["kind"] in {"table", "row", "cell", "sdt", "sdt_content"}}
     layout = _unique(plan["layout"])
     if set(layout) != set(expected_layout):
         raise DocumentError("PLAN_LAYOUT_COVERAGE")
@@ -361,7 +385,13 @@ def placement_fingerprint(path: Path) -> list:
         if tag == f"{{{W}}}t":
             offset += len(node.text or "")
             return
-        if tag in {f"{{{W}}}tab", f"{{{W}}}br", f"{{{W}}}cr", f"{{{W}}}noBreakHyphen"}:
+        if tag in {f"{{{W}}}sym",f"{{{W}}}br",f"{{{W}}}fldChar",f"{{{W}}}instrText"}:
+            # Plain line breaks and cr have equivalent text placement; explicit
+            # page/column/clear controls and glyph identity need stronger checks.
+            if tag!=f"{{{W}}}br" or node.attrib:events.append([paragraph,offset,"control",tag,dict(node.attrib),node.text or ""])
+            offset += 1
+            return
+        if tag in {f"{{{W}}}tab", f"{{{W}}}cr", f"{{{W}}}noBreakHyphen"}:
             offset += 1
             return
         if tag == f"{{{W}}}drawing":
@@ -454,6 +484,12 @@ def render_catalogue(template_dir: Path, content_dir: Path, plan: dict, target: 
                         if a < b:
                             text_run(parent, text[a - offset:b - offset], span["style"])
                     offset = end
+                elif atom["kind"] == "control":
+                    node=parse_xml(atom["xml"].encode());control_text(node)
+                    span=next((s for s in assignment["spans"] if s["start"]<=offset<s["end"]),None)
+                    if span is None:raise DocumentError("PLAN_SPAN_COVERAGE")
+                    run=ET.SubElement(parent,f"{{{W}}}r");properties(run,"character",span["style"]);run.append(node)
+                    offset+=len(atom["text"])
                 elif atom["kind"] in {"hyperlink","simple_field"}:
                     local="fldSimple" if atom["kind"]=="simple_field" else "hyperlink"
                     link = ET.SubElement(parent, f"{{{W}}}{local}", atom["attributes"])
@@ -490,8 +526,8 @@ def render_catalogue(template_dir: Path, content_dir: Path, plan: dict, target: 
                 paragraph(parent, node["id"])
             elif kind == "marker":
                 parent.append(parse_xml(node["xml"].encode()))
-            elif kind in {"table", "row", "cell"}:
-                tag = {"table": "tbl", "row": "tr", "cell": "tc"}[kind]
+            elif kind in {"table", "row", "cell", "sdt", "sdt_content"}:
+                tag = {"table": "tbl", "row": "tr", "cell": "tc", "sdt":"sdt", "sdt_content":"sdtContent"}[kind]
                 child = ET.SubElement(parent, f"{{{W}}}{tag}")
                 properties(child, kind, layout[node["id"]]["style"])
                 build(child, node["children"])
@@ -511,5 +547,9 @@ def render_catalogue(template_dir: Path, content_dir: Path, plan: dict, target: 
         story_root.attrib.update(story["attributes"])
         build(story_root,story["structure"])
         payload[name]=xml_bytes(story_root)
-    write_package(target, {**payload, **resources, "word/document.xml": xml_bytes(root)})
+    from .fields030 import validate_fields
+    parts={**payload, **resources, "word/document.xml": xml_bytes(root)}
+    for partname,partdata in parts.items():
+        if partname=='word/document.xml' or partname.startswith(('word/header','word/footer')) and partname.endswith('.xml'):validate_fields(parse_xml(partdata))
+    write_package(target, parts)
     return {"renderer": VERSION, "body_rebuilt": True, "source_docx_read": False, "model_calls": 0, "plan_provenance": plan.get("provenance"), "strict_I1_pass": False}

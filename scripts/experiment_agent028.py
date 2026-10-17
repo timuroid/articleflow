@@ -10,9 +10,9 @@ def experiment(args):
     args.output.mkdir(parents=True,exist_ok=False)
     definitions=json.loads(args.sources.read_text())['documents']
     selected=[r for r in definitions if r['status']=='downloaded' and (not args.only or r['id'] in args.only)]
-    protocol={'series':'028','max_iterations':args.iterations,'teacher':'openai/gpt-6.1-sol','student':'qwen/qwen3.8-27b','manual_feedback':False,'manual_repairs':False,'separate_runs_for_each_iteration_limit':False,'source_manifest_sha256':digest(args.sources.read_bytes()),'implementation_hashes':{p.name:digest(p.read_bytes()) for p in (Path(__file__).resolve().parents[1]/'src/articleflow').glob('*.py')}}
+    protocol={'series':args.series,'max_iterations':args.iterations,'teacher':'openai/gpt-6.1-sol','student':'qwen/qwen3.8-27b','manual_feedback':False,'manual_repairs':False,'separate_runs_for_each_iteration_limit':False,'source_manifest_sha256':digest(args.sources.read_bytes()),'implementation_hashes':{p.name:digest(p.read_bytes()) for p in (Path(__file__).resolve().parents[1]/'src/articleflow').glob('*.py')}}
     dump(args.output/'protocol.json',protocol)
-    config={'key_file':str(args.key_file.resolve()),'ledger':str(args.ledger.resolve()),'series':'028'}
+    config={'key_file':str(args.key_file.resolve()),'ledger':str(args.ledger.resolve()),'series':args.series}
     summary={'protocol':protocol,'documents':[]}
     for item in selected:
         source=args.inputs/(item['id']+'.docx')
@@ -28,5 +28,5 @@ def experiment(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('sources','inputs','output','key-file','ledger'):p.add_argument('--'+name,type=Path,required=True)
-    p.add_argument('--iterations',type=int,choices=range(1,9),default=8);p.add_argument('--only',nargs='*')
+    p.add_argument('--iterations',type=int,choices=range(1,9),default=8);p.add_argument('--only',nargs='*');p.add_argument('--series',default='028')
     experiment(p.parse_args())

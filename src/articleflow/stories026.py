@@ -9,7 +9,7 @@ def roots(parts):
         if name.startswith(('word/header','word/footer')) and name.endswith('.xml'):
             root=parse_xml(parts[name])
             if root.tag.rsplit('}',1)[-1] not in {'hdr','ftr'}:raise DocumentError('STORY_ROOT_INVALID')
-            if root.xpath('.//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk | .//wp:anchor',namespaces=NS):raise DocumentError('STORY_CONSTRUCT_UNSUPPORTED')
+            if root.xpath('.//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk',namespaces=NS):raise DocumentError('STORY_CONSTRUCT_UNSUPPORTED')
             result.append((name,root))
     return result
 

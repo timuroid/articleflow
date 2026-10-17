@@ -94,8 +94,12 @@ def load_package(path: Path, *, allow_unsupported: bool = False) -> dict[str, by
     root = parse_xml(parts["word/document.xml"])
     if root.tag != f"{{{W}}}document":
         raise DocumentError("OOXML_PROFILE_UNSUPPORTED")
-    if not allow_unsupported and root.xpath(".//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk | .//wp:anchor", namespaces=NS):
+    if not allow_unsupported and root.xpath(".//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk", namespaces=NS):
         raise DocumentError("UNSUPPORTED_CONSTRUCT")
+    from .fields030 import validate_fields
+    for name,data in parts.items():
+        if name=='word/document.xml' or name.startswith(('word/header','word/footer')) and name.endswith('.xml'):
+            validate_fields(parse_xml(data))
     return parts
 
 
@@ -124,6 +128,8 @@ def paragraph_text(p) -> str:
             pieces.append("\n")
         elif node.tag == f"{{{W}}}noBreakHyphen":
             pieces.append("\u2011")
+        elif node.tag in {f"{{{W}}}sym",f"{{{W}}}fldChar",f"{{{W}}}instrText"}:
+            pieces.append("\ufffc")
     return "".join(pieces)
 
 

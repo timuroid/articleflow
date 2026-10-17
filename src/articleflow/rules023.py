@@ -35,7 +35,8 @@ def semantic_spans(source):
             attrs = {'bold': bool(flag(rp, 'b')), 'italic': bool(flag(rp, 'i')),
                      'vertical': va.get(tag('val')) if va is not None else 'baseline',
                      'language':key(dict(language.attrib)) if language is not None else '',
-                     'hyperlink': bool(r.xpath('ancestor::w:hyperlink', namespaces=NS))}
+                     'hyperlink': bool(r.xpath('ancestor::w:hyperlink', namespaces=NS)),
+                     'field_control': ','.join(n.get(tag('fldCharType'),'instruction') for n in r if n.tag in {tag('fldChar'),tag('instrText')}) or 'none'}
             end = offset + len(text)
             if spans and spans[-1]['features'] == attrs: spans[-1]['end'] = end
             else: spans.append({'start': offset, 'end': end, 'features': attrs})
@@ -116,7 +117,7 @@ def training_examples(content, plan, semantics):
     return rows
 
 
-ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind'}
+ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control'}
 
 
 def fit(examples):
@@ -125,6 +126,7 @@ def fit(examples):
     for kind in ('paragraph','character','layout','drawing'):
         rows=[r for r in examples if r['kind']==kind]
         coarse=['role'] if kind in ('paragraph','drawing') else ['kind','depth','columns','column','row_band','roles'] if kind=='layout' else ['role','bold','italic','vertical','hyperlink']
+        if kind=='character' and any('field_control' in r['when'] for r in rows):coarse=coarse+['field_control']
         if kind=='character' and any('inline_role' in r['when'] for r in rows):coarse=coarse+['inline_role']
         groups=defaultdict(list)
         for row in rows: groups[key({k:row['when'][k] for k in coarse})].append(row)

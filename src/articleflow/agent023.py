@@ -221,7 +221,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             except DocumentError as exc:
                 recoverable={'QUESTION_SCHEMA','TEACHER_SCHEMA','ROLE_DEFINITION_INVALID','SEMANTIC_GROUP_INVALID','SEMANTIC_GROUP_COVERAGE','SEMANTIC_GROUP_OVERLAP','INLINE_ANCHOR_NOT_FOUND','INLINE_QUOTE_MISMATCH','INLINE_RANGE'}
                 if not adaptive or str(exc) not in recoverable:raise
-                row.update(status='failed',code=str(exc))
+                row.update(status='failed',code=str(exc),finished_seconds=time.monotonic()-start)
                 feedback={'validation_error':str(exc),'instruction':'Return a fresh complete response; all question roles must be keys of roles. Use exact quoted spans and local occurrence numbers.'}
                 emit();continue
             report['stage']='compiling';emit()

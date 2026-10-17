@@ -8,11 +8,11 @@ def topology(source):
     def walk(node):
         local=node.tag.rsplit('}',1)[-1]
         if local=='p':return ['paragraph']
-        if local in {'tbl','tr','tc','body','hdr','ftr'}:
+        if local in {'tbl','tr','tc','body','hdr','ftr','sdt','sdtContent'}:
             merge=[]
             if local=='tc':
                 merge=[(n.tag,tuple(sorted(n.attrib.items()))) for n in node.xpath('./w:tcPr/w:gridSpan | ./w:tcPr/w:vMerge | ./w:tcPr/w:hMerge',namespaces=NS)]
-            return [local,merge,[walk(c) for c in node if c.tag.rsplit('}',1)[-1] in {'tbl','tr','tc','p'}]]
+            return [local,merge,[walk(c) for c in node if c.tag.rsplit('}',1)[-1] in {'tbl','tr','tc','p','sdt','sdtContent'}]]
     from .stories026 import roots
     return {name:walk(story) for name,story in roots(load_package(source))}
 

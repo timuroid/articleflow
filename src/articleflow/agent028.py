@@ -73,6 +73,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
     try:
         for i,source in enumerate(references,1):
             entry={'document':i,'attempts':[]};preparation.append(entry);emit(report)
+            load_package(source,allow_unsupported=True)
             golden=render_pdf(source,folder/f'preparation-{i}'/'golden')
             accepted=None
             for attempt in range(2):
