@@ -1,0 +1,445 @@
+{
+  "schema": "frozen-real-reconstruction-027",
+  "frozen_commit": "6f562abd94c2b59e07a17ec3054913a94e10a8b0",
+  "source_count": 5,
+  "planned_variants": 10,
+  "prepared_variants": 8,
+  "verified_templates": 1,
+  "pixel_exact_variants": 2,
+  "api_attempts": 7,
+  "cost_usd": "0.153923225",
+  "documents": [
+    {
+      "id": "herzen",
+      "sha256": "0196ef19b903602b6f3acb77527c366ce9a73ee8676c0d05640be77deb4f5bbf",
+      "variants": [
+        {
+          "variant": "neutralized",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "2a7af1564c92fd0ff30aee0a7fcde18434aa9f38df1e34507bd572143b0702d8",
+          "before": {
+            "golden_pages": 3,
+            "candidate_pages": 3,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.14834271020513445,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 227779
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 367776
+              },
+              {
+                "page": 3,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 297013
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        },
+        {
+          "variant": "restyled",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "3a8c44c268d0fe7f61ae0cc6a326a0a2600829e78b9e980bb9d86cfea5dcae75",
+          "before": {
+            "golden_pages": 3,
+            "candidate_pages": 7,
+            "pixel_exact": false,
+            "differing_pixel_ratio": null,
+            "page_sizes_equal": false,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 216895
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 239405
+              },
+              {
+                "page": 3,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 280063
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        }
+      ],
+      "reference_pages": 3,
+      "status": "needs_review",
+      "code": "CATALOGUE_INLINE_UNSUPPORTED",
+      "last_stage": "extracting",
+      "iterations": []
+    },
+    {
+      "id": "tusur",
+      "sha256": "811cd0ee5b7b6a22ba29da5264936bb2deb69cb799a3b7978eb1bea810e759f9",
+      "variants": [
+        {
+          "variant": "neutralized",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "a14d90d679ae2fc9ae704bedc0183700a765d5b21ea5bed53faad1f4e525bfb2",
+          "before": {
+            "golden_pages": 2,
+            "candidate_pages": 2,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.12229812469211884,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 241160
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 249413
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        },
+        {
+          "variant": "restyled",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "b5199b75bf92ddd998bea6a190e2d2f9caf5323223664762d89932318ebad4d2",
+          "before": {
+            "golden_pages": 2,
+            "candidate_pages": 4,
+            "pixel_exact": false,
+            "differing_pixel_ratio": null,
+            "page_sizes_equal": false,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 269206
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 189393
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        }
+      ],
+      "reference_pages": 2,
+      "status": "needs_review",
+      "code": "CATALOGUE_INLINE_UNSUPPORTED",
+      "last_stage": "extracting",
+      "iterations": []
+    },
+    {
+      "id": "bmstu",
+      "sha256": "01e4d5f9deb8255f3c7895b444ad83c384b500b8e863759674eb859e8ce182c7",
+      "variants": [
+        {
+          "variant": "neutralized",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "eec9cfb7e196706d28f14a1bc723ea75364163bf2342e55b0270f81e5393759a",
+          "before": {
+            "golden_pages": 5,
+            "candidate_pages": 3,
+            "pixel_exact": false,
+            "differing_pixel_ratio": null,
+            "page_sizes_equal": false,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 392375
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 444740
+              },
+              {
+                "page": 3,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 298476
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        },
+        {
+          "variant": "restyled",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "5885f0f35a8dd84edbf2388e4ddc091a5afb40d1934a904c96805cd3aa5074e4",
+          "before": {
+            "golden_pages": 5,
+            "candidate_pages": 7,
+            "pixel_exact": false,
+            "differing_pixel_ratio": null,
+            "page_sizes_equal": false,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 252392
+              },
+              {
+                "page": 2,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 325522
+              },
+              {
+                "page": 3,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 371190
+              },
+              {
+                "page": 4,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 316576
+              },
+              {
+                "page": 5,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 223599
+              }
+            ]
+          },
+          "status": "blocked_template_not_verified"
+        }
+      ],
+      "reference_pages": 5,
+      "status": "needs_review",
+      "code": "QUESTION_SCHEMA",
+      "last_stage": "teacher",
+      "iterations": [
+        {
+          "number": 1,
+          "status": "needs_review",
+          "conflicting_groups": 3,
+          "code": null,
+          "applications": [
+            {
+              "status": "needs_review",
+              "unresolved": 16,
+              "pixel_exact": null
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "status": "failed",
+          "conflicting_groups": null,
+          "code": "QUESTION_SCHEMA",
+          "applications": []
+        }
+      ]
+    },
+    {
+      "id": "acm",
+      "sha256": "b6b9c475cf130cb3973547e0d6c72fb1967c9ed171b9ead5fc9087c04fcb4217",
+      "variants": [],
+      "reference_pages": 5,
+      "status": "failed",
+      "code": "UNSUPPORTED_CONSTRUCT"
+    },
+    {
+      "id": "osu",
+      "sha256": "539dddee1624c8f5c588597f755873ed6c83007845c6558f9e19b55b18b035f0",
+      "variants": [
+        {
+          "variant": "neutralized",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "fea4fd537eb874e8010b4892422a8e1f8ce68b771ea5b5b56f253b3f5269c806",
+          "before": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.026085387037779385,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 52318
+              }
+            ]
+          },
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "integrity": {
+            "section_boundaries_exact": true,
+            "content_exact": true,
+            "placements_exact": true,
+            "nested_topology_exact": true,
+            "protected_vertical_exact": true
+          },
+          "after": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        },
+        {
+          "variant": "restyled",
+          "content_preserved_by_corruption": true,
+          "input_sha256": "6fe857f8911d9eddc340007b542b39ea7991b8e709f133684d630106b76352e5",
+          "before": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pixel_exact": false,
+            "differing_pixel_ratio": 0.032183677661638856,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": false,
+                "differing_pixels": 64549
+              }
+            ]
+          },
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "integrity": {
+            "section_boundaries_exact": true,
+            "content_exact": true,
+            "placements_exact": true,
+            "nested_topology_exact": true,
+            "protected_vertical_exact": true
+          },
+          "after": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "page_sizes_equal": true,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        }
+      ],
+      "reference_pages": 1,
+      "status": "reference_verified",
+      "code": null,
+      "last_stage": "negative_controls",
+      "iterations": [
+        {
+          "number": 1,
+          "status": "passed",
+          "conflicting_groups": 0,
+          "code": null,
+          "applications": [
+            {
+              "status": "rendered_unverified",
+              "unresolved": 0,
+              "pixel_exact": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "calls": [
+    {
+      "model": "openai/gpt-6.1-sol",
+      "status": "QUESTION_SCHEMA",
+      "cost_usd": "0.075141",
+      "api_attempts": 1,
+      "seconds": 35.03459230899898
+    },
+    {
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "cost_usd": "0.0578735",
+      "api_attempts": 1,
+      "seconds": 31.690346951007086
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "cost_usd": "0.004885565",
+      "api_attempts": 1,
+      "seconds": 30.843477428003098
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "cost_usd": "0.00026544",
+      "api_attempts": 1,
+      "seconds": 1.4828843810028047
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "cost_usd": "0.00028336",
+      "api_attempts": 1,
+      "seconds": 1.9478869500017026
+    },
+    {
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "cost_usd": "0.015191",
+      "api_attempts": 1,
+      "seconds": 7.9048829230014235
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "cost_usd": "0.00028336",
+      "api_attempts": 1,
+      "seconds": 1.8195719680006732
+    }
+  ],
+  "evaluator_correction": {
+    "production_changed": false,
+    "reason": "Word tab-stop layout nodes were incorrectly counted as content by new evaluator; corrected guard excludes non-run w:tab. Tusur and OSU were re-evaluated; no model call occurred on their initial blocked preparation.",
+    "initial_evaluator_sha256": "1e2e005505c83fe604bd647a593397c440206be82801d893fffe2b14040e035c",
+    "final_evaluator_sha256": "0c41230192c317920c89a5c2bd7ecd3a5d1fc749c8f04619f2e80d1b4f434fcc"
+  },
+  "new_content_transfer": false,
+  "primary_storage": "local_only; public sources may be re-downloaded if hashes still match"
+}

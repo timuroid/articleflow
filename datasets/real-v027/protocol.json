@@ -1,0 +1,20 @@
+{
+  "series": "027",
+  "frozen_commit": "6f562abd94c2b59e07a17ec3054913a94e10a8b0",
+  "task": "same_content_reconstruction_from_public_official_docx_examples",
+  "selection": "First accessible native DOCX examples from IEEE CAI, Herzen PSME, OSU energy, TUSUR economic security; up to six independent official sources if fewer than four downloads succeed. No selection by formatter success.",
+  "teacher": "openai/gpt-6.1-sol",
+  "student": "qwen/qwen3.8-27b",
+  "teacher_iterations": 2,
+  "human_feedback": false,
+  "resume": false,
+  "variants": ["neutralized", "restyled"],
+  "student_calls_per_variant": 1,
+  "repeat_runs_per_variant": 1,
+  "preserved_inputs": ["text", "objects", "semantic emphasis", "section boundaries", "resource relationships", "object geometry"],
+  "metrics": ["extraction_status", "exact_content", "unresolved_assignments", "all_page_pixel_exact_144dpi", "cost_usd"],
+  "unsupported_in_denominator": true,
+  "no_runtime_changes_during_evaluation": true,
+  "not_claimed": ["unseen_content_transfer", "independent_repeated_model_reliability", "Microsoft_Word_pixel_identity"],
+  "storage": "Public URL, hashes, code and aggregate results in Git; downloaded third-party bytes and raw model logs local only unless independent authorized storage is available."
+}

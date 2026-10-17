@@ -1,0 +1,71 @@
+{
+  "documents": [
+    {
+      "id": "ieee",
+      "source_page": "https://cai.ieee.org/2025/manuscript-templates-for-conference-proceedings/",
+      "download_url": "https://www.ieee.org/content/dam/ieee-org/ieee/web/org/conferences/conference-template-a4.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://www.ieee.org/content/dam/ieee-org/ieee/web/org/conferences/conference-template-a4.docx",
+      "status": "download_failed",
+      "error": "ValueError: NOT_NATIVE_DOCX"
+    },
+    {
+      "id": "herzen",
+      "source_page": "https://psme.herzen.spb.ru/?page_id=49",
+      "download_url": "https://psme.herzen.spb.ru/wp-content/uploads/2024/10/Секция_№_Фамилия_ИО.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://psme.herzen.spb.ru/wp-content/uploads/2024/10/%D0%A1%D0%B5%D0%BA%D1%86%D0%B8%D1%8F_%E2%84%96_%D0%A4%D0%B0%D0%BC%D0%B8%D0%BB%D0%B8%D1%8F_%D0%98%D0%9E.docx",
+      "status": "downloaded",
+      "bytes": 55009,
+      "sha256": "0196ef19b903602b6f3acb77527c366ce9a73ee8676c0d05640be77deb4f5bbf"
+    },
+    {
+      "id": "osu",
+      "source_page": "https://konf.osu.ru/iees_energy/infoletter/requirements.html",
+      "download_url": "https://konf.osu.ru/iees_energy/infoletter/assets/files/article_template.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "status": "download_failed",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "id": "tusur",
+      "source_page": "https://confes.fb.tusur.ru/node/8",
+      "download_url": "https://confes.fb.tusur.ru/sites/default/files/%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B8%20%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%20%D0%BE%D1%84%D0%BE%D1%80%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://confes.fb.tusur.ru/sites/default/files/%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B8%20%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%20%D0%BE%D1%84%D0%BE%D1%80%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F.docx",
+      "status": "downloaded",
+      "bytes": 16465,
+      "sha256": "811cd0ee5b7b6a22ba29da5264936bb2deb69cb799a3b7978eb1bea810e759f9"
+    },
+    {
+      "id": "bmstu",
+      "source_page": "https://tiris.bmstu.ru/for-participants",
+      "download_url": "https://s3-oris.bmstu.ru/cms.bmstu.ru/tiris/proceedings_template.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://s3-oris.bmstu.ru/cms.bmstu.ru/tiris/proceedings_template.docx",
+      "status": "downloaded",
+      "bytes": 17796,
+      "sha256": "01e4d5f9deb8255f3c7895b444ad83c384b500b8e863759674eb859e8ce182c7"
+    },
+    {
+      "id": "acm",
+      "source_page": "https://chi2020.acm.org/authors/chi-proceedings-format/",
+      "download_url": "https://chi2020.acm.org/wp-content/uploads/2019/05/SIGCHI-CHI20-Sample-Paper.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://chi2020.acm.org/wp-content/uploads/2019/05/SIGCHI-CHI20-Sample-Paper.docx",
+      "status": "downloaded",
+      "bytes": 495139,
+      "sha256": "b6b9c475cf130cb3973547e0d6c72fb1967c9ed171b9ead5fc9087c04fcb4217"
+    },
+    {
+      "id": "osu",
+      "source_page": "https://konf.osu.ru/iees_energy/infoletter/requirements.html",
+      "download_url": "https://konf.osu.ru/iees_energy/assets/files/article_template.docx",
+      "kind": "official_formatting_example_not_published_research_article",
+      "resolved_url": "https://konf.osu.ru/iees_energy/assets/files/article_template.docx",
+      "status": "downloaded",
+      "bytes": 18313,
+      "sha256": "539dddee1624c8f5c588597f755873ed6c83007845c6558f9e19b55b18b035f0"
+    }
+  ]
+}

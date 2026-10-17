@@ -1,0 +1,62 @@
+[
+  {
+    "id": "herzen",
+    "body_paragraphs": 78,
+    "tables": 0,
+    "sections": 1,
+    "proofErr": 184,
+    "floating_anchors": 0,
+    "complex_field_markers": 0,
+    "math_objects": 1,
+    "embedded_parts": 0,
+    "story_parts": 0
+  },
+  {
+    "id": "tusur",
+    "body_paragraphs": 43,
+    "tables": 0,
+    "sections": 1,
+    "proofErr": 20,
+    "floating_anchors": 0,
+    "complex_field_markers": 0,
+    "math_objects": 0,
+    "embedded_parts": 0,
+    "story_parts": 0
+  },
+  {
+    "id": "bmstu",
+    "body_paragraphs": 49,
+    "tables": 0,
+    "sections": 1,
+    "proofErr": 0,
+    "floating_anchors": 0,
+    "complex_field_markers": 0,
+    "math_objects": 0,
+    "embedded_parts": 0,
+    "story_parts": 0
+  },
+  {
+    "id": "acm",
+    "body_paragraphs": 138,
+    "tables": 2,
+    "sections": 4,
+    "proofErr": 84,
+    "floating_anchors": 1,
+    "complex_field_markers": 60,
+    "math_objects": 0,
+    "embedded_parts": 0,
+    "story_parts": 1
+  },
+  {
+    "id": "osu",
+    "body_paragraphs": 13,
+    "tables": 0,
+    "sections": 1,
+    "proofErr": 0,
+    "floating_anchors": 0,
+    "complex_field_markers": 0,
+    "math_objects": 0,
+    "embedded_parts": 0,
+    "story_parts": 1
+  }
+]
