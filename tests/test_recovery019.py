@@ -100,6 +100,14 @@ class TypographyTests(unittest.TestCase):
             out=Path(d)/'result.docx';compile_document(p,out,assignments=roles,required=[])
             self.assertEqual([x.text for x in Document(out).paragraphs],values)
 
+    def test_legacy_profile_cannot_silently_pass_ready(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'a.docx';doc=Document();doc.add_paragraph('Title');doc.save(p)
+            roles=suggest_roles(inventory(p)['blocks'])[0]
+            r=compile_document(p,Path(d)/'out.docx',assignments=roles,required=['title'],approved=True,fonts_ok=True,styles={'title':{'pPr':None,'rPr':None}})
+            self.assertEqual(r['status'],'draft')
+            self.assertTrue(any('Старый профиль' in q for q in r['questions']))
+
     def test_numbering_binding_is_protected(self):
         a=ET.fromstring(f'<w:p xmlns:w="{t.W}"><w:pPr><w:numPr><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t>42</w:t></w:r></w:p>')
         b=copy.deepcopy(a);b.find('.//w:numId',NS).set(t.tag('val'),'2')

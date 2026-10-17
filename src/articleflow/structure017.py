@@ -359,6 +359,8 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
                 questions.append(f"Подтвердите вынос фрагмента в редакционные заметки: {block['id']}")
     if missing:
         questions.extend(f"Отсутствует обязательный слот: {slot}" for slot in missing)
+    if styles and any(profile.get("schema") != "typography-019" for profile in styles.values()):
+        questions.append("Старый профиль оформления: загрузите эталоны заново и утвердите шаблон версии 019")
     if not approved:
         questions.append("Версия шаблона не утверждена")
     if not fonts_ok:
