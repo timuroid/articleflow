@@ -27,6 +27,8 @@
 | [compact-planner.md](compact-planner.md) | План 0.5: выбор моделью полных вариантов, точные цитаты и bounded trials |
 | [catalogue-renderer.md](catalogue-renderer.md) | Каталог 0.4, полные варианты оформления, новый body и точный oracle-контроль |
 | [operations.md](operations.md) | Конфигурация, окружения и наблюдаемость |
+| [deployment.md](deployment.md) | Предусловия релиза, серверная установка, HTTPS, проверка и откат |
+| [web-017-recovery.md](web-017-recovery.md) | Карта прежнего локального Web 017 и отсутствующих в GitHub файлов |
 | [roadmap.md](roadmap.md) | Порядок реализации и критерии выхода |
 | [contracts/map.md](contracts/map.md) | Машиночитаемые примеры и схемы |
 | [adr/map.md](adr/map.md) | Архитектурные решения |

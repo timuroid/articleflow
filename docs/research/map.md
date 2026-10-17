@@ -29,6 +29,8 @@
 | [qwen-009.md](qwen-009.md) | Отдельная серия Qwen с отключённым reasoning после наблюдения обрезаний |
 | [qwen-009-summary.json](qwen-009-summary.json) | Агрегаты без reasoning и сравнение с medium/Sol/Luna |
 | [qwen-009-results.csv](qwen-009-results.csv) | Все десять попыток Qwen без reasoning |
+| [session-017-recovery.md](session-017-recovery.md) | Исторические результаты структурного Web 017 без доступных здесь первичных артефактов |
+| [session-010-016-recovery.md](session-010-016-recovery.md) | Карта промежуточных серий, сведения для восстановления и границы выводов |
 
 Вверх: [общая карта](../map.md). Схемы и понимание задачи: [концепция](../product/concept.md). Формат хранения: [TemplatePackage](../tech/template-package.md). Формат ответа модели: [DocumentPlan](../tech/document-plan.md).
 
