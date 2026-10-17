@@ -81,9 +81,12 @@ def build_package(samples,labels,definitions,destination):
     fitted,conflicts=rules.fit(examples)
     from .spacers023 import fit as fit_spacers
     spacers,spacer_conflicts=fit_spacers(spacer_samples);conflicts.extend(spacer_conflicts)
+    from .order024 import fit as fit_order
+    order,order_conflicts=fit_order([(s['content'],a) for s,a in zip(samples,labels)])
+    conflicts.extend(order_conflicts)
     package={'schema':'semantic-rules-023','status':'draft','roles':definitions,'rules':fitted,
              'section_style':next(iter(sections)),'training_documents':len(samples),
-             'observed_top_level_roles':sorted(observed_top),'spacers':spacers,
+             'observed_top_level_roles':sorted(observed_top),'spacers':spacers,'order':order,
              'protocol':'DOCX content and semantic emphasis; no typography input',
              'unresolved_training_groups':len(conflicts),'reference_assignments_included':False}
     dump(destination/'rules.json',merged);dump(destination/'semantic.json',package)
@@ -100,11 +103,15 @@ def apply(source,template_dir,folder,config,*,caller=call):
     response,meta=caller(config,student_messages(package['roles'],content),folder/'student',
                          validate=lambda r:(expand_groups(r,content['blocks'],package['roles']) and r))
     assignments=expand_groups(response,content['blocks'],package['roles'])
+    from .order024 import arrange, expected_source
+    content,permutation,moves,order_issues=arrange(content,assignments,package.get('order'),source)
     from .spacers023 import restore
     content,runtime_assignments,semantics,forced,inserted=restore(content,assignments,rules.semantic_spans(source),package,template)
     plan,unresolved=rules.compile_plan(template,content,package,runtime_assignments,semantics,forced)
+    unresolved.extend(order_issues)
+    if order_issues:plan=None
     report={'schema':'application-023','model':meta,'unresolved':unresolved,'status':'needs_review',
-            'assignments':assignments,'source_sha256':digest(source.read_bytes())}
+            'assignments':assignments,'structure_moves':moves,'structure_permutation':permutation,'source_sha256':digest(source.read_bytes())}
     if plan:
         dump(folder/'input/content/content.json',content)
         plan['template_sha256']=digest((template_dir/'rules.json').read_bytes())
@@ -121,7 +128,8 @@ def apply(source,template_dir,folder,config,*,caller=call):
                 if node.tag.rsplit('}',1)[-1]!='p' or node.findall('.//w:t',NS) or node.findall('.//w:drawing',NS):raise DocumentError('SPACER_NOT_EMPTY')
                 body.remove(node)
             parts['word/document.xml']=xml_bytes(root);checked=folder/'integrity-without-inserted-spacers.docx';write_package(checked,parts)
-        integrity=check(source,checked);report.update(integrity);report['inserted_layout_paragraphs']=len(inserted)
+        expected=expected_source(source,permutation,folder/'expected-content-order.docx')
+        integrity=check(expected,checked);report.update(integrity);report['inserted_layout_paragraphs']=len(inserted)
         if not all(integrity.values()):
             report['status']='integrity_failed'
         else:
