@@ -1,0 +1,229 @@
+{
+  "groups": [
+    {
+      "start": 1,
+      "end": 1,
+      "role": "article_title"
+    },
+    {
+      "start": 2,
+      "end": 2,
+      "role": "abstract_heading"
+    },
+    {
+      "start": 3,
+      "end": 3,
+      "role": "abstract_body"
+    },
+    {
+      "start": 4,
+      "end": 4,
+      "role": "keywords"
+    },
+    {
+      "start": 5,
+      "end": 5,
+      "role": "section_heading"
+    },
+    {
+      "start": 6,
+      "end": 12,
+      "role": "body"
+    },
+    {
+      "start": 13,
+      "end": 13,
+      "role": "section_heading"
+    },
+    {
+      "start": 14,
+      "end": 20,
+      "role": "body"
+    },
+    {
+      "start": 21,
+      "end": 21,
+      "role": "table_caption"
+    },
+    {
+      "start": 22,
+      "end": 24,
+      "role": "table_header"
+    },
+    {
+      "start": 25,
+      "end": 27,
+      "role": "table_body"
+    },
+    {
+      "start": 28,
+      "end": 30,
+      "role": "table_body"
+    },
+    {
+      "start": 31,
+      "end": 31,
+      "role": "table_body"
+    },
+    {
+      "start": 32,
+      "end": 33,
+      "role": "nested_table_body"
+    },
+    {
+      "start": 34,
+      "end": 35,
+      "role": "nested_table_body"
+    },
+    {
+      "start": 36,
+      "end": 37,
+      "role": "nested_table_body"
+    },
+    {
+      "start": 38,
+      "end": 38,
+      "role": "table_trailing_empty"
+    },
+    {
+      "start": 39,
+      "end": 40,
+      "role": "table_body"
+    },
+    {
+      "start": 41,
+      "end": 43,
+      "role": "table_body"
+    },
+    {
+      "start": 44,
+      "end": 46,
+      "role": "table_body"
+    },
+    {
+      "start": 47,
+      "end": 49,
+      "role": "table_body"
+    },
+    {
+      "start": 50,
+      "end": 52,
+      "role": "table_body"
+    },
+    {
+      "start": 53,
+      "end": 53,
+      "role": "body"
+    },
+    {
+      "start": 54,
+      "end": 54,
+      "role": "section_heading"
+    },
+    {
+      "start": 55,
+      "end": 61,
+      "role": "body"
+    },
+    {
+      "start": 62,
+      "end": 62,
+      "role": "section_heading"
+    },
+    {
+      "start": 63,
+      "end": 69,
+      "role": "body"
+    },
+    {
+      "start": 70,
+      "end": 70,
+      "role": "section_heading"
+    },
+    {
+      "start": 71,
+      "end": 77,
+      "role": "body"
+    },
+    {
+      "start": 78,
+      "end": 78,
+      "role": "table_caption"
+    },
+    {
+      "start": 79,
+      "end": 81,
+      "role": "table_header"
+    },
+    {
+      "start": 82,
+      "end": 180,
+      "role": "table_body"
+    },
+    {
+      "start": 181,
+      "end": 181,
+      "role": "body"
+    },
+    {
+      "start": 182,
+      "end": 182,
+      "role": "section_heading"
+    },
+    {
+      "start": 183,
+      "end": 189,
+      "role": "body"
+    },
+    {
+      "start": 190,
+      "end": 190,
+      "role": "section_heading"
+    },
+    {
+      "start": 191,
+      "end": 197,
+      "role": "body"
+    },
+    {
+      "start": 198,
+      "end": 198,
+      "role": "table_caption"
+    },
+    {
+      "start": 199,
+      "end": 201,
+      "role": "table_header"
+    },
+    {
+      "start": 202,
+      "end": 222,
+      "role": "table_body"
+    },
+    {
+      "start": 223,
+      "end": 223,
+      "role": "body"
+    },
+    {
+      "start": 224,
+      "end": 224,
+      "role": "section_heading"
+    },
+    {
+      "start": 225,
+      "end": 231,
+      "role": "body"
+    },
+    {
+      "start": 232,
+      "end": 232,
+      "role": "bibliography_heading"
+    },
+    {
+      "start": 233,
+      "end": 244,
+      "role": "bibliography_entry"
+    }
+  ]
+}

@@ -1,0 +1,390 @@
+{
+  "roles": {
+    "article_title": "Название научной работы в целом.",
+    "abstract_heading": "Заголовок блока аннотации.",
+    "abstract_body": "Краткое изложение предмета, целей, методов и результатов в блоке аннотации.",
+    "keywords": "Перечень ключевых слов, включая вводную метку.",
+    "section_heading": "Заголовок основного раздела статьи, с номером или без него.",
+    "body": "Основной связный текст вне аннотации, таблиц и библиографии; включает продолжение текста после таблицы.",
+    "table_caption": "Название таблицы вне её ячеек, обычно с обозначением и номером.",
+    "table_header": "Ячейка, называющая столбец или группу данных, а не отдельное наблюдение. Первая строка сама по себе не является заголовком: если она содержит такие же данные, как остальные строки, это данные таблицы.",
+    "table_body": "Данные и подписи отдельных наблюдений в ячейках внешней таблицы, кроме заголовков.",
+    "nested_table_body": "Данные в ячейках таблицы, вложенной в ячейку другой таблицы. Включает первую строку, если она содержит элементы того же ряда данных, что последующие строки, а не названия столбцов. Обозначения отдельных подуровней относятся к данным, не к заголовкам.",
+    "table_trailing_empty": "Пустой служебный абзац в родительской ячейке после вложенной таблицы.",
+    "bibliography_heading": "Заголовок списка использованных источников.",
+    "bibliography_entry": "Отдельная библиографическая запись в списке источников."
+  },
+  "groups": [
+    {
+      "start": 1,
+      "end": 1,
+      "role": "article_title"
+    },
+    {
+      "start": 2,
+      "end": 2,
+      "role": "abstract_heading"
+    },
+    {
+      "start": 3,
+      "end": 3,
+      "role": "abstract_body"
+    },
+    {
+      "start": 4,
+      "end": 4,
+      "role": "keywords"
+    },
+    {
+      "start": 5,
+      "end": 5,
+      "role": "section_heading"
+    },
+    {
+      "start": 6,
+      "end": 11,
+      "role": "body"
+    },
+    {
+      "start": 12,
+      "end": 12,
+      "role": "section_heading"
+    },
+    {
+      "start": 13,
+      "end": 18,
+      "role": "body"
+    },
+    {
+      "start": 19,
+      "end": 19,
+      "role": "table_caption"
+    },
+    {
+      "start": 20,
+      "end": 22,
+      "role": "table_header"
+    },
+    {
+      "start": 23,
+      "end": 29,
+      "role": "table_body"
+    },
+    {
+      "start": 30,
+      "end": 35,
+      "role": "nested_table_body"
+    },
+    {
+      "start": 36,
+      "end": 36,
+      "role": "table_trailing_empty"
+    },
+    {
+      "start": 37,
+      "end": 50,
+      "role": "table_body"
+    },
+    {
+      "start": 51,
+      "end": 51,
+      "role": "body"
+    },
+    {
+      "start": 52,
+      "end": 52,
+      "role": "section_heading"
+    },
+    {
+      "start": 53,
+      "end": 58,
+      "role": "body"
+    },
+    {
+      "start": 59,
+      "end": 59,
+      "role": "section_heading"
+    },
+    {
+      "start": 60,
+      "end": 65,
+      "role": "body"
+    },
+    {
+      "start": 66,
+      "end": 66,
+      "role": "section_heading"
+    },
+    {
+      "start": 67,
+      "end": 72,
+      "role": "body"
+    },
+    {
+      "start": 73,
+      "end": 73,
+      "role": "table_caption"
+    },
+    {
+      "start": 74,
+      "end": 76,
+      "role": "table_header"
+    },
+    {
+      "start": 77,
+      "end": 175,
+      "role": "table_body"
+    },
+    {
+      "start": 176,
+      "end": 176,
+      "role": "body"
+    },
+    {
+      "start": 177,
+      "end": 177,
+      "role": "section_heading"
+    },
+    {
+      "start": 178,
+      "end": 183,
+      "role": "body"
+    },
+    {
+      "start": 184,
+      "end": 184,
+      "role": "section_heading"
+    },
+    {
+      "start": 185,
+      "end": 190,
+      "role": "body"
+    },
+    {
+      "start": 191,
+      "end": 191,
+      "role": "table_caption"
+    },
+    {
+      "start": 192,
+      "end": 194,
+      "role": "table_header"
+    },
+    {
+      "start": 195,
+      "end": 215,
+      "role": "table_body"
+    },
+    {
+      "start": 216,
+      "end": 216,
+      "role": "body"
+    },
+    {
+      "start": 217,
+      "end": 217,
+      "role": "section_heading"
+    },
+    {
+      "start": 218,
+      "end": 223,
+      "role": "body"
+    },
+    {
+      "start": 224,
+      "end": 224,
+      "role": "bibliography_heading"
+    },
+    {
+      "start": 225,
+      "end": 236,
+      "role": "bibliography_entry"
+    },
+    {
+      "start": 237,
+      "end": 237,
+      "role": "article_title"
+    },
+    {
+      "start": 238,
+      "end": 238,
+      "role": "abstract_heading"
+    },
+    {
+      "start": 239,
+      "end": 239,
+      "role": "abstract_body"
+    },
+    {
+      "start": 240,
+      "end": 240,
+      "role": "keywords"
+    },
+    {
+      "start": 241,
+      "end": 241,
+      "role": "section_heading"
+    },
+    {
+      "start": 242,
+      "end": 248,
+      "role": "body"
+    },
+    {
+      "start": 249,
+      "end": 249,
+      "role": "section_heading"
+    },
+    {
+      "start": 250,
+      "end": 256,
+      "role": "body"
+    },
+    {
+      "start": 257,
+      "end": 257,
+      "role": "table_caption"
+    },
+    {
+      "start": 258,
+      "end": 260,
+      "role": "table_header"
+    },
+    {
+      "start": 261,
+      "end": 267,
+      "role": "table_body"
+    },
+    {
+      "start": 268,
+      "end": 273,
+      "role": "nested_table_body"
+    },
+    {
+      "start": 274,
+      "end": 274,
+      "role": "table_trailing_empty"
+    },
+    {
+      "start": 275,
+      "end": 288,
+      "role": "table_body"
+    },
+    {
+      "start": 289,
+      "end": 289,
+      "role": "body"
+    },
+    {
+      "start": 290,
+      "end": 290,
+      "role": "section_heading"
+    },
+    {
+      "start": 291,
+      "end": 297,
+      "role": "body"
+    },
+    {
+      "start": 298,
+      "end": 298,
+      "role": "section_heading"
+    },
+    {
+      "start": 299,
+      "end": 305,
+      "role": "body"
+    },
+    {
+      "start": 306,
+      "end": 306,
+      "role": "section_heading"
+    },
+    {
+      "start": 307,
+      "end": 313,
+      "role": "body"
+    },
+    {
+      "start": 314,
+      "end": 314,
+      "role": "table_caption"
+    },
+    {
+      "start": 315,
+      "end": 317,
+      "role": "table_header"
+    },
+    {
+      "start": 318,
+      "end": 416,
+      "role": "table_body"
+    },
+    {
+      "start": 417,
+      "end": 417,
+      "role": "body"
+    },
+    {
+      "start": 418,
+      "end": 418,
+      "role": "section_heading"
+    },
+    {
+      "start": 419,
+      "end": 425,
+      "role": "body"
+    },
+    {
+      "start": 426,
+      "end": 426,
+      "role": "section_heading"
+    },
+    {
+      "start": 427,
+      "end": 433,
+      "role": "body"
+    },
+    {
+      "start": 434,
+      "end": 434,
+      "role": "table_caption"
+    },
+    {
+      "start": 435,
+      "end": 437,
+      "role": "table_header"
+    },
+    {
+      "start": 438,
+      "end": 458,
+      "role": "table_body"
+    },
+    {
+      "start": 459,
+      "end": 459,
+      "role": "body"
+    },
+    {
+      "start": 460,
+      "end": 460,
+      "role": "section_heading"
+    },
+    {
+      "start": 461,
+      "end": 467,
+      "role": "body"
+    },
+    {
+      "start": 468,
+      "end": 468,
+      "role": "bibliography_heading"
+    },
+    {
+      "start": 469,
+      "end": 480,
+      "role": "bibliography_entry"
+    }
+  ],
+  "questions": []
+}

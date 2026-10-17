@@ -21,68 +21,68 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 237.369047 
-L 572.4 237.369047 
-L 572.4 0 
-L 0 0 
+   <path d="M 0 237.369047
+L 572.4 237.369047
+L 572.4 0
+L 0 0
 z
 " style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="line2d_1">
-    <path d="M 19.881818 53.202 
-L 248.154545 53.202 
+    <path d="M 19.881818 53.202
+L 248.154545 53.202
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_2">
-    <path d="M 19.881818 77.5956 
-L 248.154545 77.5956 
+    <path d="M 19.881818 77.5956
+L 248.154545 77.5956
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_3">
-    <path d="M 19.881818 101.9892 
-L 248.154545 101.9892 
+    <path d="M 19.881818 101.9892
+L 248.154545 101.9892
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_4">
-    <path d="M 19.881818 101.9892 
-L 19.881818 53.202 
+    <path d="M 19.881818 101.9892
+L 19.881818 53.202
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_5">
-    <path d="M 134.018182 101.9892 
-L 134.018182 53.202 
+    <path d="M 134.018182 101.9892
+L 134.018182 53.202
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_6">
-    <path d="M 248.154545 101.9892 
-L 248.154545 53.202 
+    <path d="M 248.154545 101.9892
+L 248.154545 53.202
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_7">
-    <path d="M 24.109091 151.99608 
-L 239.7 151.99608 
+    <path d="M 24.109091 151.99608
+L 239.7 151.99608
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #65788a; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="line2d_8">
-    <path d="M 24.109091 168.46176 
-L 239.7 168.46176 
+    <path d="M 24.109091 168.46176
+L 239.7 168.46176
 " clip-path="url(#p04f715118a)" style="fill: none; stroke: #65788a; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17324d" x="32.563636" y="145.629775" transform="rotate(-0 32.563636 145.629775)">Анализ после таблицы…</text>
    </g>
    <g id="patch_2">
-    <path d="M 256.609091 132.410212 
-Q 256.609091 118.757793 256.609091 105.105374 
+    <path d="M 256.609091 132.410212
+Q 256.609091 118.757793 256.609091 105.105374
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
-    <path d="M 258.809091 128.010212 
-L 256.609091 132.410212 
-L 254.409091 128.010212 
+    <path d="M 258.809091 128.010212
+L 256.609091 132.410212
+L 254.409091 128.010212
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
-    <path d="M 254.409091 109.505374 
-L 256.609091 105.105374 
-L 258.809091 109.505374 
+    <path d="M 254.409091 109.505374
+L 256.609091 105.105374
+L 258.809091 109.505374
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
    </g>
    <g id="text_2">
@@ -91,59 +91,59 @@ L 258.809091 109.505374
   </g>
   <g id="axes_2">
    <g id="line2d_9">
-    <path d="M 324.245455 53.202 
-L 552.518182 53.202 
+    <path d="M 324.245455 53.202
+L 552.518182 53.202
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_10">
-    <path d="M 324.245455 77.5956 
-L 552.518182 77.5956 
+    <path d="M 324.245455 77.5956
+L 552.518182 77.5956
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_11">
-    <path d="M 324.245455 101.9892 
-L 552.518182 101.9892 
+    <path d="M 324.245455 101.9892
+L 552.518182 101.9892
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_12">
-    <path d="M 324.245455 101.9892 
-L 324.245455 53.202 
+    <path d="M 324.245455 101.9892
+L 324.245455 53.202
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_13">
-    <path d="M 438.381818 101.9892 
-L 438.381818 53.202 
+    <path d="M 438.381818 101.9892
+L 438.381818 53.202
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_14">
-    <path d="M 552.518182 101.9892 
-L 552.518182 53.202 
+    <path d="M 552.518182 101.9892
+L 552.518182 53.202
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #17324d; stroke-linecap: square"/>
    </g>
    <g id="line2d_15">
-    <path d="M 328.472727 129.432 
-L 544.063636 129.432 
+    <path d="M 328.472727 129.432
+L 544.063636 129.432
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #65788a; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="line2d_16">
-    <path d="M 328.472727 145.89768 
-L 544.063636 145.89768 
+    <path d="M 328.472727 145.89768
+L 544.063636 145.89768
 " clip-path="url(#p585f2902bc)" style="fill: none; stroke: #65788a; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="text_3">
     <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17324d" x="336.927273" y="123.065695" transform="rotate(-0 336.927273 123.065695)">Анализ после таблицы…</text>
    </g>
    <g id="patch_3">
-    <path d="M 560.972727 109.846355 
-Q 560.972727 107.478177 560.972727 105.109998 
+    <path d="M 560.972727 109.846355
+Q 560.972727 107.478177 560.972727 105.109998
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
-    <path d="M 563.172727 105.446355 
-L 560.972727 109.846355 
-L 558.772727 105.446355 
+    <path d="M 563.172727 105.446355
+L 560.972727 109.846355
+L 558.772727 105.446355
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
-    <path d="M 558.772727 109.509998 
-L 560.972727 105.109998 
-L 563.172727 109.509998 
+    <path d="M 558.772727 109.509998
+L 560.972727 105.109998
+L 563.172727 109.509998
 " style="fill: none; stroke: #bb493b; stroke-linecap: round"/>
    </g>
    <g id="text_4">

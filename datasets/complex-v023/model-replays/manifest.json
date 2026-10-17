@@ -1,0 +1,155 @@
+{
+  "files": [
+    {
+      "path": "article-final3--iteration-1--application-1--student.json",
+      "source_run": "article-final3",
+      "sha256": "786fc64b8ede46df2c94db3bcb33f5d357c7a4e8c21659f367ade8e04fcb7dd5",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-final3--iteration-1--teacher.json",
+      "source_run": "article-final3",
+      "sha256": "c514c9c33cb37b30dc360bd7680403a1da3259dcbcc5a2a7d25a1eece2534fd2",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-resume3--iteration-1--application-1--student.json",
+      "source_run": "nested-resume3",
+      "sha256": "181c75122fb76581f580f958880b310e1683ee8a7d6ec80e306224c9f1f6d546",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-resume3--iteration-1--application-2--student.json",
+      "source_run": "nested-resume3",
+      "sha256": "7584ac0ee89ce6959ded161a542fd359c4b3ce2e34d738f56e67e5b5c0e0758c",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-resume3--iteration-1--teacher.json",
+      "source_run": "nested-resume3",
+      "sha256": "7cca0e0e5186fdc1ba1b2ceb777815ed4c1829602278f70f08a169b65ffe5ffc",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-1--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "487a2b004cbbfbcf5c99a3f984822bb7957731ed1cbbb24062f7710d511c8f0b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-10--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "ca526b46863733dc840f3ee93d17d579cbd1c151eb3005e7fb115f1d1cbda30b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-2--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "39f7f8b3f169537b79003974810f793ad1f85873eda9c723a933a9920bf17277",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-3--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "487a2b004cbbfbcf5c99a3f984822bb7957731ed1cbbb24062f7710d511c8f0b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-4--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "ca526b46863733dc840f3ee93d17d579cbd1c151eb3005e7fb115f1d1cbda30b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-5--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "78e2840f3dcfdade819a52775fc3498d18ae51cda03d9200b73999720a8bdd20",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-6--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "39f7f8b3f169537b79003974810f793ad1f85873eda9c723a933a9920bf17277",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-7--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "39f7f8b3f169537b79003974810f793ad1f85873eda9c723a933a9920bf17277",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-8--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "ca526b46863733dc840f3ee93d17d579cbd1c151eb3005e7fb115f1d1cbda30b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "article-heldout1--trial-9--student.json",
+      "source_run": "article-heldout1",
+      "sha256": "487a2b004cbbfbcf5c99a3f984822bb7957731ed1cbbb24062f7710d511c8f0b",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-1--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "edbf1f9d09e18996ef9dfdb9203930c6e0803fd89c7d02d5c0683ed728acfdc0",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-10--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-2--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "edbf1f9d09e18996ef9dfdb9203930c6e0803fd89c7d02d5c0683ed728acfdc0",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-3--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-4--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-5--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-6--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-7--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-8--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    },
+    {
+      "path": "nested-heldout1--trial-9--student.json",
+      "source_run": "nested-heldout1",
+      "sha256": "bdb87d641f1645f9473bf34552f0512fbfd0e76d4c877e95cf4251c9a04a16b9",
+      "mode": "saved_model_response_not_a_new_call"
+    }
+  ],
+  "scope": "synthetic-only; excludes private user reference and prompts"
+}

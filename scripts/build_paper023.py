@@ -18,6 +18,7 @@ def figures(data,out):
  out.mkdir(parents=True,exist_ok=True)
  def save(fig,name):
   fig.savefig(out/(name+'.svg'),bbox_inches='tight',facecolor='white');fig.savefig(out/(name+'.png'),dpi=200,bbox_inches='tight',facecolor='white');plt.close(fig)
+  svg=out/(name+'.svg');svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
  def canvas(size=(11,4)):
   f,a=plt.subplots(figsize=size);a.set_xlim(0,11);a.set_ylim(0,4);a.axis('off');return f,a
  def box(a,x,y,w,h,text,color=TEAL):
