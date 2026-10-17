@@ -33,3 +33,9 @@
 - [Связанные агентные исследования](related-agent-work-028.md).
 - Машиночитаемые результаты: [029](convergence-029.json), [030](convergence-030.json), [031](convergence-031.json), [032](convergence-032.json).
 - [Диагностика порядка XML-свойств](property-order030.json): простая нормализация не разрешила конфликты.
+
+- [Свежий прогон033](convergence-033.json), [остановка до API](convergence-033-budget.json), [причинные replay-проверки](compiler-replays-033.json).
+
+- [Сводное исследование и готовность033](autonomy-033.md).
+
+- [Длинный прогон033](convergence-033-general.json), [offline-аудит свойств длинных экземпляров](long-properties-033.json).

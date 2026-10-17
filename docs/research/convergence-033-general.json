@@ -1,0 +1,143 @@
+{
+  "protocol": {
+    "series": "033-general-b",
+    "max_iterations": 2,
+    "teacher": "openai/gpt-6.1-sol",
+    "student": "qwen/qwen3.8-27b",
+    "manual_feedback": false,
+    "manual_repairs": false,
+    "separate_runs_for_each_iteration_limit": false,
+    "source_manifest_sha256": "fd9f8e04c0c22d9ada3e3e9f2e1f1faf91640d84658d3cd4c30b026071d380e7",
+    "implementation_hashes": {
+      "agent028.py": "49219449c3add446750864a98152643a268998e58776ac9b15bb9c0d1b6f198a",
+      "templateagent022.py": "f343b1621ce12443fd0c3fcde0f1da45ef406eaf07f1b160318ce3573c7b4bc2",
+      "catalogue.py": "6d10780b39e1ea23cc37867d56953848822b62e458f4ccf8f2f08fef7b1c1d8f",
+      "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "templatecheck021.py": "6a375c273e689009035036198513a369ce41f2e0b5fbcc88c440ccd97788e3c2",
+      "roundtrip022.py": "5db1aae8a818f15c4f849b01db23278270e06559b26558dc686a1b049324f32d",
+      "evidence031.py": "fe705c05b39772dbaa88f1ecb3699f31ed9284a06029d1aabc02666eff58b5df",
+      "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+      "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+      "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+      "order024.py": "06072b45783719f5abd247c8c7f95f883024d9891e44ccf6b738f37dfff77505",
+      "structure017.py": "3b0a24f01802443991432f6cadc45d9f175c49da0bd56ec0f25ad466e72c39a3",
+      "format032.py": "49abd2cc92c0e2c85abe082fb4db3a6dcb9bdcb40f25f31eeaeefab1a3b057ef",
+      "fields030.py": "ba5a045e5808e92ee00e62954b02667f5fd258545753abfdf202bc5304e23916",
+      "stories026.py": "ec21ac95b410704315fe74c770c996b0a5fd34c793b94a6e3de6796de9c382e7",
+      "diagnostics024.py": "c47073589e8aef586d048265ef907f532d5bd6f019d2e5eae05ac3da9d8ca664",
+      "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+      "fonts019.py": "7e4ff5846f00d492f2c8b0d5286a7bcd34b8cc8cd054e9a14e5d19ad947a8275",
+      "inline026.py": "b4797c61bc2ab2a015b6632cc4f451fbc0bb62902a061f62213635b631e10eb0",
+      "layout021.py": "8905ff740dfc8b1248281c8395595dad859d96ad45c6017806669ad785509061",
+      "docx_engine.py": "df49b2df4f0bee23d29e6da502f4ac2a35937b2e84f81e2658b397069b024e74",
+      "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+      "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+      "infrastructure031.py": "71e3bff0ad14b9cccaf2bf2c4ad8b0c31714ba02e0edfb4c9e148c9673de84cd",
+      "rules023.py": "a9c048bb6e9db865d3cda7236c3039bc6e4a839311b1bd8791ab01582dec6829",
+      "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+      "web017.py": "b371353b887853bfa1b047e82ed8ab59ba64860fd0125f1d29fab6a7f43267b9",
+      "controls023.py": "b3b7f325de947753b481c1125f18e69219121ceb5befdf0f5895df0ce47b2aa0",
+      "documentcheck022.py": "b9fe8a60939051571c18eccd5c6574487bb52737dbe999a494c343dc3bfa0019",
+      "provider023.py": "e1c2690b905d424f554acd56cb6bfcad4cb3f7500ab549ff06b5b2c85a7d1192",
+      "spacers023.py": "8415262738769061b33e84102710fc45b6c85b1409de186eac39768b52cd57fb",
+      "bookmarks020.py": "6ffde6eda956f468ddb8baf9d0248cb19dc18867242aec7d76ef6f43bfe2dd1c",
+      "webagent023.py": "4f489d5257078f54b26fca716d7cd14f0d21d0d279cf6738d5316c7ac4cf14f6",
+      "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+      "semantic023.py": "a932919ca4aa26372e02b2d21bd2c83de4240dca8cecd6002bf17d99b5ceaa1a",
+      "model019.py": "672de2df49593e9f27a7eb6f0911943416e4e943a54aa531c44b3c161e396bb7",
+      "integrity023.py": "92d1ef43b0518cd2836031c41f884c2b9dcd55f74cf9ccbedb1addd8ad465ce1",
+      "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+      "adapters028.py": "3b93d4c178a79f95c2f3a69a884b99d5360a26cf5c1f7e9a8c004ead2c8d154d",
+      "typography019.py": "6b65d43eed7715e386315478984e12f2b619a8e8cc3ebdabddee64b1c659fe5c",
+      "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+      "representation021.py": "34310ebd31e478f9ead371e6440ec4d98c2cf2d8b7755aee332d85c1acaeba71",
+      "agent023.py": "1003a92868555a8d2715586a399341ad302c7e2b1f7c4819be8d84b5ae74e644"
+    }
+  },
+  "documents": [
+    {
+      "id": "canterbury",
+      "status": "needs_review",
+      "code": null,
+      "seconds": 353.5056207689995,
+      "first_success_iteration": null,
+      "iterations": [
+        {
+          "number": 1,
+          "status": "needs_review",
+          "conflicts": 35,
+          "code": null,
+          "started_seconds": 0.6332041679997928,
+          "finished_seconds": 119.55431368500285,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 391,
+          "teacher_student_agreement": {
+            "correct": 295,
+            "total": 415,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 0
+        },
+        {
+          "number": 2,
+          "status": "needs_review",
+          "conflicts": 33,
+          "code": null,
+          "started_seconds": 119.55591771800391,
+          "finished_seconds": 351.20904013300606,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 342,
+          "teacher_student_agreement": {
+            "correct": 304,
+            "total": 415,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 4
+        }
+      ],
+      "api_attempts": 4,
+      "cost_usd": "0.553163325",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": "instance_verified",
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "EMPTY_RUN_UNSUPPORTED",
+              "adaptation": null,
+              "pixel_exact": null
+            },
+            {
+              "number": 2,
+              "status": "passed",
+              "code": null,
+              "adaptation": {
+                "adapter": "proofing-and-empty-runs-v1",
+                "removed_nodes": 68,
+                "parts": {
+                  "word/document.xml": 68
+                }
+              },
+              "pixel_exact": true
+            }
+          ]
+        }
+      ],
+      "api_seconds_sum": 346.21243989300274,
+      "unknown_cost_attempts": 0,
+      "unconfirmed_reserve_usd": "0",
+      "human_feedback_revisions_applied": 0,
+      "instance_replay_passed": true
+    }
+  ],
+  "prefix_success": {
+    "1": 0,
+    "2": 0
+  },
+  "timing_note": "Wall time includes local rendering and waiting on the shared ledger; API seconds sum excludes lock waiting and account/catalog requests. Series029,030 and031 overlapped. Do not treat wall times as isolated service latency."
+}

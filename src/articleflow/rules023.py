@@ -145,7 +145,18 @@ def fit(examples):
                 else:
                     rule={'kind':kind,'when':json.loads(cond),'set':items[0]['set'],'support':len(items)}
                     rule['id']=digest(key(rule).encode())[:16];rules.append(rule)
-    return rules,conflicts
+    # Inline annotations are a prediction, not a mandatory style dependency.
+    # Remove this selector only when EVERY compatible training observation agrees.
+    # Conflicting observations remain in rows and prevent an unsafe broadening.
+    for rule in rules:
+        if rule['kind']!='character' or 'inline_role' not in rule['when']:continue
+        condition={k:v for k,v in rule['when'].items() if k!='inline_role'}
+        support=[r for r in examples if r['kind']=='character' and all(r['when'].get(k)==v for k,v in condition.items())]
+        if support and all(r['set']==rule['set'] for r in support):
+            rule['when']=condition;rule['support']=len(support)
+            rule['id']=digest(key({k:v for k,v in rule.items() if k!='id'}).encode())[:16]
+    unique={key({k:v for k,v in r.items() if k not in {'id','support'}}):r for r in rules}
+    return list(unique.values()),conflicts
 
 
 def validate_rules(rules,template):

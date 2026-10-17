@@ -1,0 +1,106 @@
+{
+  "order_replays": [
+    {
+      "id": "tusur",
+      "status": "rendered_unverified",
+      "api_attempts": 0,
+      "mode": "saved_response_replay",
+      "unresolved_count": 0,
+      "moves": 2,
+      "pixels": {
+        "golden_pages": 2,
+        "candidate_pages": 2,
+        "pages_equal": true,
+        "page_sizes_equal": true,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0,
+        "mae": 0.0,
+        "matched_page_diagnostics": [
+          {
+            "page": 1,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          },
+          {
+            "page": 2,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "osu",
+      "status": "rendered_unverified",
+      "api_attempts": 0,
+      "mode": "saved_response_replay",
+      "unresolved_count": 0,
+      "moves": 2,
+      "pixels": {
+        "golden_pages": 1,
+        "candidate_pages": 1,
+        "pages_equal": true,
+        "page_sizes_equal": true,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0,
+        "mae": 0.0,
+        "matched_page_diagnostics": [
+          {
+            "page": 1,
+            "same_size": true,
+            "pixel_exact": true,
+            "differing_pixels": 0
+          }
+        ]
+      }
+    }
+  ],
+  "inline_replay": {
+    "mode": "saved_teacher_and_student_replay",
+    "api_attempts": 0,
+    "status": "rendered_unverified",
+    "unresolved_count": 0,
+    "training_conflicts": 0,
+    "pixels": {
+      "golden_pages": 2,
+      "candidate_pages": 2,
+      "pages_equal": true,
+      "page_sizes_equal": true,
+      "pixel_exact": true,
+      "differing_pixel_ratio": 0.0,
+      "mae": 0.0,
+      "matched_page_diagnostics": [
+        {
+          "page": 1,
+          "same_size": true,
+          "pixel_exact": true,
+          "differing_pixels": 0
+        },
+        {
+          "page": 2,
+          "same_size": true,
+          "pixel_exact": true,
+          "differing_pixels": 0
+        }
+      ]
+    },
+    "format": {
+      "resources_exact": true,
+      "property_exact": true,
+      "parts": [
+        {
+          "part": "word/document.xml",
+          "paragraphs_exact": true,
+          "layout_exact": true,
+          "drawings_exact": true,
+          "paragraph_count_source": 43,
+          "paragraph_count_target": 43
+        }
+      ],
+      "scope": "Resolved paragraph/run properties and direct table/section/content-control/drawing properties. Does not certify arbitrary unsupported Word features or cross-renderer pagination."
+    }
+  },
+  "note": "Offline causal replays with frozen model responses; zero new API requests. Not independent LLM trials."
+}

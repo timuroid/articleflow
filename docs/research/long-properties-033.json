@@ -1,0 +1,58 @@
+[
+  {
+    "id": "canterbury",
+    "resources_exact": true,
+    "property_exact": true,
+    "parts": [
+      {
+        "part": "word/document.xml",
+        "paragraphs_exact": true,
+        "layout_exact": true,
+        "drawings_exact": true,
+        "paragraph_count_source": 612,
+        "paragraph_count_target": 612
+      }
+    ],
+    "scope": "Resolved paragraph/run properties and direct table/section/content-control/drawing properties. Does not certify arbitrary unsupported Word features or cross-renderer pagination."
+  },
+  {
+    "id": "dundee",
+    "resources_exact": true,
+    "property_exact": true,
+    "parts": [
+      {
+        "part": "word/document.xml",
+        "paragraphs_exact": true,
+        "layout_exact": true,
+        "drawings_exact": true,
+        "paragraph_count_source": 450,
+        "paragraph_count_target": 450
+      },
+      {
+        "part": "word/footer1.xml",
+        "paragraphs_exact": true,
+        "layout_exact": true,
+        "drawings_exact": true,
+        "paragraph_count_source": 9,
+        "paragraph_count_target": 9
+      },
+      {
+        "part": "word/header1.xml",
+        "paragraphs_exact": true,
+        "layout_exact": true,
+        "drawings_exact": true,
+        "paragraph_count_source": 2,
+        "paragraph_count_target": 2
+      },
+      {
+        "part": "word/header2.xml",
+        "paragraphs_exact": true,
+        "layout_exact": true,
+        "drawings_exact": true,
+        "paragraph_count_source": 1,
+        "paragraph_count_target": 1
+      }
+    ],
+    "scope": "Resolved paragraph/run properties and direct table/section/content-control/drawing properties. Does not certify arbitrary unsupported Word features or cross-renderer pagination."
+  }
+]
