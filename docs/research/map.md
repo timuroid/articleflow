@@ -50,3 +50,5 @@
 - [Новые прогоны, сравнение 018/019 и все модельные попытки](evaluation-019.md).
 
 - [Серверный smoke и состояние бюджета 019](deployment-019-results.json).
+
+- [Замысел рукописи 020](manuscript-020-brief.md), [протокол](transfer-020-protocol.md), [результаты](evaluation-020.md) и [машинная сводка](evaluation-020.json).

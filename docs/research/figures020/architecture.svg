@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="670" viewBox="0 0 1600 670"><rect width="100%" height="100%" fill="white"/>
+<rect x="22" y="30" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="266.5" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Эталоны DOCX</text>
+<text x="266.5" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">разбор и измерения</text>
+<path d="M 514 92 H 548 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="555" y="30" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="799.5" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Роли и варианты</text>
+<text x="799.5" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">проверка конфликтов</text>
+<path d="M 1047 92 H 1081 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="1088" y="30" width="490" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1333.0" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Утверждённый шаблон</text>
+<text x="1333.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">правила и происхождение</text>
+<rect x="22" y="200" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="266.5" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Новая рукопись</text>
+<text x="266.5" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">содержание и объекты</text>
+<path d="M 514 262 H 548 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="555" y="200" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="799.5" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">LLM: роли и контексты</text>
+<text x="799.5" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">план без нового текста</text>
+<path d="M 1047 262 H 1081 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="1088" y="200" width="490" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1333.0" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Сборщик</text>
+<text x="1333.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">применение свойств</text>
+<rect x="22" y="370" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="266.5" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Проверка содержания</text>
+<text x="266.5" y="454" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">связей и структуры</text>
+<path d="M 514 432 H 548 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="555" y="370" width="489" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="799.5" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Рендер и шрифты</text>
+<text x="799.5" y="454" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">визуальная проверка</text>
+<path d="M 1047 432 H 1081 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="1088" y="370" width="490" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1333.0" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Результат и отчёт</text>
+<text x="1333.0" y="454" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">либо явный отказ</text>
+<text x="800" y="621" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" fill="#26384f">Шаблон первой стадии используется планировщиком и сборщиком второй стадии.</text></svg>

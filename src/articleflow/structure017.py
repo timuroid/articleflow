@@ -15,7 +15,7 @@ from lxml import etree as ET
 
 from .docx_engine import NS, W, DocumentError, digest, load_package, paragraph_text, parse_xml, write_package, xml_bytes
 from . import typography019 as typo
-from . import fragments019
+from . import fragments019, bookmarks020
 
 SLOTS = (
     "udc", "title", "authors", "affiliation", "city", "email",
@@ -44,6 +44,7 @@ def _body(parts: dict[str, bytes]):
     for name in _SINGLE_STORY:
         if name in parts and parse_xml(parts[name]).xpath(".//w:t", namespaces=NS):
             raise DocumentError("OTHER_STORY_REVIEW")
+    bookmarks020.validate_body_markers(body)
     return root, body
 
 
@@ -59,14 +60,11 @@ def inventory(source: Path) -> dict:
     blocks = []
     resolver = typo.Resolver(parts)
     in_abstract = False
+    in_references = False
     for index, node in enumerate(body):
         if node.tag == f"{{{W}}}sectPr":
             continue
-        # A bookmark end can be a top-level sibling immediately after the
-        # paragraph containing its start. Move both together during assembly.
-        if node.tag == f"{{{W}}}bookmarkEnd" and index > 0 and body[index - 1].tag == f"{{{W}}}p" and body[index - 1].xpath(
-            './/w:bookmarkStart[@w:id=$bookmark_id]', namespaces=NS, bookmark_id=node.get(f"{{{W}}}id")
-        ):
+        if node.tag in bookmarks020.MARKERS:
             continue
         if node.tag not in {f"{{{W}}}p", f"{{{W}}}tbl"}:
             raise DocumentError("BODY_NODE_REVIEW")
@@ -79,6 +77,12 @@ def inventory(source: Path) -> dict:
             "format_hints": resolver.hints(node) if node.tag == typo.tag("p") else {},
         }
         text = block["text"].strip()
+        if re.fullmatch(r"(?:список литературы|references|bibliography)", text, re.I):
+            in_references = True
+        elif in_references and (block["format_hints"].get("outline_level") not in {None, "9"} or re.match(r"^(?:информация об авторах|information about the authors|abstract|аннотация)\b", text, re.I)):
+            in_references = False
+        elif in_references:
+            block["format_hints"]["bibliography"] = True
         if re.match(r"^(?:аннотация|реферат|краткое\s+содержание)\s*$", text, re.I):
             in_abstract = True
         elif re.match(r"^ключевые\s+слова", text, re.I):
@@ -253,15 +257,12 @@ def _audit_source_nodes(original: list, output: list) -> None:
 
 
 def _clone_with_bookmark_end(body, index: int) -> list:
-    nodes = [copy.deepcopy(body[index])]
-    if index + 1 < len(body) and body[index + 1].tag == f"{{{W}}}bookmarkEnd":
-        nodes.append(copy.deepcopy(body[index + 1]))
-    return nodes
+    return [bookmarks020.clone_paragraph(body, index)]
 
 
 def _block_nodes(body, block):
     if block.get("range"):
-        return [fragments019.fragment(body[block["index"]], *block["range"])]
+        return [fragments019.fragment(bookmarks020.clone_paragraph(body, block["index"]), *block["range"])]
     return _clone_with_bookmark_end(body, block["index"])
 
 
@@ -278,12 +279,18 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
         if not set(assignments) <= set(suggested) or not set(assignments.values()) <= set(SLOTS) | {"editorial", "abstract_remainder"}:
             raise DocumentError("ROLE_ASSIGNMENT_INVALID")
         suggested.update(assignments)
+    if "editorial" in suggested.values():
+        if editorial_output is None:
+            raise DocumentError("EDITORIAL_OUTPUT_REQUIRED")
+        if editorial_output.resolve() in {source.resolve(), output.resolve()}:
+            raise DocumentError("EDITORIAL_OUTPUT_CONFLICT")
     questions = [f"Неразобранный фрагмент аннотации: {block['id']}" for block in inv["blocks"]
                  if suggested[block["id"]] == "abstract_remainder" and block["text"].strip()
                  and block["id"] not in (assignments or {})]
     if set(assignments or {}) != set(suggested):
         questions.append("Роли всех исходных блоков ещё не подтверждены")
     resolver = typo.Resolver(parts)
+    original_bookmarks = bookmarks020.signature(body)
     original = [n for block in inv["blocks"] for n in _block_nodes(body, block)]
     ordered = []
     reordered_source = []
@@ -333,6 +340,11 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
     _audit_source_nodes(original, reordered_source + editorial)
     if typo.scientific_signature(original) != typo.scientific_signature(reordered_source + editorial):
         raise DocumentError("SCIENTIFIC_PAYLOAD_INTEGRITY")
+    if original_bookmarks != bookmarks020.signature(reordered_source + editorial):
+        raise DocumentError("BOOKMARK_RANGE_CHANGED")
+    # A valid combined stream must not conceal a range split across two files.
+    bookmarks020.signature(reordered_source)
+    bookmarks020.signature(editorial)
     sect = copy.deepcopy(body.find("w:sectPr", NS))
     if (styles or {}).get("__document__"):
         typo.apply_section(sect, styles["__document__"])

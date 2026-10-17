@@ -1,0 +1,117 @@
+{
+  "series": "020",
+  "basis_commit": "71e1127d435fe87ec04f73d6687d24c6d302f538",
+  "new_api_attempts": 2,
+  "new_confirmed_usd": "0.0032251",
+  "short_demo": {
+    "role_correct": 26,
+    "role_total": 27,
+    "roles_exact": false,
+    "manual_role_changes": 1,
+    "meta": {
+      "model": "openai/gpt-6-luna",
+      "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+      "request_sha256": "af6c1d4956c4b9e8b7ab59ace8c5941dee48f921ae5c85e6b127cc4206f0acdd",
+      "api_attempts": 1,
+      "repair_calls": 0,
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.0008353",
+      "reserve_usd": "0.01417800",
+      "seconds": 4.229660697979853
+    }
+  },
+  "manuscript": {
+    "source_sha256": "6a8daa006361223813b3c7ee61ccc1770c8326c8f6fb9be78644944a5d30fbcd",
+    "output_sha256": "da733382d27ba6dc932aacf5a8d556567bd5b79018b245682ba7d9c67cb167ea",
+    "blocks": 69,
+    "roles_correct": 69,
+    "contexts_correct": 69,
+    "semantic_document_exact": true,
+    "model": {
+      "model": "openai/gpt-6-luna",
+      "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+      "request_sha256": "e88736a73dcac041dfd271bcd0b4026657f33b706e3b67ef05b1449f1a57179e",
+      "api_attempts": 1,
+      "repair_calls": 0,
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.0023898",
+      "reserve_usd": "0.04262750",
+      "seconds": 8.116343024070375
+    },
+    "manual_role_repairs": 0,
+    "text_preserved": true,
+    "resource_parts_identical": true,
+    "resource_parts": 6,
+    "tables": 3,
+    "drawings": 2,
+    "status": "draft",
+    "missing": [
+      "authors"
+    ],
+    "independent_transfer": false,
+    "pixel_gold_available": false
+  },
+  "format_audit": {
+    "checked_properties": 328,
+    "matched": 328,
+    "mismatches": [],
+    "page_geometry_matches_profile": true,
+    "pages": 10,
+    "fonts": [
+      "Arial-BoldMT",
+      "ArialMT",
+      "TimesNewRomanPS-BoldMT",
+      "TimesNewRomanPSMT"
+    ],
+    "text_outside_page": [],
+    "visual_pages_reviewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  },
+  "editorial_proof": {
+    "output_sha256": "b0dbb5f99926ad4981725cb455f50e3675f263be1efdd6acae43ee26b751ac69",
+    "changes": [
+      "Russian wording of author placeholder",
+      "keep caption and short table 3 together across page boundary"
+    ],
+    "scientific_text_changes": 0,
+    "model_role_repairs": 0,
+    "additional_model_calls": 0,
+    "not_automatic_template_result": true
+  },
+  "regression": {
+    "role_correct": 152,
+    "role_total": 152,
+    "roles_exact": 7,
+    "content_exact": 7,
+    "pixel_exact": 6,
+    "pixel_pairs": 6
+  },
+  "tests": 92,
+  "gherkin_scenarios": 22,
+  "gherkin_steps": 95,
+  "budget": {
+    "attempts": 65,
+    "confirmed_usd": "0.121563690",
+    "unsettled_reserved_usd": "1.060285",
+    "additional_cap_usd": "3",
+    "account": {
+      "usage_usd": "8.078233864",
+      "available_usd": "3.188014161",
+      "at": "2026-10-17T09:48:16.800448+00:00"
+    }
+  },
+  "independent_real_benchmark": false,
+  "deployment_performed": false
+}

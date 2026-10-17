@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="670" viewBox="0 0 1600 670"><rect width="100%" height="100%" fill="white"/>
+<rect x="22" y="30" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="400.0" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Контроль сборщика</text>
+<text x="400.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">известный правильный план</text>
+<path d="M 781 92 H 815 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="822" y="30" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1200.0" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Проверка исполнения</text>
+<text x="1200.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">не измеряет модель</text>
+<rect x="22" y="200" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="400.0" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Набор разработки</text>
+<text x="400.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">ошибки уже использованы</text>
+<path d="M 781 262 H 815 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="822" y="200" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1200.0" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Проверка регрессии</text>
+<text x="1200.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">не оценивает обобщение</text>
+<rect x="22" y="370" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="400.0" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Независимый корпус</text>
+<text x="400.0" y="454" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">фиксируется заранее</text>
+<path d="M 781 432 H 815 l -10 -6 m 10 6 l -10 6" fill="none" stroke="#26384f" stroke-width="3"/>
+<rect x="822" y="370" width="756" height="125" rx="12" fill="#f3f6fa" stroke="#26384f" stroke-width="3"/>
+<text x="1200.0" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">Проверка переноса</text>
+<text x="1200.0" y="454" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" fill="#172a42">следующий этап исследования</text>
+<text x="800" y="621" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" fill="#26384f">Единица оценки — документ; отказы и ручные исправления учитываются отдельно.</text></svg>

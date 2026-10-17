@@ -177,3 +177,25 @@ def zipped(c):
 def incomplete(c):
     job=next(j for j in c.jobs019 if j['source_name']=='missing.docx');assert job['status']=='draft'
     assert c.client019.get('/api/v017/jobs/'+job['id']+'/files/final').status_code==409
+
+@given('подтверждённый план выносит исходный абзац в редакционные заметки')
+def editorial_without_destination(c):
+    setup(c);c.doc019=Document();c.doc019.add_paragraph('Содержательный исходный абзац.')
+    c.source020=c.work019/'source020.docx';c.doc019.save(c.source020)
+    c.bytes020=c.source020.read_bytes();c.out020=c.work019/'out020.docx'
+    c.roles020={b['id']:'editorial' for b in inventory(c.source020)['blocks']}
+
+@when('сборщик вызван без отдельного пути редакционного результата')
+def missing_destination(c):
+    from articleflow.docx_engine import DocumentError
+    try:compile_document(c.source020,c.out020,assignments=c.roles020,required=[])
+    except DocumentError as error:c.error020=str(error)
+    else:c.error020=None
+
+@then('сборка отклонена до записи выходного документа')
+def no_output(c):
+    assert c.error020=='EDITORIAL_OUTPUT_REQUIRED'
+    assert not c.out020.exists()
+
+@then('исходный научный абзац остаётся доступным без изменений')
+def same_source(c):assert c.source020.read_bytes()==c.bytes020

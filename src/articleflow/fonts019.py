@@ -36,7 +36,10 @@ def audit(families=("Arial", "Times New Roman")):
 def required_fonts(styles):
     from .docx_engine import parse_xml, NS, W
     names = set()
-    for profile in styles.values():
+    profiles = list(styles.values())
+    while profiles:
+        profile = profiles.pop()
+        profiles.extend(v for v in profile.values() if isinstance(v, dict))
         for key in ("rPr", "label_rPr"):
             if not profile.get(key):
                 continue

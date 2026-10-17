@@ -157,6 +157,8 @@ def context(role, node, hints=None):
     level = (hints or {}).get("outline_level")
     if level is not None and str(level).isdigit() and int(level) < 9:
         return "body.heading." + str(int(level) + 1)
+    if (hints or {}).get("bibliography"):
+        return "body.references"
     numbered = re.match(r"^(\d+(?:\.\d+)*)\.?\s+\S", text)
     if numbered and len(text) < 160:
         return "body.heading." + str(numbered.group(1).count(".") + 1)
@@ -167,13 +169,17 @@ def context(role, node, hints=None):
 
 def measure(paragraph, resolver, key):
     p, base = resolver.resolve(paragraph)
+    # A numbering ID belongs to the source package, never to a portable style.
+    numbering = child(p, "numPr")
+    if numbering is not None:
+        p.remove(numbering)
     runs = paragraph.findall(".//w:r", NS)
     text_runs = [r for r in runs if paragraph_text(r)]
     dominant = max(text_runs, key=lambda r: len(paragraph_text(r)), default=None)
     if dominant is not None:
         _, font_source = resolver.resolve(paragraph, dominant)
         # Body local emphasis is content. It must not become a universal rule.
-        if key == "body" or key == "body.table":
+        if key in {"body", "body.table", "body.references"}:
             font_only = ET.Element(tag("rPr"))
             for n in font_source:
                 if ET.QName(n).localname in {"rFonts", "sz", "szCs", "color", "lang"}:
@@ -182,14 +188,21 @@ def measure(paragraph, resolver, key):
         else:
             base = font_source
     result = {"schema": "typography-019", "pPr": stable_xml(p), "rPr": stable_xml(base)}
-    # An explicit service label is a reusable span rule, never a sample quote.
-    if key.startswith("abstract_") and key != "abstract_heading" and len(text_runs) > 1:
-        first = paragraph_text(text_runs[0])
-        if re.match(r"^[^.:]{1,80}[.:]\s*$", first):
-            _, label = resolver.resolve(paragraph, text_runs[0])
-            result["label_rPr"] = stable_xml(label)
-            _, rest = resolver.resolve(paragraph, text_runs[-1])
-            result["rPr"] = stable_xml(rest)
+    # Word may split a label before its punctuation (e.g. bold word, plain dot).
+    match = re.match(r"^\s*(?:постановка\s+(?:проблемы|задачи)|проблема|цель(?:\s+(?:исследования|работы))?|результаты?|практическая\s+значимость)([.:])\s*", paragraph_text(paragraph), re.I)
+    if key.startswith("abstract_") and key != "abstract_heading" and match and len(text_runs) > 1:
+        _, label = resolver.resolve(paragraph, text_runs[0])
+        _, rest = resolver.resolve(paragraph, text_runs[-1])
+        result["label_rPr"] = stable_xml(label)
+        result["rPr"] = stable_xml(rest)
+        offset = 0
+        for run in text_runs:
+            if offset <= match.start(1) < offset + len(paragraph_text(run)):
+                _, punctuation = resolver.resolve(paragraph, run)
+                if stable_xml(punctuation) != stable_xml(label):
+                    result["label_scope"] = "words"
+                break
+            offset += len(paragraph_text(run))
     return result
 
 
@@ -204,11 +217,12 @@ def apply(paragraph, profile, resolver, key):
     if paragraph.tag != tag("p"):
         return
     label = re.match(r"^[^.:]{1,80}[.:]\s*", paragraph_text(paragraph)) if profile.get("label_rPr") else None
+    label_end = (len(label.group().rstrip().rstrip(".:")) if profile.get("label_scope") == "words" else label.end()) if label else 0
     offset = 0
     if label:
         for run in list(paragraph.findall("w:r", NS)):
             text = paragraph_text(run)
-            boundary = label.end() - offset
+            boundary = label_end - offset
             if 0 < boundary < len(text) and all(ET.QName(c).localname in {"rPr", "t"} for c in run):
                 position = paragraph.index(run)
                 for i, part in enumerate((text[:boundary], text[boundary:])):
@@ -226,6 +240,10 @@ def apply(paragraph, profile, resolver, key):
         semantic.append((run, r))
     source_p = child(paragraph, "pPr")
     p = parse_xml(profile["pPr"].encode())
+    # Also protect previously saved 019 profiles carrying foreign numIds.
+    for n in list(p):
+        if n.tag in {tag("numPr"), tag("sectPr")}:
+            p.remove(n)
     # Numbering and source bindings are content, not template style IDs.
     if source_p is not None:
         for n in source_p:
@@ -236,10 +254,10 @@ def apply(paragraph, profile, resolver, key):
     label = re.match(r"^[^.:]{1,80}[.:]\s*", paragraph_text(paragraph)) if profile.get("label_rPr") else None
     for run, source_r in semantic:
         length = len(paragraph_text(run))
-        chosen = profile.get("label_rPr") if label and offset < label.end() else profile["rPr"]
+        chosen = profile.get("label_rPr") if label and offset < label_end else profile["rPr"]
         r = parse_xml(chosen.encode())
         preserve = {"vertAlign"}
-        if key in {"body", "body.table", "keywords"}:
+        if key in {"body", "body.table", "body.references", "keywords"}:
             preserve |= {"b", "i", "bCs", "iCs", "u", "strike", "dstrike", "highlight"}
         for n in source_r:
             if ET.QName(n).localname in preserve:
@@ -274,7 +292,15 @@ def apply_base(parts, profile):
     normal = next((s for s in styles.findall(tag("style")) if s.get(tag("default")) == "1" and s.get(tag("type")) == "paragraph"), None)
     if normal is None:
         raise DocumentError("DEFAULT_STYLE_MISSING")
+    defaults = styles.find(tag("docDefaults"))
+    if defaults is None:
+        defaults = ET.Element(tag("docDefaults"))
+        styles.insert(0, defaults)
     for kind in ("pPr", "rPr"):
+        container = defaults.find(tag(kind + "Default"))
+        if container is None:
+            container = ET.SubElement(defaults, tag(kind + "Default"))
+        container[:] = [parse_xml(profile[kind].encode())]
         old = child(normal, kind)
         if old is not None:
             normal.remove(old)
@@ -297,6 +323,21 @@ def table_profile(table, resolver):
     grid = table.find("w:tblGrid", NS)
     widths = [int(n.get(tag("w"), "0")) for n in grid] if grid is not None else []
     profile["table_width"] = sum(widths)
+    rows = table.findall("w:tr", NS)
+    if len(rows) > 1:
+        def bold_text(row):
+            flags = []
+            for p in row.findall(".//w:p", NS):
+                for r in p.findall(".//w:r", NS):
+                    if paragraph_text(r).strip():
+                        _, effective = resolver.resolve(p, r)
+                        flags.append(child(effective, "b") is not None and value(effective, "b", "1") not in {"0", "false", "off"})
+            return flags
+        first_flags = bold_text(rows[0])
+        later_flags = [f for row in rows[1:] for f in bold_text(row)]
+        if first_flags and all(first_flags) and later_flags and not all(later_flags):
+            # Observation requires the same template approval as other variants.
+            profile["first_row"] = measure(first, resolver, "body.table.header")
     properties = ET.Element(tag("tblPr"))
     for style in resolver.chain(value(child(table, "tblPr"), "tblStyle")):
         if style.findall("w:tblStylePr", NS):
@@ -311,8 +352,10 @@ def table_profile(table, resolver):
 
 
 def apply_table(table, profile, resolver):
+    first_row = table.find("w:tr", NS)
     for p in table.findall(".//w:p", NS):
-        apply(p, profile, resolver, "body.table")
+        header = profile.get("first_row") if first_row is not None and first_row in p.iterancestors() else None
+        apply(p, header or profile, resolver, "body.table.header" if header else "body.table")
     if profile.get("tblPr"):
         target = parse_xml(profile["tblPr"].encode())
         old = child(table, "tblPr")
