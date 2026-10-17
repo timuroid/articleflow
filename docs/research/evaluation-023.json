@@ -1,0 +1,962 @@
+{
+  "series": "023",
+  "date": "2026-10-17",
+  "fresh_heldout_trials": [
+    {
+      "id": "article-heldout1",
+      "source_sha256": "fd0c1c321b27d689c0b11711dcddd30a6b3b442def3ba8f9527f47dd617a52ba",
+      "template_sha256": "ff64461abc4a22cb2067309611edc87621cfe149ac72e5a4f42e5befa40da845",
+      "semantic_sha256": "51817d2d6ee1db137576f461b3bc8fe74cd808c9fef995be8d6ad3e96e5c393e",
+      "independent_documents": 1,
+      "rows": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.003798985",
+          "seconds": 24.14175383001566,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 2,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.004478785",
+          "seconds": 27.981779995956458,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 3,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.003655625",
+          "seconds": 18.7002842919901,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 4,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.002819625",
+          "seconds": 15.615533423959278,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 5,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.004265025",
+          "seconds": 21.733349197078496,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 6,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.004335425",
+          "seconds": 22.126548202941194,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 7,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.004335425",
+          "seconds": 22.02291010704357,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 8,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.002962985",
+          "seconds": 21.434170863009058,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 9,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.003655625",
+          "seconds": 18.534615474985912,
+          "content_exact": true,
+          "nested_topology_exact": null
+        },
+        {
+          "attempt": 10,
+          "passed": true,
+          "pages": 10,
+          "exact_pages": 10,
+          "cost_usd": "0.002819625",
+          "seconds": 15.008503322023898,
+          "content_exact": true,
+          "nested_topology_exact": null
+        }
+      ],
+      "median_seconds": 21.583760030043777,
+      "total_cost_usd": 0.03712713
+    },
+    {
+      "id": "nested-heldout1",
+      "source_sha256": "e8c6ed83267147f4054f9e93151d1c37a93dccb910bb4a5b85c58078b24db67a",
+      "template_sha256": "4e336680d9c9da9f7c88d212339800dbe6d89abde4742c49e8080a592cfe0265",
+      "semantic_sha256": "9f6468836606fc67461f6c9f16adfaec826227f6dbd8f282c25efcd10b6d20d8",
+      "independent_documents": 1,
+      "rows": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00395083",
+          "seconds": 48.96955590893049,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 2,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00395083",
+          "seconds": 52.69781238702126,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 3,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00206543",
+          "seconds": 38.4021474319743,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 4,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00192207",
+          "seconds": 28.988517677993514,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 5,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00344447",
+          "seconds": 38.35475082299672,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 6,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00206543",
+          "seconds": 40.578362492029555,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 7,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00192207",
+          "seconds": 29.132568327942863,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 8,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00192207",
+          "seconds": 28.893671781988814,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 9,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00192207",
+          "seconds": 28.342803371022455,
+          "content_exact": true,
+          "nested_topology_exact": true
+        },
+        {
+          "attempt": 10,
+          "passed": true,
+          "pages": 16,
+          "exact_pages": 16,
+          "cost_usd": "0.00192207",
+          "seconds": 28.443722808966413,
+          "content_exact": true,
+          "nested_topology_exact": true
+        }
+      ],
+      "median_seconds": 33.74365957546979,
+      "total_cost_usd": 0.02508734
+    }
+  ],
+  "training_runs": [
+    {
+      "id": "article-final3",
+      "status": "reference_verified",
+      "code": null,
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 0,
+          "applications": [
+            {
+              "role_correct": 151,
+              "role_total": 151,
+              "passed": true,
+              "unresolved": 0,
+              "pages": 9,
+              "pixel_exact": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "article-run1",
+      "status": "needs_review",
+      "code": "PROVIDER_HTTP_400",
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": null,
+          "applications": []
+        }
+      ]
+    },
+    {
+      "id": "article-run2",
+      "status": "reference_verified",
+      "code": null,
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 0,
+          "applications": [
+            {
+              "role_correct": 151,
+              "role_total": 151,
+              "passed": true,
+              "unresolved": 0,
+              "pages": 9,
+              "pixel_exact": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nested-resume2",
+      "status": "needs_review",
+      "code": "BUDGET_EXCEEDED",
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": null,
+          "applications": []
+        }
+      ]
+    },
+    {
+      "id": "nested-resume3",
+      "status": "reference_verified",
+      "code": null,
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 0,
+          "applications": [
+            {
+              "role_correct": 236,
+              "role_total": 236,
+              "passed": true,
+              "unresolved": 0,
+              "pages": 15,
+              "pixel_exact": true
+            },
+            {
+              "role_correct": 244,
+              "role_total": 244,
+              "passed": true,
+              "unresolved": 0,
+              "pages": 16,
+              "pixel_exact": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nested-run1",
+      "status": "needs_review",
+      "code": "BUDGET_EXCEEDED",
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 0,
+          "applications": [
+            {
+              "role_correct": 234,
+              "role_total": 236,
+              "passed": false,
+              "unresolved": 8,
+              "pages": null,
+              "pixel_exact": null
+            },
+            {
+              "role_correct": 244,
+              "role_total": 244,
+              "passed": true,
+              "unresolved": 0,
+              "pages": 16,
+              "pixel_exact": true
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "conflicting_groups": null,
+          "applications": []
+        }
+      ]
+    },
+    {
+      "id": "owner-resume2",
+      "status": "needs_review",
+      "code": "BUDGET_EXCEEDED",
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 46,
+          "applications": [
+            {
+              "role_correct": 161,
+              "role_total": 161,
+              "passed": false,
+              "unresolved": 335,
+              "pages": null,
+              "pixel_exact": null
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "conflicting_groups": null,
+          "applications": []
+        }
+      ]
+    },
+    {
+      "id": "owner-run1",
+      "status": "needs_review",
+      "code": "BUDGET_EXCEEDED",
+      "iterations": [
+        {
+          "number": 1,
+          "conflicting_groups": 46,
+          "applications": [
+            {
+              "role_correct": 178,
+              "role_total": 178,
+              "passed": false,
+              "unresolved": 350,
+              "pages": null,
+              "pixel_exact": null
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "conflicting_groups": null,
+          "applications": []
+        }
+      ]
+    }
+  ],
+  "provider_attempts": [
+    {
+      "run": "article-final3",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.002915015",
+      "reserve_usd": "0.03498584",
+      "seconds": 30.366274781990796,
+      "request_sha256": "6130a5902060a7461a22ed3b4521e76deb3d260776cae127517c45c3ba9c7dc3"
+    },
+    {
+      "run": "article-final3",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.0473435",
+      "reserve_usd": "0.2689525",
+      "seconds": 15.362441885983571,
+      "request_sha256": "c870afd9af3978f74f37af6bd1ab33061cda76ecf428c5d8f22918ce31925daf"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.003798985",
+      "reserve_usd": "0.03678176",
+      "seconds": 24.14175383001566,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-10/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.002819625",
+      "reserve_usd": "0.03678176",
+      "seconds": 15.008503322023898,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-2/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.004478785",
+      "reserve_usd": "0.03678176",
+      "seconds": 27.981779995956458,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-3/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.003655625",
+      "reserve_usd": "0.03678176",
+      "seconds": 18.7002842919901,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-4/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.002819625",
+      "reserve_usd": "0.03678176",
+      "seconds": 15.615533423959278,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-5/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.004265025",
+      "reserve_usd": "0.03678176",
+      "seconds": 21.733349197078496,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-6/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.004335425",
+      "reserve_usd": "0.03678176",
+      "seconds": 22.126548202941194,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-7/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.004335425",
+      "reserve_usd": "0.03678176",
+      "seconds": 22.02291010704357,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-8/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.002962985",
+      "reserve_usd": "0.03678176",
+      "seconds": 21.434170863009058,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-heldout1",
+      "path": "trial-9/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.003655625",
+      "reserve_usd": "0.03678176",
+      "seconds": 18.534615474985912,
+      "request_sha256": "78f2f5beeef31565a6e759f9b815b870034071990155a666705d0c2e33ef7522"
+    },
+    {
+      "run": "article-run1",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "PROVIDER_HTTP_400",
+      "http_status": 400,
+      "cost_usd": null,
+      "reserve_usd": "0.942055",
+      "seconds": 0.08268455904908478,
+      "request_sha256": "df6e23e37da2346c667a8a3dfbd0f89a0314bf77e3210bea8d3bb8091dbcf7f0"
+    },
+    {
+      "run": "article-run2",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00155091",
+      "reserve_usd": "0.03496520",
+      "seconds": 14.080135838012211,
+      "request_sha256": "e9c1a6847c328ad3ec67f6114f6cb3cdc4a1d23bd2b711fc91f67db124bf0249"
+    },
+    {
+      "run": "article-run2",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.047281",
+      "reserve_usd": "0.3088950",
+      "seconds": 17.09480254293885,
+      "request_sha256": "1367af0c27c9041abd3987f8e72ce107587a462f637f9f1e44856d119f3a94bc"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00395083",
+      "reserve_usd": "0.05064152",
+      "seconds": 48.96955590893049,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-10/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00192207",
+      "reserve_usd": "0.05064152",
+      "seconds": 28.443722808966413,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-2/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00395083",
+      "reserve_usd": "0.05064152",
+      "seconds": 52.69781238702126,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-3/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00206543",
+      "reserve_usd": "0.05064152",
+      "seconds": 38.4021474319743,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-4/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00192207",
+      "reserve_usd": "0.05064152",
+      "seconds": 28.988517677993514,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-5/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00344447",
+      "reserve_usd": "0.05064152",
+      "seconds": 38.35475082299672,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-6/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00206543",
+      "reserve_usd": "0.05064152",
+      "seconds": 40.578362492029555,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-7/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00192207",
+      "reserve_usd": "0.05064152",
+      "seconds": 29.132568327942863,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-8/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00192207",
+      "reserve_usd": "0.05064152",
+      "seconds": 28.893671781988814,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-heldout1",
+      "path": "trial-9/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00192207",
+      "reserve_usd": "0.05064152",
+      "seconds": 28.342803371022455,
+      "request_sha256": "89ff52e258e81c86646d23570c79ca257259a5889f3996083c751a7b9ff9a1fe"
+    },
+    {
+      "run": "nested-resume3",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.0020264",
+      "reserve_usd": "0.04730216",
+      "seconds": 34.04401635797694,
+      "request_sha256": "d18a4040f65eb166a3a11f68b95d505c4ab48586e7af07db0ee638afa92f9a6d"
+    },
+    {
+      "run": "nested-resume3",
+      "path": "iteration-1/application-2/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.004095985",
+      "reserve_usd": "0.05061104",
+      "seconds": 51.07869764091447,
+      "request_sha256": "100f23bc96c20638674e3ddec605759cd4887ba092dd796953b28c0e01488a1b"
+    },
+    {
+      "run": "nested-resume3",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.151201",
+      "reserve_usd": "0.7542025",
+      "seconds": 25.3317256369628,
+      "request_sha256": "fe51317f9678c74217163881ac46f7f38a092faeafaedb2df75eebecf85bc512"
+    },
+    {
+      "run": "nested-run1",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.002023425",
+      "reserve_usd": "0.04714520",
+      "seconds": 23.1231461269781,
+      "request_sha256": "4edfece2433d5ab30f51f7d807513c6a6c1717ea3cb7490f430755a094b87ec6"
+    },
+    {
+      "run": "nested-run1",
+      "path": "iteration-1/application-2/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00415021",
+      "reserve_usd": "0.05045408",
+      "seconds": 34.38527377799619,
+      "request_sha256": "4c96cca2dae221663408c357245d49b6166e6bce5548d0b77c55094b62526775"
+    },
+    {
+      "run": "nested-run1",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.1475285",
+      "reserve_usd": "0.7829825",
+      "seconds": 28.033644795999862,
+      "request_sha256": "87fd64edccfdf6e6406eab59e8e9ade3524b04bebd5cf59044e0b00a7d53755c"
+    },
+    {
+      "run": "owner-resume2",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00777835",
+      "reserve_usd": "0.03799976",
+      "seconds": 43.87332834198605,
+      "request_sha256": "a40127f27d0e438142846a7aa61ec1a643a2ca6167d3ec9577fe5d206ff06006"
+    },
+    {
+      "run": "owner-resume2",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.1419035",
+      "reserve_usd": "0.5054750",
+      "seconds": 40.104038052028045,
+      "request_sha256": "52c43b37697af213422a26d5e225512156756b63da5169e24baeaff786a5cc9b"
+    },
+    {
+      "run": "owner-run1",
+      "path": "iteration-1/application-1/student/meta.json",
+      "model": "qwen/qwen3.8-27b",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.00843917",
+      "reserve_usd": "0.03871904",
+      "seconds": 47.37110639503226,
+      "request_sha256": "bf53eae79c4fd4ba67665780d260a059117da9a5f9bbd152e2c5ecf20bc453a5"
+    },
+    {
+      "run": "owner-run1",
+      "path": "iteration-1/teacher/meta.json",
+      "model": "openai/gpt-6.1-sol",
+      "status": "valid",
+      "http_status": 200,
+      "cost_usd": "0.1232735",
+      "reserve_usd": "0.4948325",
+      "seconds": 32.371994631015696,
+      "request_sha256": "e8982bfe38c3d7d6b49818f41b5ab94225b93e6e34436c2f8a878eece7341e41"
+    }
+  ],
+  "corpus": {
+    "synthetic": [
+      {
+        "path": "article-1.docx",
+        "family": "article",
+        "seed": 1,
+        "paragraphs": 151,
+        "sha256": "ceb196595f6ea76a4370b087f0722a380d8fa417fae3a838faceab85f43a4d56",
+        "split": "train"
+      },
+      {
+        "path": "article-2.docx",
+        "family": "article",
+        "seed": 2,
+        "paragraphs": 159,
+        "sha256": "40f893e0dea8d8d3ec32e49cf1f0e5be70f3a5886ba79b22be02178652ae5c42",
+        "split": "train"
+      },
+      {
+        "path": "article-17.docx",
+        "family": "article",
+        "seed": 17,
+        "paragraphs": 159,
+        "sha256": "fd0c1c321b27d689c0b11711dcddd30a6b3b442def3ba8f9527f47dd617a52ba",
+        "split": "held_out"
+      },
+      {
+        "path": "nested-1.docx",
+        "family": "nested",
+        "seed": 1,
+        "paragraphs": 236,
+        "sha256": "2e1722f0ef9f62f50e3225594860cf40359e0d63c959136c85fd5107ad0fda50",
+        "split": "train"
+      },
+      {
+        "path": "nested-2.docx",
+        "family": "nested",
+        "seed": 2,
+        "paragraphs": 244,
+        "sha256": "ee08edde0808d7c464bd8e3e82da845149f7a484beb4729f05463a29ed54003d",
+        "split": "train"
+      },
+      {
+        "path": "nested-17.docx",
+        "family": "nested",
+        "seed": 17,
+        "paragraphs": 244,
+        "sha256": "e8c6ed83267147f4054f9e93151d1c37a93dccb910bb4a5b85c58078b24db67a",
+        "split": "held_out"
+      },
+      {
+        "path": "columns-1.docx",
+        "family": "columns",
+        "seed": 1,
+        "paragraphs": 151,
+        "sha256": "4bf67c31f6eb8c55597114616b250614061dbe907c49699cba88eda8d98abfca",
+        "split": "train"
+      },
+      {
+        "path": "columns-2.docx",
+        "family": "columns",
+        "seed": 2,
+        "paragraphs": 159,
+        "sha256": "69ec9f7fada6871aadf4155785b5ae2c3eb34643618b0155a3ed21c017865083",
+        "split": "train"
+      },
+      {
+        "path": "columns-17.docx",
+        "family": "columns",
+        "seed": 17,
+        "paragraphs": 159,
+        "sha256": "c6809c307289e25b8b519c5144b0c1d6ceaea83b3e211a47fd520e36d12c64fc",
+        "split": "held_out"
+      },
+      {
+        "path": "stories-1.docx",
+        "family": "stories",
+        "seed": 1,
+        "paragraphs": 151,
+        "sha256": "cf3f9898dc481094998a66ddc670b10380db7dad58e72394bde6d14b4e2b8bda",
+        "split": "train"
+      },
+      {
+        "path": "stories-2.docx",
+        "family": "stories",
+        "seed": 2,
+        "paragraphs": 159,
+        "sha256": "5dcebdc8cc45b8c778e8d1aefc73c9293959cbaa61e6554050930004e936c2f8",
+        "split": "train"
+      },
+      {
+        "path": "stories-17.docx",
+        "family": "stories",
+        "seed": 17,
+        "paragraphs": 159,
+        "sha256": "d92a96a0c1d1cb8d700c3e00c009521105a22e37e383600d490f67bd2a77b2fb",
+        "split": "held_out"
+      }
+    ],
+    "public": [
+      {
+        "id": "mstu",
+        "url": "https://vestnik.mauniver.ru/conditions/files/shablon.docx",
+        "landing": "https://vestnik.mauniver.ru/conditions/typography.shtml",
+        "bytes": 266069,
+        "sha256": "8f6ee1edbba655c133a5658cbae89d48a0b9b9ae7ad1e9377930236a948a150a",
+        "redistribution": "not_granted",
+        "external_model_calls": 0,
+        "status": "unsupported",
+        "code": "UNSUPPORTED_CONSTRUCT"
+      },
+      {
+        "id": "gostdown",
+        "url": "https://gitlab.iaaras.ru/iaaras/gostdown/-/raw/master/demo-template-report.docx",
+        "landing": "https://gitlab.iaaras.ru/iaaras/gostdown",
+        "bytes": 45999,
+        "sha256": "4677a256c2e9f82d03acac35a76e2f24d05d145e492a4c61afa49aae103ae5b5",
+        "redistribution": "not_granted",
+        "external_model_calls": 0,
+        "status": "unsupported",
+        "code": "CATALOGUE_STORY_UNSUPPORTED"
+      },
+      {
+        "id": "vsu",
+        "url": "https://journals.vsu.ru/public/journals/8/econ_article_template.docx",
+        "landing": "https://journals.vsu.ru/econ/ru/about/submissions",
+        "bytes": 70726,
+        "sha256": "a90838e02d708ac0505e2e4191990c44464a412c469febf1e42ef26ec0d8c428",
+        "redistribution": "not_granted",
+        "external_model_calls": 0,
+        "status": "unsupported",
+        "code": "ACTIVE_CONTENT_UNSUPPORTED"
+      }
+    ],
+    "download_failures": [
+      {
+        "id": "ieee-a4",
+        "bytes": 0,
+        "counted_as_document": false
+      }
+    ],
+    "private": [
+      {
+        "id": "owner-reference",
+        "sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+        "pages": 12,
+        "paragraphs": 178,
+        "status": "needs_review"
+      }
+    ]
+  },
+  "universal_accuracy": "not_established",
+  "new_provider_attempts": 35,
+  "known_cost_usd": 0.7537249349999999,
+  "unknown_attempts": 1,
+  "normalization_counterexample": {
+    "golden_pages": 12,
+    "candidate_pages": 12,
+    "pages_equal": true,
+    "page_sizes_equal": true,
+    "pixel_exact": false,
+    "differing_pixel_ratio": 0.00023201192900302014,
+    "mae": 0.018922766619267097
+  }
+}

@@ -47,3 +47,11 @@ Strict tests измеряют реальные SDK/API attempts: invalid respons
 Pixel benchmark запускается по [протоколу](../research/benchmark.md) только в зафиксированной render-среде; parser проверка Mermaid/JSON не считается испытанием DOCX. Для batch нужны 100/200/300-item tests с rejected uploads, review, одинаковыми именами, потерей worker, budget pause, частичным ZIP, cleanup и отзывом архивов. Сначала mock нагрузка; платное качество оценивается отдельно с разрешённым бюджетом.
 
 Профиль 0.7 дополнительно проверяет [source marks](semantic-marks.md), [I3](source-aware.md), работу без target oracle, исправление неверной типографики на новом синтетическом тексте, неоднозначное сопоставление, несовместимость ресурсов, связность source/neutral input и неизменность серии до API-запроса.
+
+## Исполняемый срез 023
+
+`python -m unittest discover -s tests -q`; BDD только
+`behave docs/product/scenarios/research-pilot.feature docs/product/scenarios/structure-web.feature`.
+В этих двух файлах 30 сценариев/119 шагов. Остальные исторические feature-файлы
+ещё содержат undefined steps и не входят в пройденный gate. Подробные измерения:
+[серия 023](../research/evaluation-023.md). Платные запросы отделены от тестов.

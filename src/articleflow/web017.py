@@ -176,6 +176,11 @@ def _process_job(store: Store, job_id: str):
     batch = store.one("SELECT * FROM batches WHERE id=?", (job["batch_id"],))
     version = store.one("SELECT * FROM template_versions WHERE template_id=? AND version=?", (batch["template_id"], batch["template_version"]))
     spec = json.loads(version["spec_json"])
+    if spec.get('agent023'):
+        from .webagent023 import process_job
+        store.execute("UPDATE jobs SET status='processing' WHERE id=?", (job_id,))
+        process_job(store,job,batch,version,spec)
+        return
     choices = spec.get("selected", {})
     styles = {role: spec["styles"][role][key] for role, key in choices.items() if role in spec["styles"] and key in spec["styles"][role]}
     source = store.path("jobs", job_id, "source.docx")
@@ -235,10 +240,10 @@ def _process_batch(store: Store, batch_id: str):
         for job in store.all("SELECT id FROM jobs WHERE batch_id=? ORDER BY created_at,id", (batch_id,)):
             try:
                 _process_job(store, job["id"])
-            except Exception:
+            except Exception as exc:
                 # The exception is intentionally not logged: parsers may include private text.
                 store.execute("UPDATE jobs SET status='error', report_json=? WHERE id=?",
-                              (json.dumps({"status": "error", "code": "INTERNAL_ERROR"}), job["id"]))
+                              (json.dumps({"status": "error", "code": str(exc) if isinstance(exc,DocumentError) else "INTERNAL_ERROR"}), job["id"]))
 
 
 class Approval(BaseModel):
@@ -268,7 +273,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
 
     @app.get("/healthz")
     def healthz():
-        return {"status": "ok", "web_version":"022", "release":os.environ.get("ARTICLEFLOW_RELEASE", "development"), "mode": "model_available" if model_config() else "local_review_only"}
+        return {"status": "ok", "web_version":"023", "release":os.environ.get("ARTICLEFLOW_RELEASE", "development"), "mode": "model_available" if model_config() else "local_review_only"}
 
     @app.get("/")
     def index():
@@ -507,6 +512,8 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         version = _latest(store, template_id)
         if not version["approved"]:
             raise HTTPException(409, "TEMPLATE_NOT_APPROVED")
+        if json.loads(version['spec_json']).get('agent023') and not use_llm:
+            raise HTTPException(400,'AGENT_REQUIRES_MODEL_CONSENT')
         if not 1 <= len(files) <= MAX_BATCH:
             raise HTTPException(400, "BATCH_LIMIT")
         batch_id = _uid()
@@ -547,6 +554,10 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
     @app.patch("/api/v017/jobs/{job_id}/decisions", dependencies=[Depends(csrf)])
     def decisions(job_id: str, body: Decisions):
         item = store.one("SELECT * FROM jobs WHERE id=?", (job_id,))
+        batch = store.one("SELECT * FROM batches WHERE id=?", (item['batch_id'],))
+        version = store.one("SELECT * FROM template_versions WHERE template_id=? AND version=?", (batch['template_id'],batch['template_version']))
+        if json.loads(version['spec_json']).get('agent023'):
+            raise HTTPException(409, "AGENT_EDIT_SOURCE_OR_REQUIREMENTS")
         if item["status"] in {"queued", "processing"}:
             raise HTTPException(409, "JOB_IN_PROGRESS")
         if body.expected_revision != item["revision"]:
@@ -621,4 +632,6 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         store.one("SELECT id FROM exports WHERE id=?", (export_id,))
         return FileResponse(store.path("exports", f"{export_id}.zip"), filename=f"articleflow-{export_id}.zip")
 
+    from .webagent023 import mount
+    mount(app,store,csrf)
     return app

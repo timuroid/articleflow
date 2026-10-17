@@ -312,3 +312,32 @@ def runtime_gate022(c):
 def runtime_rejected022(c):
     assert c.result022['samples'][0]['attempts'][1]['status']=='passed'
     assert c.result022['status']=='needs_review'
+
+@given('три наблюдения одного смыслового контекста содержат два разных отступа')
+def conflict023(c):
+    c.examples023=[{'kind':'paragraph','when':{'role':'body'},'set':{'style':s},'id':str(i)} for i,s in enumerate(['a','a','b'])]
+
+@when('агент компилирует правила выбора оформления')
+def fit023(c):
+    from articleflow.rules023 import fit
+    c.rules023,c.conflicts023=fit(c.examples023)
+
+@then('контекст остаётся неоднозначным без правила большинства')
+def ambiguous023(c):
+    assert not c.rules023 and len(c.conflicts023)==1
+
+@given('малая модель назначила роль только первому из двух абзацев')
+def incomplete023(c):
+    c.response023={'groups':[{'start':1,'end':1,'role':'body'}]}
+
+@when('проверяется полное покрытие смыслового плана')
+def coverage023(c):
+    from articleflow.semantic023 import expand_groups
+    from articleflow.docx_engine import DocumentError
+    try:expand_groups(c.response023,[{'id':'a'},{'id':'b'}],{'body':'Основной текст'})
+    except DocumentError as e:c.error023=str(e)
+    else:c.error023=None
+
+@then('неполный план отклонён до сборки')
+def rejected023(c):
+    assert c.error023=='SEMANTIC_GROUP_COVERAGE'

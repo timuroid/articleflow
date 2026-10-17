@@ -19,3 +19,5 @@ var/
 *.docm
 *.pdf
 *.log
+# Raster derivatives of the original research SVG figures.
+docs/research/figures023/*.png

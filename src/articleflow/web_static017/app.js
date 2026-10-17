@@ -76,6 +76,43 @@ async function showTemplate(id) {
   const statusNames = {passed:'Рабочий шаблон прошёл контроль',needs_review:'Шаблон не прошёл проверку',unavailable:'Проверка недоступна',interrupted:'Запуск прерван',queued:'В очереди',running:'Выполняется'};
   async function showRun(runId) {
     const run = await request(`/template-runs/${runId}`); const r=run.report;
+    if(r.schema==='teacher-student-023') {
+      const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
+      validation.replaceChildren(node('strong','',names[run.status]||run.status));
+      for(const iteration of r.iterations||[]) {
+        validation.append(node('p','',`Итерация ${iteration.number}: проверено документов ${iteration.applications.length}; противоречивых правил ${iteration.conflicting_groups ?? '—'}.`));
+        for(const [index,a] of iteration.applications.entries()) {
+          const pixels=a.pixels;
+          validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: роли ${a.role_correct}/${a.role_total}. ${pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` : `Неоднозначных назначений: ${a.unresolved?.length||0}.`}`));
+        }
+      }
+      for(let i=1;i<=(r.training_documents||0);i++) for(const [mode,label] of [['reference','Эталон'],['result','Результат']]) {
+        const link=node('a','button',`${label} ${i} · PDF`);link.href=`${api}/template-runs/${runId}/agent-preview/${i}/${mode}`;link.target='_blank';link.rel='noopener';validation.append(link);
+      }
+      if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}. История попыток сохранена.`));
+      if(run.status==='reference_verified' && spec.agent023?.run_id!==runId) {
+        validation.append(node('p','help','Проверено восстановление эталонов. Точное совпадение для любого нового текста этим не гарантируется.'));
+        const answers={};
+        for(const q of r.questions||[]) {
+          const label=node('label','',q.question);const select=node('select');
+          for(const [value,title] of [['','Выберите ответ'],['yes','Блок обязателен'],['no','Блок необязателен']]) {const option=node('option','',title);option.value=value;select.append(option);}
+          label.append(select);validation.append(label);answers[q.role]=select;
+          for(const evidence of q.evidence||[]) {
+            validation.append(node('p','help',evidence.excerpt));
+            const link=node('a','',`Показать в эталоне ${evidence.document}${evidence.page ? `, страница ${evidence.page}` : ''}`);
+            link.href=`${api}/template-runs/${runId}/agent-preview/${evidence.document}/reference${evidence.page ? `#page=${evidence.page}` : ''}`;
+            link.target='_blank';link.rel='noopener';validation.append(link);
+          }
+        }
+        validation.append(button('Сохранить проверенный шаблон',async()=>{
+          if(Object.values(answers).some(s=>!s.value)){message('Ответьте на вопросы об обязательных блоках.',true);return;}
+          const result=await request(`/templates/${id}/approve-agent`,{method:'POST',body:JSON.stringify({run_id:runId,answers:Object.fromEntries(Object.entries(answers).map(([r,s])=>[r,s.value==='yes']))})});
+          await loadTemplates();await showTemplate(id);message(`Сохранена версия ${result.version}.`);
+        },'button primary'));
+      }
+      if(['queued','running'].includes(run.status) && target.contains(validation)) setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),2000);
+      return;
+    }
     validation.replaceChildren(node('strong','',run.status==='passed' && r.acceptance_contract!=='production-roundtrip-022-v1' ? 'Старая проверка: рабочий шаблон не подтверждён' : (statusNames[run.status] || run.status)), node('p','',stageNames[r.stage] || 'Подготовка'));
     for (const [index,sample] of (r.samples || []).entries()) {
       const final=sample.attempts?.find(a=>a.strategy==='complete_property_catalogue');
@@ -98,7 +135,7 @@ async function showTemplate(id) {
     if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}`));
     if(['queued','running'].includes(run.status) && target.isConnected && target.contains(validation)) setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),1800);
   }
-  target.append(button('Проверить и доработать шаблон',async()=>{
+  target.append(button('Проверить без внешней модели',async()=>{
     await request(`/templates/${id}/refine`,{method:'POST'}); await showTemplate(id);
   },'button primary'));
   const runs=await request(`/templates/${id}/runs`);if(runs.length) await showRun(runs[0].id);
@@ -106,15 +143,33 @@ async function showTemplate(id) {
     const consentLabel = node('label');
     const consent = node('input'); consent.type = 'checkbox';
     consentLabel.append(consent, document.createTextNode(' Разрешаю передать текст эталонов в OpenRouter для анализа ролей'));
-    const analyze = button('Проверить смысловые роли моделью', async () => {
+    const contextLabel=node('label','','Дополнительные требования к шаблону (необязательно)');
+    const context=node('textarea');context.rows=3;context.maxLength=12000;contextLabel.append(context);
+    const analyze = button('Обучить шаблон и проверить с Qwen', async () => {
       if (!consent.checked) { message('Для анализа нужно разрешение на отправку текста эталонов.', true); return; }
       analyze.disabled = true; target.setAttribute('aria-busy', 'true'); message('Модель анализирует эталоны. Это может занять несколько минут.');
-      try { await request(`/templates/${id}/analyze`, { method: 'POST', body: JSON.stringify({ consent_external: true }) }); await loadTemplates(); await showTemplate(id); message('Создана новая версия наблюдений. Проверьте различия.'); }
+      try { await request(`/templates/${id}/learn`, { method: 'POST', body: JSON.stringify({ consent_external: true,context:context.value }) }); await showTemplate(id); message('Обучение запущено. Агент сравнит все страницы и доработает правила при ошибках.'); }
       catch (error) { message(`Анализ не завершён: ${error.message}`, true); }
       finally { analyze.disabled = false; target.removeAttribute('aria-busy'); }
     });
-    target.append(consentLabel, analyze);
+    target.append(contextLabel, consentLabel, analyze);
   }
+  if(item.approved && spec.agent023) {
+    target.append(node('p','','Проверенный шаблон сохранён. Для оформления новых документов включите модель и разрешите передачу текста.'));
+    const details=node('details');details.append(node('summary','','Уточнить обязательные блоки'));const answers={};
+    details.append(node('p','help','Если блок встречался в эталоне, но отсутствует в новой статье, система спросит об этом. Здесь можно заранее указать, какие блоки обязательны или необязательны. Изменение создаст новую версию.'));
+    for(const [role,description] of Object.entries(spec.agent023.roles)) {
+      const label=node('label','',description);const select=node('select');
+      for(const [value,text] of [['','Спрашивать при отсутствии'],['yes','Обязателен'],['no','Необязателен']]) {const option=node('option','',text);option.value=value;select.append(option);}
+      if(role in spec.agent023.answers) select.value=spec.agent023.answers[role]?'yes':'no';
+      label.append(select);details.append(label);answers[role]=select;
+    }
+    details.append(button('Сохранить требования',async()=>{
+      await request(`/templates/${id}/requirements`,{method:'POST',body:JSON.stringify({expected_version:item.version,answers:Object.fromEntries(Object.entries(answers).filter(([,s])=>s.value).map(([r,s])=>[r,s.value==='yes']))})});
+      await loadTemplates();await showTemplate(id);message('Требования сохранены в новой версии шаблона.');
+    }));target.append(details);return;
+  }
+  if(runs[0] && JSON.parse(runs[0].report_json).schema==='teacher-student-023') return;
   if (item.approved && spec.extraction_validation?.status === 'passed' && spec.extraction_validation?.acceptance_contract === 'production-roundtrip-022-v1') {
     target.append(node('p', '', 'Версия утверждена и неизменяема. Она доступна для новых пакетов.'));
     return;
@@ -224,7 +279,7 @@ async function renderJob(id) {
   target.append(heading);
   const actions = node('div', 'actions');
   const links = [['source', 'Исходник'], ['report', 'Отчёт']];
-  if (['draft', 'ready'].includes(job.status)) links.push(['draft', 'Черновик']);
+  if (['draft', 'ready'].includes(job.status) && job.report?.result_available!==false) links.push(['draft', 'Черновик']);
   if (job.status === 'ready') links.push(['final', 'Готовый DOCX']);
   if (job.report?.editorial_blocks) links.push(['editorial', 'Редакторские заметки']);
   for (const [kind, label] of links) {
@@ -242,6 +297,11 @@ async function renderJob(id) {
     for (const text of questions) list.append(node('li', '', text));
     questionPane.append(list);
   } else questionPane.append(node('p', '', 'Блокирующих вопросов нет. Проверьте DOCX визуально.'));
+  if(job.report?.schema==='application-023') {
+    questionPane.append(node('p','help','Обязательность блоков можно уточнить в шаблоне. Недостающий текст добавьте в исходную статью и загрузите её снова; это будет отдельная обработка с моделью.'));
+    questionPane.append(button('Открыть требования шаблона',()=>showTemplate(job.report.template_id)));
+    target.append(questionPane);target.scrollIntoView({behavior:'smooth',block:'start'});return;
+  }
   const suppliedInputs = {};
   const supplied = JSON.parse(job.supplied_json || '{}');
   for (const slot of [...new Set([...(job.report?.missing || []), ...Object.keys(supplied)])]) {
