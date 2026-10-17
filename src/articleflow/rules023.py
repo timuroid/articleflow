@@ -103,7 +103,7 @@ def training_examples(content, plan, semantics):
             for semantic in semantics[bid]:
                 a=max(span['start'],semantic['start']);z=min(span['end'],semantic['end'])
                 if a<z: rows.append({'kind':'character','when':{**pf,'script':pf['language'],**semantic['features']},
-                                    'set':{'style':span['style']},'id':bid})
+                                    'set':{'style':span['style']},'id':bid,'range':[a,z]})
     for b in plan['layout']:
         rows.append({'kind':'layout','when':f['layout'][b['id']],'set':{'style':b['style']},'id':b['id']})
     for b in plan['objects']:
@@ -132,7 +132,7 @@ def fit(examples):
                 targets={key(r['set']) for r in items}
                 if len(targets)>1:
                     conflicts.append({'kind':kind,'when':json.loads(cond),'variants':len(targets),
-                                      'examples':[{'id':r['id'],'set':r['set']} for r in items[:30]]})
+                                      'examples':[{k:r[k] for k in ('id','set','document','range') if k in r} for r in items[:30]]})
                 else:
                     rule={'kind':kind,'when':json.loads(cond),'set':items[0]['set'],'support':len(items)}
                     rule['id']=digest(key(rule).encode())[:16];rules.append(rule)

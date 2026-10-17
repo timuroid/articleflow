@@ -60,7 +60,7 @@ def relabel(extracted, labels, definitions):
 def build_package(samples,labels,definitions,destination):
     destination.mkdir(parents=True,exist_ok=False)
     merged=None;examples=[];sections=set();observed_top=set();spacer_samples=[]
-    for sample,assignment in zip(samples,labels):
+    for document,(sample,assignment) in enumerate(zip(samples,labels),1):
         template,plan=relabel(sample['extracted'],assignment,definitions)
         if merged is None:
             merged=template
@@ -72,7 +72,7 @@ def build_package(samples,labels,definitions,destination):
             for role,props in template['roles'].items():
                 for group in ('paragraph_styles','character_styles'):
                     merged['roles'][role][group]=sorted(set(merged['roles'][role][group]+props[group]))
-        examples.extend(rules.training_examples(sample['content'],plan,sample['semantics']))
+        examples.extend({**r,'document':document} for r in rules.training_examples(sample['content'],plan,sample['semantics']))
         f=rules.features(sample['content'],assignment)['paragraph']
         observed_top.update(assignment[b['id']] for b in sample['content']['blocks'] if b['text'].strip() and f[b['id']]['depth']==0)
         sections.add(plan['section_style'])
@@ -200,6 +200,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             package,conflicts=build_package(samples,labels,response['roles'],work/'template')
             row['conflicting_groups']=len(conflicts);row['questions']=response['questions']
             row['conflict_properties']=sorted({p for c in conflicts for p in c.get('differing_properties',[])})
+            from .diagnostics024 import evidence
+            row['conflict_evidence']=evidence(conflicts,samples)
+            emit()
             dump(work/'training-conflicts.json',conflicts)
             confusions=[]
             for i,sample in enumerate(samples):

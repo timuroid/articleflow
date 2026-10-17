@@ -101,6 +101,21 @@ async function showTemplate(id) {
       for(const iteration of r.iterations||[]) {
         validation.append(node('p','',`Итерация ${iteration.number}: проверено документов ${iteration.applications.length}; противоречивых правил ${iteration.conflicting_groups ?? '—'}.`));
         if(iteration.conflict_properties?.length){const details=node('details');details.append(node('summary','','Какие свойства расходятся'));details.append(node('p','help',iteration.conflict_properties.join(', ')));validation.append(details);}
+        if(iteration.conflict_evidence?.total){
+          const evidence=iteration.conflict_evidence;const details=node('details');details.append(node('summary','','Места, требующие уточнения'));
+          details.append(node('p','help','Все различия сохранены. Для переноса на новые документы нужно объяснить, когда выбирать каждый вариант.'));
+          for(const group of evidence.groups){
+            details.append(node('p','',`${group.kind} · ${group.when.role||'контекст'} · вариантов: ${group.variants??'неизвестно'}`));
+            if(group.differing_properties.length)details.append(node('p','help',group.differing_properties.join(', ')));
+            for(const location of group.locations){
+              details.append(node('p','',`Документ ${location.document}, абзац ${location.paragraph}${location.range?`, символы [${location.range.join(', ')})`:''}: ${location.excerpt}`));
+              const link=node('a','','Открыть эталон PDF');link.href=`${api}/template-runs/${runId}/agent-preview/${location.document}/reference`;link.target='_blank';link.rel='noopener';details.append(link);
+            }
+            if(!group.location_complete)details.append(node('p','help','Места показаны не для всех вариантов; требуется дополнительная диагностика.'));
+          }
+          if(evidence.truncated)details.append(node('p','help',`Показаны первые ${evidence.groups.length} из ${evidence.total} конфликтов.`));
+          validation.append(details);
+        }
         for(const [index,a] of iteration.applications.entries()) {
           const pixels=a.pixels;
           validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: роли ${a.role_correct}/${a.role_total}. ${pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` : `Неоднозначных назначений: ${a.unresolved?.length||0}.`}`));

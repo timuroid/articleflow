@@ -18,6 +18,41 @@ def property_map(fragments):
     return result
 
 
+def evidence(conflicts, samples, limit=50):
+    """Private run diagnostics only; never include source excerpts in runtime rules."""
+    documents = [{b['id']: (i, b) for i, b in enumerate(s['content']['blocks'], 1)}
+                 for s in samples]
+    groups = []
+    for conflict in conflicts[:limit]:
+        locations = []
+        seen = set()
+        for example in conflict.get('examples', []):
+            document = example.get('document')
+            if not isinstance(document, int) or not 1 <= document <= len(documents):
+                continue
+            found = documents[document - 1].get(example['id'])
+            if found is None:
+                continue
+            variant = str(sorted(example['set'].items()))
+            if variant in seen:
+                continue
+            seen.add(variant)
+            ordinal, block = found
+            span = example.get('range')
+            text = block['text']
+            excerpt = text[span[0]:span[1]] if span else text
+            locations.append({'document': document, 'block_id': block['id'],
+                              'paragraph': ordinal, 'range': span,
+                              'excerpt': excerpt[:240], 'target': example['set']})
+        groups.append({'kind': conflict['kind'], 'when': conflict.get('when', {}),
+                       'differing_properties': conflict.get('differing_properties', []),
+                       'locations': locations, 'requires_clarification': True,
+                       'variants': conflict.get('variants'),
+                       'location_complete': bool(locations) and len(locations) == conflict.get('variants')})
+    return {'groups': groups, 'total': len(conflicts), 'truncated': len(conflicts) > limit,
+            'policy': 'preserve_exact_differences'}
+
+
 def explain(conflicts, template):
     """Property names are evidence of ambiguity, never permission to drop them."""
     result = []
