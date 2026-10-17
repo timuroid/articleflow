@@ -29,6 +29,7 @@
 | [operations.md](operations.md) | Конфигурация, окружения и наблюдаемость |
 | [deployment.md](deployment.md) | Предусловия релиза, серверная установка, HTTPS, проверка и откат |
 | [deployment-caddy-017.md](deployment-caddy-017.md) | Новая реализация Web 017 за существующим Caddy без замены других сайтов |
+| [deployment-observation-017.md](deployment-observation-017.md) | Факты первого запуска, HTTPS, шрифты, загрузки DOCX и ZIP |
 | [web-017-recovery.md](web-017-recovery.md) | Карта прежнего локального Web 017 и отсутствующих в GitHub файлов |
 | [data-preservation.md](data-preservation.md) | Правила долговременного хранения, публикации и восстановления данных |
 | [web-017-local.md](web-017-local.md) | Новая локальная реализация FastAPI, SQLite, ревизий и ZIP |

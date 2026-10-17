@@ -35,6 +35,8 @@ $domain {
     reverse_proxy 127.0.0.1:8769
 }
 SITE
+chown root:caddy "$site"
+chmod 0640 "$site"
 printf '\nimport %s\n' "$site" >>"$main"
 if ! caddy validate --config "$main" >/dev/null; then
   cp "$backup" "$main"
