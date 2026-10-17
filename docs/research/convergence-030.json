@@ -1,0 +1,364 @@
+{
+  "protocol": {
+    "series": "030",
+    "max_iterations": 8,
+    "teacher": "openai/gpt-6.1-sol",
+    "student": "qwen/qwen3.8-27b",
+    "manual_feedback": false,
+    "manual_repairs": false,
+    "separate_runs_for_each_iteration_limit": false,
+    "source_manifest_sha256": "fd9f8e04c0c22d9ada3e3e9f2e1f1faf91640d84658d3cd4c30b026071d380e7",
+    "implementation_hashes": {
+      "agent028.py": "3fe9a9b7286bd522df3b60e169ded7204379212a2181129014e846eb780e023d",
+      "templateagent022.py": "f343b1621ce12443fd0c3fcde0f1da45ef406eaf07f1b160318ce3573c7b4bc2",
+      "catalogue.py": "fdb2d3ceafe4057dc5f90ba190fc1e0cb97c4dfdd048b364ec4f365b441233de",
+      "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "templatecheck021.py": "6a375c273e689009035036198513a369ce41f2e0b5fbcc88c440ccd97788e3c2",
+      "roundtrip022.py": "5db1aae8a818f15c4f849b01db23278270e06559b26558dc686a1b049324f32d",
+      "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+      "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+      "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+      "order024.py": "cdc6a270189d8b4245e7997f936891ac2c03225f94fe9925a498363d1a98f257",
+      "structure017.py": "3b0a24f01802443991432f6cadc45d9f175c49da0bd56ec0f25ad466e72c39a3",
+      "fields030.py": "ba5a045e5808e92ee00e62954b02667f5fd258545753abfdf202bc5304e23916",
+      "stories026.py": "ec21ac95b410704315fe74c770c996b0a5fd34c793b94a6e3de6796de9c382e7",
+      "diagnostics024.py": "c47073589e8aef586d048265ef907f532d5bd6f019d2e5eae05ac3da9d8ca664",
+      "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+      "fonts019.py": "7e4ff5846f00d492f2c8b0d5286a7bcd34b8cc8cd054e9a14e5d19ad947a8275",
+      "inline026.py": "b4797c61bc2ab2a015b6632cc4f451fbc0bb62902a061f62213635b631e10eb0",
+      "layout021.py": "8905ff740dfc8b1248281c8395595dad859d96ad45c6017806669ad785509061",
+      "docx_engine.py": "df49b2df4f0bee23d29e6da502f4ac2a35937b2e84f81e2658b397069b024e74",
+      "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+      "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+      "rules023.py": "60e7a415fd5ca54c683674faba7a833519d402d8e076748075b63897a22f6036",
+      "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+      "web017.py": "b371353b887853bfa1b047e82ed8ab59ba64860fd0125f1d29fab6a7f43267b9",
+      "controls023.py": "b3b7f325de947753b481c1125f18e69219121ceb5befdf0f5895df0ce47b2aa0",
+      "documentcheck022.py": "b9fe8a60939051571c18eccd5c6574487bb52737dbe999a494c343dc3bfa0019",
+      "provider023.py": "e1c2690b905d424f554acd56cb6bfcad4cb3f7500ab549ff06b5b2c85a7d1192",
+      "spacers023.py": "8415262738769061b33e84102710fc45b6c85b1409de186eac39768b52cd57fb",
+      "bookmarks020.py": "6ffde6eda956f468ddb8baf9d0248cb19dc18867242aec7d76ef6f43bfe2dd1c",
+      "webagent023.py": "b44742b2668ce64c375d69856154273592e055d52e3e0b885c8145c7ceeffe86",
+      "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+      "semantic023.py": "5b5ba17cb95b4a04fae5e8a37f567d9c9e5ff7c0a6c8e7b400c6e8f55a15acec",
+      "model019.py": "672de2df49593e9f27a7eb6f0911943416e4e943a54aa531c44b3c161e396bb7",
+      "integrity023.py": "92d1ef43b0518cd2836031c41f884c2b9dcd55f74cf9ccbedb1addd8ad465ce1",
+      "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+      "adapters028.py": "3b93d4c178a79f95c2f3a69a884b99d5360a26cf5c1f7e9a8c004ead2c8d154d",
+      "typography019.py": "6b65d43eed7715e386315478984e12f2b619a8e8cc3ebdabddee64b1c659fe5c",
+      "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+      "representation021.py": "34310ebd31e478f9ead371e6440ec4d98c2cf2d8b7755aee332d85c1acaeba71",
+      "agent023.py": "9cf248ae1bb8df6591bc79bfedbd52fc6abb482dcd9b3daf3efd90e6b2517e88"
+    }
+  },
+  "documents": [
+    {
+      "id": "canterbury",
+      "status": "needs_review",
+      "code": "MODEL_INCOMPLETE",
+      "seconds": 812.8939606519998,
+      "first_success_iteration": null,
+      "iterations": [
+        {
+          "number": 1,
+          "status": "needs_review",
+          "conflicts": 30,
+          "code": null,
+          "started_seconds": 0.549414679997426,
+          "finished_seconds": 125.19173302999843,
+          "stress": [],
+          "application_failures": [
+            "PROVIDER_HTTP_429"
+          ],
+          "unresolved_count": 0,
+          "teacher_student_agreement": {
+            "correct": 0,
+            "total": 0,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 0
+        },
+        {
+          "number": 2,
+          "status": "needs_review",
+          "conflicts": 28,
+          "code": null,
+          "started_seconds": 125.19309757700103,
+          "finished_seconds": 360.18927368200093,
+          "stress": [],
+          "application_failures": [
+            "PROVIDER_HTTP_429"
+          ],
+          "unresolved_count": 0,
+          "teacher_student_agreement": {
+            "correct": 0,
+            "total": 0,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 3
+        },
+        {
+          "number": 3,
+          "status": "needs_review",
+          "conflicts": 32,
+          "code": null,
+          "started_seconds": 360.1917110899958,
+          "finished_seconds": 657.2314185569994,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 367,
+          "teacher_student_agreement": {
+            "correct": 405,
+            "total": 415,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 4
+        },
+        {
+          "number": 4,
+          "status": "failed",
+          "conflicts": null,
+          "code": "MODEL_INCOMPLETE",
+          "started_seconds": 657.2330704319975,
+          "finished_seconds": null,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 0,
+          "teacher_student_agreement": {
+            "correct": 0,
+            "total": 0,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 0
+        }
+      ],
+      "api_attempts": 7,
+      "cost_usd": "1.11316117",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": "instance_verified",
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "EMPTY_RUN_UNSUPPORTED",
+              "adaptation": null,
+              "pixel_exact": null
+            },
+            {
+              "number": 2,
+              "status": "passed",
+              "code": null,
+              "adaptation": {
+                "adapter": "proofing-and-empty-runs-v1",
+                "removed_nodes": 68,
+                "parts": {
+                  "word/document.xml": 68
+                }
+              },
+              "pixel_exact": true
+            }
+          ]
+        }
+      ],
+      "api_seconds_sum": 522.858193865999,
+      "unknown_cost_attempts": 2,
+      "unconfirmed_reserve_usd": "0.11889544",
+      "human_feedback_revisions_applied": 0,
+      "instance_replay_passed": true
+    },
+    {
+      "id": "dundee",
+      "status": "needs_review",
+      "code": null,
+      "seconds": 1791.1910313300032,
+      "first_success_iteration": null,
+      "iterations": [
+        {
+          "number": 1,
+          "status": "needs_review",
+          "conflicts": 78,
+          "code": null,
+          "started_seconds": 0.5413915300014196,
+          "finished_seconds": 251.54905467299977,
+          "stress": [],
+          "application_failures": [
+            "MODEL_INCOMPLETE"
+          ],
+          "unresolved_count": 0,
+          "teacher_student_agreement": {
+            "correct": 0,
+            "total": 0,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 0
+        },
+        {
+          "number": 2,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 251.5509666759972,
+          "finished_seconds": 467.97820252399833,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 369,
+          "teacher_student_agreement": {
+            "correct": 268,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 6
+        },
+        {
+          "number": 3,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 467.98028678399714,
+          "finished_seconds": 692.7084007459998,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 366,
+          "teacher_student_agreement": {
+            "correct": 260,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 6
+        },
+        {
+          "number": 4,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 692.7105210209993,
+          "finished_seconds": 922.171262691998,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 363,
+          "teacher_student_agreement": {
+            "correct": 261,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 5
+        },
+        {
+          "number": 5,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 922.1736450370008,
+          "finished_seconds": 1141.914944363998,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 363,
+          "teacher_student_agreement": {
+            "correct": 268,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 5
+        },
+        {
+          "number": 6,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 1141.9182096959994,
+          "finished_seconds": 1369.702413223,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 365,
+          "teacher_student_agreement": {
+            "correct": 261,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 6
+        },
+        {
+          "number": 7,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 1369.7051365869993,
+          "finished_seconds": 1607.4145899319992,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 363,
+          "teacher_student_agreement": {
+            "correct": 269,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 6
+        },
+        {
+          "number": 8,
+          "status": "needs_review",
+          "conflicts": 77,
+          "code": null,
+          "started_seconds": 1607.4172225910006,
+          "finished_seconds": 1789.2612764860023,
+          "stress": [],
+          "application_failures": [],
+          "unresolved_count": 398,
+          "teacher_student_agreement": {
+            "correct": 260,
+            "total": 269,
+            "independent_ground_truth": false
+          },
+          "generated_questions": 6
+        }
+      ],
+      "api_attempts": 16,
+      "cost_usd": "2.487913900",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": "instance_verified",
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "CATALOGUE_INLINE_UNSUPPORTED",
+              "adaptation": null,
+              "pixel_exact": null
+            },
+            {
+              "number": 2,
+              "status": "passed",
+              "code": null,
+              "adaptation": {
+                "adapter": "proofing-and-empty-runs-v1",
+                "removed_nodes": 23,
+                "parts": {
+                  "word/document.xml": 23
+                }
+              },
+              "pixel_exact": true
+            }
+          ]
+        }
+      ],
+      "api_seconds_sum": 1475.326997633012,
+      "unknown_cost_attempts": 0,
+      "unconfirmed_reserve_usd": "0",
+      "human_feedback_revisions_applied": 0,
+      "instance_replay_passed": true
+    }
+  ],
+  "prefix_success": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "5": 0,
+    "8": 0
+  },
+  "timing_note": "Wall time includes local rendering and waiting on the shared ledger; API seconds sum excludes lock waiting and account/catalog requests. Series029,030 and031 overlapped. Do not treat wall times as isolated service latency."
+}

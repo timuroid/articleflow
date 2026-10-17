@@ -110,7 +110,7 @@ def mount(app,store,csrf):
         row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,));report=json.loads(row['report_json'])
         if report.get('schema')!='teacher-student-023' or not 1<=sample<=report.get('training_documents',0):raise HTTPException(404,'NOT_FOUND')
         run_root=store.path('template-runs',run_id)
-        if report.get('contract')=='adaptive-template-028':run_root=run_root/'learning'
+        if report.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/'learning'
         if mode=='reference':folder=run_root/f'reference-{sample}'/'reference'
         elif mode=='result':folder=run_root/f'iteration-{len(report["iterations"])}'/f'application-{sample}'/'render'
         else:raise HTTPException(404,'NOT_FOUND')
@@ -128,7 +128,8 @@ def mount(app,store,csrf):
         paths=sorted(store.path('templates',template_id,'samples').glob('*.docx'))
         if [digest(p.read_bytes()) for p in paths]!=report['source_hashes']:raise HTTPException(409,'REFERENCE_CHANGED')
         run_root=store.path('template-runs',body.run_id)
-        if report.get('contract')=='adaptive-template-028':
+        if report.get('contract') in {'adaptive-template-028','adaptive-template-032'}:
+            if report.get('contract')=='adaptive-template-032' and report.get('certification',{}).get('format_properties_exact') is not True:raise HTTPException(409,'PROPERTY_CERTIFICATION_REQUIRED')
             if not all(report.get('certification',{}).get(k) is True for k in ('instance_replay','stress_passed')):raise HTTPException(409,'STRESS_CERTIFICATION_REQUIRED')
             run_root=run_root/'learning'
         directory=run_root/f'iteration-{len(report["iterations"])}'/'template'
@@ -173,7 +174,7 @@ def process_job(store,job,batch,version,spec):
     settings=spec['agent023'];config=model_config()
     if not batch.get('use_llm') or config is None:raise DocumentError('AGENT_REQUIRES_MODEL_CONSENT')
     run_root=store.path('template-runs',settings['run_id'])
-    if settings.get('contract')=='adaptive-template-028':run_root=run_root/'learning'
+    if settings.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/'learning'
     template=run_root/f'iteration-{settings["iteration"]}'/'template'
     if any(digest((template/n).read_bytes())!=h for n,h in settings['package_hashes'].items()):raise DocumentError('PACKAGE_CHANGED')
     source=store.path('jobs',job['id'],'source.docx')

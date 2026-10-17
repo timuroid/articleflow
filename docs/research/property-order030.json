@@ -1,0 +1,20 @@
+[
+  {
+    "case": "bmstu",
+    "iteration": "iteration-8",
+    "conflicts": 1,
+    "resolved_by_property_order_only": 0
+  },
+  {
+    "case": "herzen",
+    "iteration": "iteration-7",
+    "conflicts": 4,
+    "resolved_by_property_order_only": 0
+  },
+  {
+    "case": "canterbury",
+    "iteration": "iteration-2",
+    "conflicts": 28,
+    "resolved_by_property_order_only": 0
+  }
+]

@@ -86,6 +86,18 @@ and an issue. A caller must not present it as a correctly ordered result.
     nodes = [n for n in body if n.tag != '{%s}sectPr' % NS['w']]
     if len(nodes) != len(original):
         raise DocumentError('ORDER_SOURCE_ALIGNMENT')
+    def movable_atom(atom):
+        if atom['kind']=='text':return True
+        if atom['kind']!='control':return False
+        node=parse_xml(atom['xml'].encode())
+        return node.tag=='{%s}sym'%NS['w'] or (node.tag=='{%s}br'%NS['w'] and node.get('{%s}type'%NS['w']) in {None,'textWrapping'} and node.get('{%s}clear'%NS['w']) in {None,'none'})
+    def neighbour_binding(atom):
+        if atom['kind']=='control':
+            node=parse_xml(atom['xml'].encode())
+            # A page break remains a barrier itself; it does not bind a caption
+            # to the following paragraph. A plain line break binds nothing.
+            if node.tag in {'{%s}br'%NS['w'],'{%s}sym'%NS['w']}:return False
+        return atom['kind']!='text'
     def safe(index):
         node = original[index]
         if node['kind'] != 'paragraph':
@@ -95,10 +107,10 @@ and an issue. A caller must not present it as a correctly ordered result.
         for neighbour in (index-1,index+1):
             if not 0<=neighbour<len(original):continue
             nearby=original[neighbour]
-            if nearby['kind']!='paragraph' or any(a['kind']!='text' for a in blocks[nearby['id']]['atoms']):
+            if nearby['kind']!='paragraph' or any(neighbour_binding(a) for a in blocks[nearby['id']]['atoms']):
                 return False
         # Marker/hyperlink/object atoms stay fixed; no caption binding is invented.
-        if not block['text'] or any(a['kind'] != 'text' for a in block['atoms']):
+        if not block['text'] or not all(movable_atom(a) for a in block['atoms']):
             return False
         xml = nodes[index]
         if xml.xpath('.//w:numPr | .//w:bookmarkStart | .//w:bookmarkEnd | .//w:fldChar | .//w:instrText | .//w:sectPr', namespaces=NS):

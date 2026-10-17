@@ -40,9 +40,9 @@ def permute(source,target):
     """Swap two adjacent plain paragraphs only; section/object/table boundaries are barriers."""
     parts=load_package(source);root=parse_xml(parts['word/document.xml']);body=root.find('w:body',NS)
     def safe(p):
-        return p.tag==t.tag('p') and bool(p.findall('.//w:t',NS)) and not p.xpath('.//w:sectPr | .//w:numPr | .//w:bookmarkStart | .//w:bookmarkEnd | .//w:hyperlink | .//w:drawing | .//w:fldChar | .//w:fldSimple | .//m:oMath | .//w:pStyle',namespaces=NS)
+        return p.tag==t.tag('p') and bool(p.findall('.//w:t',NS)) and not p.xpath('.//w:sectPr | .//w:numPr | .//w:bookmarkStart | .//w:bookmarkEnd | .//w:hyperlink | .//w:drawing | .//w:fldChar | .//w:fldSimple | .//m:oMath | .//w:pStyle | .//w:br[@w:type="page" or @w:type="column" or (@w:clear and @w:clear!="none")]',namespaces=NS)
     for i in range(len(body)-1):
-        if safe(body[i]) and safe(body[i+1]) and all(n.tag in {t.tag('p'),t.tag('sectPr')} for n in list(body)[max(0,i-1):i+3]):
+        if safe(body[i]) and safe(body[i+1]) and xml_bytes(body[i])!=xml_bytes(body[i+1]) and all(n.tag in {t.tag('p'),t.tag('sectPr')} for n in list(body)[max(0,i-1):i+3]):
             a,b=body[i],body[i+1];body.remove(b);body.insert(i,b)
             parts['word/document.xml']=xml_bytes(root);write_package(target,parts)
             return {'applied':True,'swapped':[i,i+1]}
@@ -54,7 +54,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
     original_hashes=[digest(p.read_bytes()) for p in references]
     limits={'iterations':max_iterations,'model_calls':max_calls,'seconds':seconds,'cost':'shared_provider_ledger_cap'}
     def emit(report):
-        report.update(contract='adaptive-template-028',source_hashes=original_hashes,preparation=copy.deepcopy(preparation),limits=limits,model_calls=calls,elapsed_seconds=round(time.monotonic()-started,2),call_history=copy.deepcopy(history),transport_events=copy.deepcopy(transport_events))
+        report.update(contract='adaptive-template-032',source_hashes=original_hashes,preparation=copy.deepcopy(preparation),limits=limits,mutation_version='032',model_calls=calls,elapsed_seconds=round(time.monotonic()-started,2),call_history=copy.deepcopy(history),transport_events=copy.deepcopy(transport_events))
         latest.clear();latest.update(copy.deepcopy(report))
         dump(folder/'result.json',report)
         if progress:progress(copy.deepcopy(report))
@@ -93,7 +93,10 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     extracted=work/'extracted';agent023.extract_input(candidate,extracted)
                     plan=json.loads((extracted/'oracle-plan.json').read_text())
                     rebuilt=work/'reconstructed.docx';render_catalogue(extracted/'template',extracted/'content',plan,rebuilt)
-                    integrity=check(candidate,rebuilt);pixels=compare_pixels(golden,render_pdf(rebuilt,work/'render'))
+                    integrity=check(candidate,rebuilt)
+                    from .format032 import audit
+                    observation['format']=audit(candidate,rebuilt);integrity['format_properties_exact']=observation['format']['property_exact']
+                    pixels=compare_pixels(golden,render_pdf(rebuilt,work/'render'))
                     observation.update(integrity=integrity,pixels=pixels)
                     if not all(integrity.values()) or not pixels['pixel_exact']:raise DocumentError('INSTANCE_REPLAY_MISMATCH')
                     observation['status']='passed';accepted=candidate;break
@@ -120,7 +123,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                         row.update(unresolved_count=len(result['unresolved']),status=result['status'])
                         if result.get('pdf'):
                             pixels=compare_pixels(sample['golden'],Path(result['pdf']));row['pixels']=pixels
-                            row['passed']=pixels['pixel_exact'] and result.get('content_exact',False)
+                            from .format032 import audit
+                            row['format']=audit(sample['source'],base/name/'result.docx')
+                            row['passed']=pixels['pixel_exact'] and result.get('content_exact',False) and row['format']['property_exact']
                         else:row['passed']=False
                     except DocumentError as exc:row.update(code=str(exc),passed=False)
             for i,source in enumerate(validation_sources,1):
@@ -133,7 +138,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         result=agent023.run(prepared,folder/'learning',teacher,student,max_iterations=max_iterations,caller=bounded,progress=emit,context=context,feedback_provider=feedback_provider,acceptance_probe=stress,adaptive=True,resume_from=resume_from)
         result['effective_source_hashes']=[digest(p.read_bytes()) for p in prepared]
         if result['status']=='reference_verified':
-            result['certification']={'instance_replay':True,'stress_passed':True,'scope':'references_and_applicable_mutations','universal_accuracy_proven':False}
+            result['certification']={'instance_replay':True,'stress_passed':True,'format_properties_exact':True,'scope':'references_and_applicable_mutations','universal_accuracy_proven':False}
         emit(result);return result
     except DocumentError as exc:report.update(status='needs_review',code=str(exc),last_stage=report.get('stage'),stage='finished')
     except Exception as exc:report.update(status='unavailable',code='PREPARATION_UNAVAILABLE',error_type=type(exc).__name__,stage='finished')

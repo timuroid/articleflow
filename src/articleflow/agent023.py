@@ -279,7 +279,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 report['stage']='comparing';emit()
                 if trial.get('pdf'):
                     public['pixels']=compare_all(sample['golden'],Path(trial['pdf']),work/f'diff-{i+1}')
-                public['passed']=bool(public.get('pixels',{}).get('pixel_exact')) and trial.get('content_exact',False) and trial.get('placements_exact',False)
+                    from .format032 import audit
+                    public['format']=audit(sample['source'],work/f'application-{i+1}'/'result.docx')
+                public['passed']=bool(public.get('pixels',{}).get('pixel_exact')) and trial.get('content_exact',False) and trial.get('placements_exact',False) and public.get('format',{}).get('property_exact',False)
                 row['applications'].append(public);emit()
             success=not conflicts and all(a['passed'] for a in row['applications'])
             if success and acceptance_probe is not None:
