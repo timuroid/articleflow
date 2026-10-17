@@ -130,5 +130,17 @@
       ]
     ],
     "unauthenticated_http": "401"
+  },
+  "final_release": {
+    "commit": "5d41fb60dab8fc0daff15da0a4d8452d761c2eab",
+    "archive_sha256": "2e24f4baeae5cf39edc836fa53133e1c9b8d7e5884ae1ff9c5f1a8b16ccc1750",
+    "authenticated_https": 200,
+    "previous_ready_docx_download": 200,
+    "fonts_exact": true,
+    "llm_enabled": true,
+    "server_tests": 81,
+    "server_tests_seconds": 13.563,
+    "new_paid_calls": 0,
+    "delta": "legacy profiles remain draft until re-extraction"
   }
 }
