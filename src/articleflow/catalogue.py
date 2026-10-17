@@ -112,6 +112,8 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
     if body.find("w:sectPr", NS) is None:
         raise DocumentError("CATALOGUE_SECTION_PROFILE_UNSUPPORTED")
     catalogue = Catalogue()
+    from .typography019 import Resolver
+    resolver = Resolver(parts)
     roles = {name: {"description": definitions["roles"][name], "paragraph_styles": set(), "character_styles": set()} for name in sorted(set(annotations.values()))}
     blocks, block_plan, objects, object_plan, layout_plan = [], [], [], [], []
     object_files = {}
@@ -188,7 +190,18 @@ def extract_catalogue(source: Path, annotations: dict, definitions: dict, output
             visit(child, atoms)
         if offset != len(paragraph_text(p)):
             raise DocumentError("CATALOGUE_TEXT_COVERAGE")
-        blocks.append({"id": bid, "text": paragraph_text(p), "atoms": atoms, "section_boundary":p.find("w:pPr/w:sectPr",NS) is not None})
+        effective,_=resolver.resolve(p)
+        number=effective.find("w:numPr/w:numId",NS)
+        listed=number is not None and number.get(f"{{{W}}}val") not in {None,"0"}
+        level=effective.find("w:numPr/w:ilvl",NS)
+        level_value=level.get(f"{{{W}}}val","0") if level is not None else "0"
+        numbering_level=resolver.numbering_level(effective) if listed else None
+        fmt=numbering_level.find("w:numFmt",NS) if numbering_level is not None else None
+        commands=sorted({(n.text or "").strip().split()[0].upper() for n in p.findall('.//w:instrText',NS) if (n.text or "").strip()})
+        blocks.append({"id": bid, "text": paragraph_text(p), "atoms": atoms, "section_boundary":p.find("w:pPr/w:sectPr",NS) is not None,
+                       "list_level":int(level_value) if listed and level_value.isdigit() else -1,
+                       "list_kind":fmt.get(f"{{{W}}}val","unknown") if fmt is not None else "unknown" if listed else "none",
+                       "field_commands":','.join(commands)})
         block_plan.append({"id": bid, "role": role, "paragraph_style": pstyle, "spans": spans})
 
     def structure(node):

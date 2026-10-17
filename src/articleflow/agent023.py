@@ -175,7 +175,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
     def emit():
         dump(folder/'result.json',report)
         if progress:progress(copy.deepcopy(report))
-    samples=[];observations=[];allblocks=[];feedback=None;feedback_images=[];start=time.monotonic()
+    samples=[];observations=[];allblocks=[];feedback=None;feedback_images=[];start=time.monotonic();teacher_output_limit=8000
     report['stage']='extracting';emit()
     try:
         for i,source in enumerate(references):
@@ -186,9 +186,10 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     'semantics':rules.semantic_spans(source),'golden':render_pdf(source,local/'reference')}
             samples.append(sample)
             report['extracted_documents']=len(samples);emit()
+            geometry=rules.features(content,{b['id']:'unknown' for b in content['blocks']})['paragraph']
             for b,p in zip(content['blocks'],plan['blocks']):
                 bid=f'{i}:{b["id"]}';allblocks.append({'id':bid,'text':b['text']})
-                observations.append({'n':len(observations)+1,'document':i+1,'text':b['text'],
+                observations.append({'n':len(observations)+1,'document':i+1,'text':b['text'],'structure':{k:v for k,v in geometry[b['id']].items() if k not in {'role','previous_role','next_role'}},
                                      'paragraph_style':p['paragraph_style'],'character_styles':sorted({s['style'] for s in p['spans']}),'style_spans':p['spans']})
             # Style properties are training observations, never sent to the student.
             sample['catalogue']=template['styles']
@@ -196,8 +197,10 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             previous=sorted(Path(resume_from).glob('iteration-*/teacher/request.json'))[-1]
             message=json.loads(previous.read_text())['messages'][1]['content']
             previous_input=json.loads(message if isinstance(message,str) else message[0]['text'])
-            if previous_input['observations']['paragraphs']!=observations:raise DocumentError('RESUME_REFERENCE_CHANGED')
-            feedback=previous_input['feedback']
+            from .evidence031 import restore
+            aliases=previous_input['observations'].get('style_aliases',{})
+            if restore(previous_input['observations']['paragraphs'],aliases)!=observations:raise DocumentError('RESUME_REFERENCE_CHANGED')
+            feedback=restore(previous_input['feedback'],aliases)
             if feedback:
                 feedback['conflicts']=[{**c,'examples':c.get('examples',[])[:4]} for c in feedback.get('conflicts',[])[:20]]
                 for m in feedback.get('measurements',[]):
@@ -213,16 +216,18 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             user_feedback=feedback_provider() if feedback_provider else {'revision':0,'text':''}
             report['feedback_revision_applied']=user_feedback['revision']
             report['stage']='teacher'
-            row={'number':iteration+1,'status':'running','applications':[],'started_seconds':time.monotonic()-start};report['iterations'].append(row);emit()
+            row={'number':iteration+1,'teacher_output_limit':teacher_output_limit,'status':'running','applications':[],'started_seconds':time.monotonic()-start};report['iterations'].append(row);emit()
             try:
                 response,meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':user_feedback['text'],'paragraphs':observations,
-                           'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=8000,
+                           'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=teacher_output_limit,
                            validate=lambda r:(expand_groups(r,allblocks) and r))
             except DocumentError as exc:
-                recoverable={'QUESTION_SCHEMA','TEACHER_SCHEMA','ROLE_DEFINITION_INVALID','SEMANTIC_GROUP_INVALID','SEMANTIC_GROUP_COVERAGE','SEMANTIC_GROUP_OVERLAP','INLINE_ANCHOR_NOT_FOUND','INLINE_QUOTE_MISMATCH','INLINE_RANGE'}
+                recoverable={'MODEL_INCOMPLETE','QUESTION_SCHEMA','TEACHER_SCHEMA','ROLE_DEFINITION_INVALID','SEMANTIC_GROUP_INVALID','SEMANTIC_GROUP_COVERAGE','SEMANTIC_GROUP_OVERLAP','INLINE_ANCHOR_NOT_FOUND','INLINE_QUOTE_MISMATCH','INLINE_RANGE'}
                 if not adaptive or str(exc) not in recoverable:raise
                 row.update(status='failed',code=str(exc),finished_seconds=time.monotonic()-start)
+                if str(exc)=='MODEL_INCOMPLETE':teacher_output_limit=min(32768,teacher_output_limit*2)
                 feedback={'validation_error':str(exc),'instruction':'Return a fresh complete response; all question roles must be keys of roles. Use exact quoted spans and local occurrence numbers.'}
+                if str(exc)=='MODEL_INCOMPLETE':feedback['instruction']='The previous answer was truncated. Output budget increased. Group consecutive paragraphs and use only necessary semantic inline annotations; return complete JSON.'
                 emit();continue
             report['stage']='compiling';emit()
             row['teacher']=meta;expanded=expand_groups(response,allblocks)
@@ -249,7 +254,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 try:
                     trial=apply(incoming,work/'template',work/f'application-{i+1}',student,caller=caller)
                 except DocumentError as exc:
-                    if not adaptive:raise
+                    if not adaptive or str(exc).startswith('PROVIDER_HTTP_'):raise
                     row['applications'].append({'status':'failed','code':str(exc),'unresolved':[],'passed':False})
                     emit();continue
                 new_content=json.loads((work/f'application-{i+1}/input-original.json').read_text())
@@ -291,7 +296,8 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                            'unresolved_examples':a.get('unresolved',[])[:12]} for a in row['applications']]
             feedback={'conflicts':[{**c,'examples':c.get('examples',[])[:4]} for c in conflicts[:20]],
                       'semantic_confusions':confusions[:40],'measurements':measurements,
-                      'previous_roles':response['roles'],'previous_groups':response['groups']}
+                      'previous_roles':response['roles'],'previous_groups':response['groups'],
+                      'previous_inline_roles':response.get('inline_roles',{}),'previous_inline':response.get('inline',[])}
             if row.get('stress'):feedback['stress_failures']=[{k:v for k,v in r.items() if k!='pixels'} for r in row['stress'] if not r.get('passed') and r.get('status')!='not_applicable']
             dump(work/'feedback.json',feedback)
             feedback_images=[]

@@ -52,3 +52,30 @@ class Agent028Tests(unittest.TestCase):
             with patch('articleflow.agent028.render_pdf',return_value=base/'dummy.pdf'),patch('articleflow.agent028.compare_pixels',return_value={'pixel_exact':True}),patch('articleflow.agent023.render_pdf',return_value=base/'dummy.pdf'):
                 result=run([src],base/'run',{'model':'teacher'},{'model':'student'},max_calls=0)
             self.assertEqual(result['code'],'AGENT_CALL_LIMIT');self.assertNotIn('certification',result)
+
+    def test_teacher_incomplete_answer_increases_explicit_output_budget(self):
+        from articleflow.agent023 import run as learn
+        with tempfile.TemporaryDirectory() as td:
+            base=Path(td);src=base/'sample.docx';d=Document();d.add_paragraph('Body');d.save(src);limits=[]
+            def caller(config,messages,directory,**kw):
+                if config['model']=='teacher':
+                    limits.append(kw['max_tokens'])
+                    if len(limits)==1:raise DocumentError('MODEL_INCOMPLETE')
+                    return {'roles':{'body':'Body paragraph'},'groups':[{'start':1,'end':1,'role':'body'}],'questions':[]},{}
+                return {'groups':[{'start':1,'end':1,'role':'body'}]},{}
+            with patch('articleflow.agent023.render_pdf',return_value=base/'dummy.pdf'),patch('articleflow.agent023.compare_all',return_value={'pixel_exact':True}):
+                result=learn([src],base/'loop',{'model':'teacher'},{'model':'student'},max_iterations=2,caller=caller,adaptive=True,acceptance_probe=lambda *a:[{'variant':'test','passed':False}])
+            self.assertEqual(limits,[8000,16000]);self.assertEqual(result['iterations'][0]['code'],'MODEL_INCOMPLETE')
+            self.assertIsNotNone(result['iterations'][0]['finished_seconds'])
+
+    def test_exhausted_provider_outage_does_not_regenerate_template(self):
+        from articleflow.agent023 import run as learn
+        with tempfile.TemporaryDirectory() as td:
+            base=Path(td);src=base/'sample.docx';d=Document();d.add_paragraph('Body');d.save(src);teachers=[]
+            def caller(config,*a,**kw):
+                if config['model']=='teacher':
+                    teachers.append(1);return {'roles':{'body':'Body paragraph'},'groups':[{'start':1,'end':1,'role':'body'}],'questions':[]},{}
+                raise DocumentError('PROVIDER_HTTP_429')
+            with patch('articleflow.agent023.render_pdf',return_value=base/'dummy.pdf'):
+                result=learn([src],base/'loop',{'model':'teacher'},{'model':'student'},max_iterations=3,caller=caller,adaptive=True)
+            self.assertEqual(len(teachers),1);self.assertEqual(result['code'],'PROVIDER_HTTP_429')

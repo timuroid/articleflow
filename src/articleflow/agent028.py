@@ -49,15 +49,16 @@ def permute(source,target):
     return {'applied':False,'reason':'NO_SAFE_ADJACENT_BLOCKS'}
 
 
-def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',feedback_provider=None,max_calls=40,seconds=1800,validation_sources=()):
-    folder=Path(folder);started=time.monotonic();calls=0;preparation=[];history=[]
+def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',feedback_provider=None,max_calls=40,seconds=1800,validation_sources=(),resume_from=None):
+    folder=Path(folder);started=time.monotonic();calls=0;preparation=[];history=[];transport_events=[];latest={}
     original_hashes=[digest(p.read_bytes()) for p in references]
     limits={'iterations':max_iterations,'model_calls':max_calls,'seconds':seconds,'cost':'shared_provider_ledger_cap'}
     def emit(report):
-        report.update(contract='adaptive-template-028',source_hashes=original_hashes,preparation=copy.deepcopy(preparation),limits=limits,model_calls=calls,elapsed_seconds=round(time.monotonic()-started,2),call_history=copy.deepcopy(history))
+        report.update(contract='adaptive-template-028',source_hashes=original_hashes,preparation=copy.deepcopy(preparation),limits=limits,model_calls=calls,elapsed_seconds=round(time.monotonic()-started,2),call_history=copy.deepcopy(history),transport_events=copy.deepcopy(transport_events))
+        latest.clear();latest.update(copy.deepcopy(report))
         dump(folder/'result.json',report)
         if progress:progress(copy.deepcopy(report))
-    def bounded(config,messages,directory,**kwargs):
+    def once(config,messages,directory,**kwargs):
         nonlocal calls
         if calls>=max_calls:raise DocumentError('AGENT_CALL_LIMIT')
         if time.monotonic()-started>seconds:raise DocumentError('AGENT_TIME_LIMIT')
@@ -67,6 +68,12 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             meta=Path(directory)/'meta.json'
             if meta.exists():
                 record=json.loads(meta.read_text());history.append({**record,'stage_path':str(Path(directory).relative_to(folder)),'elapsed_seconds':round(time.monotonic()-started,2)})
+    def bounded(config,messages,directory,**kwargs):
+        from .infrastructure031 import recover
+        def retry(event):
+            transport_events.append({**event,'stage_path':str(Path(directory).relative_to(folder)),'elapsed_seconds':round(time.monotonic()-started,2)})
+            emit({**latest,'stage':'provider_wait'})
+        return recover(lambda attempt:once(config,messages,attempt,**kwargs),directory,on_retry=retry)
     report={'schema':'teacher-student-023','status':'running','stage':'preflight','iterations':[],'training_documents':len(references)}
     folder.mkdir(parents=True,exist_ok=False);emit(report)
     prepared=[]
@@ -123,7 +130,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     row.update(status=result['status'],unresolved_count=len(result['unresolved']),passed=result['status']=='rendered_unverified' and not result['unresolved'])
                 except DocumentError as exc:row.update(status='failed',code=str(exc))
             return rows
-        result=agent023.run(prepared,folder/'learning',teacher,student,max_iterations=max_iterations,caller=bounded,progress=emit,context=context,feedback_provider=feedback_provider,acceptance_probe=stress,adaptive=True)
+        result=agent023.run(prepared,folder/'learning',teacher,student,max_iterations=max_iterations,caller=bounded,progress=emit,context=context,feedback_provider=feedback_provider,acceptance_probe=stress,adaptive=True,resume_from=resume_from)
         result['effective_source_hashes']=[digest(p.read_bytes()) for p in prepared]
         if result['status']=='reference_verified':
             result['certification']={'instance_replay':True,'stress_passed':True,'scope':'references_and_applicable_mutations','universal_accuracy_proven':False}

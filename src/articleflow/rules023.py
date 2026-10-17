@@ -50,6 +50,7 @@ def features(content, assignments):
         raise DocumentError('SEMANTIC_COVERAGE')
     result = {'paragraph': {}, 'layout': {}, 'drawing': {}}
     texts={b['id']:b['text'] for b in content['blocks']}
+    structural={b['id']:{'list_level':b.get('list_level',-1),'list_kind':b.get('list_kind','none'),'field_commands':b.get('field_commands','')} for b in content['blocks']}
     boundaries={b['id']:bool(b.get('section_boundary')) for b in content['blocks']}
     def language(text):
         cyr=sum('\u0400'<=c<='\u052f' for c in text)
@@ -68,6 +69,7 @@ def features(content, assignments):
                          previous_role=assignments.get(visible[i-1].get('id'),'OBJECT') if i else 'START',
                          next_role=assignments.get(visible[i+1].get('id'),'OBJECT') if i+1<len(visible) else 'END',
                          language=language(texts[n['id']]))
+                f.update(structural[n['id']])
                 result['paragraph'][n['id']]=f
             else:
                 children=n.get('children',[])
@@ -117,7 +119,7 @@ def training_examples(content, plan, semantics):
     return rows
 
 
-ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control'}
+ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control','list_level','list_kind','field_commands'}
 
 
 def fit(examples):

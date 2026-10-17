@@ -59,7 +59,10 @@ def teacher_messages(observations, feedback=None, images=()):
       'Whitespace boundaries matter: preserve them and define separator ownership consistently from the evidence. '
       'Ranges must not overlap; unmarked text is plain. Define roles such as variable or term by meaning, '
       'never by font, copied text, position or exact symbol. Include surrounding spaces only if semantically justified.')
-    text=json.dumps({'observations':observations,'feedback':feedback},ensure_ascii=False)
+    from .evidence031 import prepare
+    observations,feedback=prepare(observations,feedback)
+    prompt+=' Style identifiers in observations and feedback use a reversible alias table; never define roles by those aliases. Structure describes source content, not target typography.'
+    text=json.dumps({'observations':observations,'feedback':feedback},ensure_ascii=False,separators=(',',':'))
     content=[{'type':'text','text':text},*[{'type':'image_url','image_url':{'url':image,'detail':'low'}} for image in images]] if images else text
     return [{'role':'system','content':prompt},{'role':'user','content':content}]
 

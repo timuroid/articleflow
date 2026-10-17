@@ -79,7 +79,7 @@ async function showTemplate(id) {
     if(r.schema==='teacher-student-023') {
       const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
       validation.replaceChildren(node('strong','',names[run.status]||run.status));
-      const stages={preflight:'Проверяем точную пересборку и адаптируем чтение',extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',stress_testing:'Проверяем изменённое оформление и порядок блоков',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
+      const stages={provider_wait:'Модель временно недоступна. Повторяем запрос с сохранением шаблона',preflight:'Проверяем точную пересборку и адаптируем чтение',extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',stress_testing:'Проверяем изменённое оформление и порядок блоков',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
       const timeline=node('ol','pipeline');
       const current=Object.keys(stages).indexOf(r.stage==='finished' && run.status!=='reference_verified' ? r.last_stage : r.stage);
       Object.entries(stages).forEach(([key,label],index)=>{const item=node('li',index===current?'active':index<current?'done':'',label);if(index===current)item.setAttribute('aria-current','step');timeline.append(item);});
