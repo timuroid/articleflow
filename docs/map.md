@@ -18,6 +18,7 @@
 | [research/dialogue-recovery-2026-10-17.md](research/dialogue-recovery-2026-10-17.md) | Сверка прежнего диалога с локальными файлами, Git и потерянными материалами |
 | [tech/web-017-local.md](tech/web-017-local.md) | Новый локальный веб-срез, HTTP и хранение |
 | [tech/deployment-observation-017.md](tech/deployment-observation-017.md) | Проверенный первый запуск восстановленного Web 017 |
+| [tech/deployment-observation-018.md](tech/deployment-observation-018.md) | Проверенное обновление ZIP-упаковки и независимая копия серии 018 |
 | [tech/structure-017-local.md](tech/structure-017-local.md) | Структурная сборка DOCX и границы точности |
 | [tech/data-preservation.md](tech/data-preservation.md) | Публикация, закрытые резервные копии и проверка восстановления |
 
