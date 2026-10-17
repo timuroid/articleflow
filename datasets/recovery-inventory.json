@@ -5,9 +5,9 @@
   "items": [
     {"id": "public_cli_007", "kind": "code_and_research", "status": "available_in_public_git", "location": "repository main"},
     {"id": "real_conference_corpus_010_014", "kind": "real_docx_dataset", "status": "not_found", "reported_groups": ["EPOC", "AAMS", "USS"], "reported_count_for_011": 34, "needed_to_recover": "original corpus manifest or another file backup; names and URLs are not known here"},
-    {"id": "user_reference_001", "kind": "private_docx_template", "status": "not_found", "needed_to_recover": "reattach the exact original DOCX or a private backup; compare with the previously recorded hash outside public Git"},
+    {"id": "user_reference_001", "kind": "private_docx_template", "status": "verified_in_local_archive_outside_work", "sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e", "note": "private local copy; contents and filesystem path excluded from public Git"},
     {"id": "scientific_manuscript_014_016", "kind": "private_manuscript_and_outputs", "status": "not_found", "needed_to_recover": "private Markdown/DOCX backups or exported artifact"},
-    {"id": "web_017", "kind": "source_and_release_archive", "status": "not_found", "needed_to_recover": "saved articleflow-web-017 archive or old workspace snapshot"},
+    {"id": "web_017", "kind": "source_and_release_archive", "status": "old_release_not_found_new_implementation_local", "needed_to_recover": "saved articleflow-web-017 archive or old workspace snapshot for bytewise recovery; new implementation must be separately tested and versioned"},
     {"id": "llm_usage_ledger_010_017", "kind": "private_cost_ledger", "status": "not_found", "needed_to_recover": "original ledger; reported historical totals are not a substitute"},
     {"id": "synthetic_v1", "kind": "new_synthetic_docx_dataset", "status": "reproducible_from_public_git", "location": "scripts/build_synthetic_corpus.py + datasets/synthetic-v1/manifest.json", "note": "newly generated; DOCX binaries are local only after publication rejection; not the lost conference corpus"}
   ]

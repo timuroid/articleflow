@@ -7,12 +7,15 @@ conference corpus and must not be reported as independent real-world transfer.
 from __future__ import annotations
 
 import argparse
+import binascii
 import datetime as dt
 import hashlib
 import io
 import json
+import struct
 import tempfile
 import zipfile
+import zlib
 from pathlib import Path
 
 from docx import Document
@@ -21,7 +24,6 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt
 from docx.opc.constants import RELATIONSHIP_TYPE
-from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1] / "datasets" / "synthetic-v1"
@@ -39,16 +41,37 @@ def digest(path: Path) -> str:
 
 
 def chart(seed: int) -> io.BytesIO:
-    image = Image.new("RGB", (640, 230), "white")
-    draw = ImageDraw.Draw(image)
-    draw.line((50, 185, 610, 185), fill="#394d68", width=3)
-    for index, height in enumerate((70 + seed * 5, 100 + seed * 3, 55 + seed * 7)):
-        x = 100 + index * 160
-        draw.rectangle((x, 185 - height, x + 65, 185), fill=(35 + 30 * index, 90 + 25 * index, 150))
-    result = io.BytesIO()
-    image.save(result, format="PNG")
-    result.seek(0)
-    return result
+    """Draw a tiny deterministic PNG without platform-specific encoders."""
+    width, height = 160, 80
+    pixels = bytearray([255, 255, 255] * width * height)
+
+    def paint(x: int, y: int, color: tuple[int, int, int]) -> None:
+        offset = (y * width + x) * 3
+        pixels[offset:offset + 3] = bytes(color)
+
+    for y in range(63, 65):
+        for x in range(12, 151):
+            paint(x, y, (57, 77, 104))
+    for index, bar_height in enumerate((20 + seed, 30 + seed, 16 + seed)):
+        for y in range(64 - bar_height, 64):
+            for x in range(25 + 45 * index, 43 + 45 * index):
+                paint(x, y, (35 + 30 * index, 90 + 25 * index, 150))
+
+    raw = b"".join(b"\x00" + pixels[y * width * 3:(y + 1) * width * 3] for y in range(height))
+    blocks = bytearray(b"\x78\x01")
+    for offset in range(0, len(raw), 65535):
+        chunk = raw[offset:offset + 65535]
+        blocks.append(1 if offset + len(chunk) == len(raw) else 0)
+        blocks.extend(struct.pack("<HH", len(chunk), 0xffff - len(chunk)))
+        blocks.extend(chunk)
+    blocks.extend(struct.pack(">I", zlib.adler32(raw) & 0xffffffff))
+
+    def png_chunk(name: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + name + data + struct.pack(">I", binascii.crc32(name + data) & 0xffffffff)
+
+    png = b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+    png += png_chunk(b"IDAT", bytes(blocks)) + png_chunk(b"IEND", b"")
+    return io.BytesIO(png)
 
 
 def add_hyperlink(paragraph, text: str) -> None:
@@ -196,9 +219,10 @@ def save_normalized(document: Document, target: Path) -> None:
         with zipfile.ZipFile(raw) as source, zipfile.ZipFile(target, "w") as output:
             for name in sorted(source.namelist()):
                 info = zipfile.ZipInfo(name, FIXED_TIME)
-                info.compress_type = zipfile.ZIP_DEFLATED
+                info.create_system = 3
+                info.compress_type = zipfile.ZIP_STORED
                 info.external_attr = 0o600 << 16
-                output.writestr(info, source.read(name), compresslevel=9)
+                output.writestr(info, source.read(name))
 
 
 def build() -> dict:

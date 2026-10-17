@@ -13,6 +13,8 @@ coverage/
 uploads/
 artifacts/
 private-fixtures/
+var/
+*.egg-info/
 *.docx
 *.docm
 *.pdf

@@ -14,6 +14,9 @@
 | [research/session-017-recovery.md](research/session-017-recovery.md) | Исторические наблюдения 017 и предел их воспроизводимости |
 | [research/session-010-016-recovery.md](research/session-010-016-recovery.md) | Известные результаты пропавших локальных серий и перечень первичных файлов |
 | [research/manuscript-reconstructed.md](research/manuscript-reconstructed.md) | Новый научный черновик по сохранившимся первичным сводкам; прежняя рукопись отсутствует |
+| [research/dialogue-recovery-2026-10-17.md](research/dialogue-recovery-2026-10-17.md) | Сверка прежнего диалога с локальными файлами, Git и потерянными материалами |
+| [tech/web-017-local.md](tech/web-017-local.md) | Новый локальный веб-срез, HTTP и хранение |
+| [tech/structure-017-local.md](tech/structure-017-local.md) | Структурная сборка DOCX и границы точности |
 | [tech/data-preservation.md](tech/data-preservation.md) | Публикация, закрытые резервные копии и проверка восстановления |
 
 Порядок знакомства: [концепция и схемы](product/concept.md) → исследование → хранение шаблона и DocumentPlan → продукт и интерфейс → сценарии → технические контракты. Нормативное слово «должен» описывает целевое обязательство реализации, а не уже существующую функцию. Текущая спецификация `0.2` от 2026-10-15; старые контракты с явной версией `0.1` сохранены как ограниченные baselines, а ADR отмечают изменения решений.

@@ -32,6 +32,7 @@
 | [qwen-009-results.csv](qwen-009-results.csv) | Все десять попыток Qwen без reasoning |
 | [session-017-recovery.md](session-017-recovery.md) | Исторические результаты структурного Web 017 без доступных здесь первичных артефактов |
 | [session-010-016-recovery.md](session-010-016-recovery.md) | Карта промежуточных серий, сведения для восстановления и границы выводов |
+| [dialogue-recovery-2026-10-17.md](dialogue-recovery-2026-10-17.md) | Сверка общего диалога с Git, локальными копиями и потерянными первичными файлами |
 
 Вверх: [общая карта](../map.md). Схемы и понимание задачи: [концепция](../product/concept.md). Формат хранения: [TemplatePackage](../tech/template-package.md). Формат ответа модели: [DocumentPlan](../tech/document-plan.md).
 

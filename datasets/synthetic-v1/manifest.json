@@ -15,7 +15,7 @@
       "kind": "reference",
       "style": "north",
       "path": "train/north-01.docx",
-      "sha256": "4e3116f95e363526a01dd8cde942ccaa85066cb7b39cb2da50bbfe9d31e1aeb9",
+      "sha256": "e9a7ba8cc5643de63db5aa7909496ad2408ffc8c8ef35d9a52da68dc349c13bb",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -29,7 +29,7 @@
       "kind": "reference",
       "style": "north",
       "path": "train/north-02.docx",
-      "sha256": "0ea9c10cdd269f88a721b40e81162876803a5d5c6ffcdb25212a25baf8211e75",
+      "sha256": "2b72476be0b2d9f3c198c7c50d04101d800e9a370e5b58c1731ee1ffec381556",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -43,7 +43,7 @@
       "kind": "reference",
       "style": "north",
       "path": "evaluation/north-03.docx",
-      "sha256": "689b7cfd7e71ee1bacac66f71f63975761b7bf6bf6228459254eeb070dd9d97b",
+      "sha256": "7aa344429b526c261d64d77aaf6a6e147ecde4ab7c383f552798bb181a6d1583",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -57,7 +57,7 @@
       "kind": "source",
       "style": "north",
       "path": "inputs/north-03.docx",
-      "sha256": "fa438f682aa94f8dd62861bc8a3d048e626bbfc07cc1d7a7a7142d13edf41cfc",
+      "sha256": "17664263ce109a85cc0f55dc3fd001dbb05132c9d4243df3adcecbe98971f69a",
       "paired_reference": "evaluation/north-03.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -78,7 +78,7 @@
       "kind": "reference",
       "style": "north",
       "path": "evaluation/north-04.docx",
-      "sha256": "e22dca320dfb64372f0c77c4b0f4ad9e06a6bb1efe27302002365fcc9b42bf68",
+      "sha256": "cab7f471ac3af6cf7f7e3fec9f9c328c8acd25f21bf2e93ae3d211f571a20e40",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -92,7 +92,7 @@
       "kind": "source",
       "style": "north",
       "path": "inputs/north-04.docx",
-      "sha256": "c12a064b19634dce6218e56c9cf80b67285705ad072038614d6bf3d838e1e208",
+      "sha256": "b74aeb4f8aa87fddfe147f4c902c255c5d64ffa4a7982a3578d7d9d9339366af",
       "paired_reference": "evaluation/north-04.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -113,7 +113,7 @@
       "kind": "reference",
       "style": "east",
       "path": "train/east-01.docx",
-      "sha256": "551846bcc87fd704d51a0fcf7561dfbf69e3d0a3818c1c3b30b65b6d19db2678",
+      "sha256": "90da9b8f2b2592a9fabe68daf4db692a52dcadac517df4d0f3807c4cbf1a7bab",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -127,7 +127,7 @@
       "kind": "reference",
       "style": "east",
       "path": "train/east-02.docx",
-      "sha256": "99df2192f693d8c8005d5c41c1d331f4efcbc35ca0297faa9214cf59725bea9b",
+      "sha256": "7e24b1e7897734bc7b811c646c1598eac441e467e5d3519ce7beb1a278a282c9",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -141,7 +141,7 @@
       "kind": "reference",
       "style": "east",
       "path": "evaluation/east-03.docx",
-      "sha256": "8c6639018478190ac7c731b3ea4afbb0215d28bf7e5cf24b407d55135e8f69a8",
+      "sha256": "e1a8f43360d1192db4b01f5cda77017ccef4303d70aadc602dce52a19d24399e",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -155,7 +155,7 @@
       "kind": "source",
       "style": "east",
       "path": "inputs/east-03.docx",
-      "sha256": "c55995766cd92650912feba48f14ce317505d005be577d6d932a6bfc58e090cc",
+      "sha256": "d905e1fb40c34b4b97e5b779cff871cd426765b30a122e4f45b1d4462959197c",
       "paired_reference": "evaluation/east-03.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -176,7 +176,7 @@
       "kind": "reference",
       "style": "east",
       "path": "evaluation/east-04.docx",
-      "sha256": "96f4528004acb11545094d8fca233c1139ab3e2e1b83a8b65b874177612f929f",
+      "sha256": "72ee79019725e53343389683c6083fb9d79627b75f5aa3643a3dcd5b55d04ffe",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -190,7 +190,7 @@
       "kind": "source",
       "style": "east",
       "path": "inputs/east-04.docx",
-      "sha256": "a1179428a2d40fd686dbef114ac42ce7559d17d08204309985d4c0219f9cc468",
+      "sha256": "f7b17a54df7e38812688df27b27d6e2fb55060d18754da25b8de33c7890e3624",
       "paired_reference": "evaluation/east-04.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -211,7 +211,7 @@
       "kind": "reference",
       "style": "south",
       "path": "train/south-01.docx",
-      "sha256": "f1de9514daeff5c718ef7b88d77a9936f624e4bf8df40d1d88d761a0bc2ce290",
+      "sha256": "22488c6528f980a616f2924c63f0149992989e4d612da422ac7ba91176e0ef8e",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -225,7 +225,7 @@
       "kind": "reference",
       "style": "south",
       "path": "train/south-02.docx",
-      "sha256": "87d0ce0e5a410d6942af7a280d52a4528d9bb9a85a7be70d9cfe829de23b3b3f",
+      "sha256": "952dddf8587a48f8483dd1bc9419f06dd8888eb8e2c4acc3cf363bf4be974f1e",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -239,7 +239,7 @@
       "kind": "reference",
       "style": "south",
       "path": "evaluation/south-03.docx",
-      "sha256": "adcfcf035389092a6d00782d388eaa08808fccf6a395cf1208d8f1cf55ed1a49",
+      "sha256": "d39b4e812e166c48975982f5b1530b56488b1a957f09ecefb3a68bffe6070504",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -253,7 +253,7 @@
       "kind": "source",
       "style": "south",
       "path": "inputs/south-03.docx",
-      "sha256": "c68195b1921b5304b55de9daa07f51ac880e08147b0ca5b71529db7741584074",
+      "sha256": "41e8c2f2e47a17475e9e5456dcb0af42e5d009767b49dab3e46956aa341b0af2",
       "paired_reference": "evaluation/south-03.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -274,7 +274,7 @@
       "kind": "reference",
       "style": "south",
       "path": "evaluation/south-04.docx",
-      "sha256": "5b99c9353aa9579f989c432d4623f29ac6af2e7e38e94f791419d82912c5123c",
+      "sha256": "25a3a746e3854a6680a77cda156b083db08b24ca2199b9d53943f500f713c5cd",
       "expected_abstract_order": [
         "Постановка проблемы",
         "Цель",
@@ -288,7 +288,7 @@
       "kind": "source",
       "style": "south",
       "path": "inputs/south-04.docx",
-      "sha256": "24d38f957380b4813d073d9b97edb790c5f65eb0d0522802fc223bcf5df1eaa6",
+      "sha256": "078e4d78b333891b63b2f3c8851367f40e26f5c02e967e31f6231bb49f2ca84d",
       "paired_reference": "evaluation/south-04.docx",
       "expected_abstract_order": [
         "Постановка проблемы",
@@ -309,7 +309,7 @@
       "kind": "missing_required",
       "style": "north",
       "path": "inputs/north-missing.docx",
-      "sha256": "4aa7e7451d9dd1781493ec623076887eb232a3888b3baa4cb8faa89fecd7b3b6",
+      "sha256": "9c2301b489c3125bd32aee1264ed7b1b41fbce5effbf03da6220a767875b03c1",
       "missing_roles": [
         "authors",
         "abstract.significance"

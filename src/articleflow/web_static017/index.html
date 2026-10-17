@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ArticleFlow — проверка научных DOCX</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержанию</a>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span>ArticleFlow</span></div>
+    <span class="mode" id="mode">Локальная проверка · без модели</span>
+  </header>
+  <main id="main" class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">Рабочее пространство редактора</p>
+      <h1 id="page-title">От образца к проверяемому DOCX</h1>
+      <p>Сначала утвердите оформление по эталону. Затем загрузите статьи и проверьте найденные части. Неопределённые данные остаются черновиком с явными вопросами.</p>
+      <div class="notice" id="font-notice" role="status">Проверяем установленные шрифты…</div>
+    </section>
+
+    <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+
+    <div class="grid">
+      <section class="panel" aria-labelledby="template-heading">
+        <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Эталоны и шаблон</h2><p>Один или несколько оформленных DOCX одного вида.</p></div></div>
+        <form id="template-form">
+          <label for="template-name">Название шаблона</label>
+          <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
+          <label for="template-files">Эталоны DOCX, до 10 файлов</label>
+          <input id="template-files" name="files" type="file" accept=".docx" multiple required>
+          <p class="help">Исходные файлы хранятся на этом сервере. Анализ текста внешней моделью отключён.</p>
+          <button type="submit" class="button primary">Извлечь наблюдения</button>
+        </form>
+        <div id="template-list" class="stack" aria-live="polite"></div>
+        <div id="template-review" class="review" hidden></div>
+      </section>
+
+      <section class="panel" aria-labelledby="batch-heading">
+        <div class="panel-head"><span class="step">02</span><div><h2 id="batch-heading">Статьи</h2><p>Обработка продолжается для остальных файлов, если один требует проверки.</p></div></div>
+        <form id="batch-form">
+          <label for="batch-template">Утверждённый шаблон</label>
+          <select id="batch-template" name="template_id" required><option value="">Сначала утвердите шаблон</option></select>
+          <label for="batch-files">Статьи DOCX, до 200 файлов</label>
+          <input id="batch-files" name="files" type="file" accept=".docx" multiple required>
+          <p class="help">Не более 25 МиБ на файл. Исходники и все ревизии остаются доступны.</p>
+          <button type="submit" class="button primary">Начать обработку</button>
+        </form>
+        <div id="batch-view" class="stack" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section class="panel result" aria-labelledby="review-heading">
+      <div class="panel-head"><span class="step">03</span><div><h2 id="review-heading">Проверка и результат</h2><p>Готовый DOCX доступен только после обязательных проверок. Черновик можно скачать отдельно.</p></div></div>
+      <div id="job-view" class="empty">Выберите статью из пакета, чтобы увидеть вопросы, блоки и файлы.</div>
+    </section>
+  </main>
+  <footer class="footer">ArticleFlow Web 017 · Локальный режим восстановления · Структурный просмотр не показывает страницы Word.</footer>
+</body>
+</html>
