@@ -1,0 +1,134 @@
+{
+  "live": {
+    "release_commit": "0dc62d6a9a040e2a0efb98334204bd58b6a35dc7",
+    "tls_verified_by_curl": true,
+    "fonts": {
+      "families": {
+        "Arial": true,
+        "Times New Roman": true
+      },
+      "exact": true,
+      "renderer_fonts": {
+        "Arial": [
+          "Arial-BoldItalicMT",
+          "Arial-BoldMT",
+          "Arial-ItalicMT",
+          "ArialMT"
+        ],
+        "Times New Roman": [
+          "TimesNewRomanPS-BoldItal",
+          "TimesNewRomanPS-BoldMT",
+          "TimesNewRomanPS-ItalicMT",
+          "TimesNewRomanPSMT"
+        ]
+      }
+    },
+    "llm_enabled": true,
+    "manual_jobs": [
+      {
+        "id": "819ce76f839947558f20ffaed1eb7346",
+        "source_name": "north-03.docx",
+        "status": "ready",
+        "source_unchanged": true,
+        "revision": 1,
+        "docx_zip_valid": true
+      },
+      {
+        "id": "008872498c1c41bfb98da6361538bdcb",
+        "source_name": "north-missing.docx",
+        "status": "ready",
+        "source_unchanged": true,
+        "revision": 1,
+        "docx_zip_valid": true
+      }
+    ],
+    "zip": {
+      "jobs": 2,
+      "reports": 2,
+      "ready_docx": 2
+    },
+    "model_job": {
+      "id": "091b76b8cb0b4144bdff0dd8dbb228ea",
+      "status": "ready",
+      "model": {
+        "model": "openai/gpt-6-luna",
+        "prompt_sha256": "40f136a2f1465012f0f81ed2bf5d9bfe50c3294684dc47a54fa8a4d596e88734",
+        "request_sha256": "3249121be1b82653721f42701cb61d9688c192b5031fbf3f4e028cefb28c6144",
+        "api_attempts": 1,
+        "repair_calls": 0,
+        "status": "valid",
+        "http_status": 200,
+        "cost_usd": "0.00021933",
+        "reserve_usd": "0.00782875",
+        "seconds": 3.4218557690037414
+      }
+    },
+    "history_contains_batch": true
+  },
+  "post": {
+    "pixels": {
+      "golden_pages": 2,
+      "candidate_pages": 2,
+      "pages_equal": true,
+      "page_sizes_equal": true,
+      "pixel_exact": true,
+      "differing_pixel_ratio": 0.0,
+      "mae": 0.0,
+      "matched_page_diagnostics": [
+        {
+          "page": 1,
+          "same_size": true,
+          "pixel_exact": true,
+          "differing_pixels": 0
+        },
+        {
+          "page": 2,
+          "same_size": true,
+          "pixel_exact": true,
+          "differing_pixels": 0
+        }
+      ]
+    },
+    "db_integrity": "ok",
+    "statuses": {
+      "draft": 4,
+      "ready": 3
+    },
+    "budget": {
+      "attempts": 63,
+      "confirmed_cost_usd": "0.118338590",
+      "unknown_reserve_usd": "1.060285",
+      "cap_usd": "3",
+      "provider": {
+        "usage_usd": "8.075008764",
+        "available_usd": "3.191239261",
+        "at": "2026-10-17T08:59:00.785272+00:00"
+      }
+    }
+  },
+  "tls": {
+    "tls": "TLSv1.3",
+    "not_after": "Jan 15 06:32:19 2027 GMT",
+    "issuer": [
+      [
+        [
+          "countryName",
+          "US"
+        ]
+      ],
+      [
+        [
+          "organizationName",
+          "Let's Encrypt"
+        ]
+      ],
+      [
+        [
+          "commonName",
+          "YE2"
+        ]
+      ]
+    ],
+    "unauthenticated_http": "401"
+  }
+}
