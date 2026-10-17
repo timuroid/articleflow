@@ -1,0 +1,78 @@
+{
+  "health": {
+    "status": "ok",
+    "web_version": "022",
+    "release": "1815429899423cd0e263212666e3357ac4e76750",
+    "mode": "model_available"
+  },
+  "unauthenticated_http": 401,
+  "authenticated_http": 200,
+  "tls": "TLSv1.3",
+  "certificate_expires": "Jan 15 06:32:19 2027 GMT",
+  "fonts": {
+    "families": {
+      "Arial": true,
+      "Times New Roman": true
+    },
+    "exact": true,
+    "renderer_fonts": {
+      "Arial": [
+        "Arial-BoldItalicMT",
+        "Arial-BoldMT",
+        "Arial-ItalicMT",
+        "ArialMT"
+      ],
+      "Times New Roman": [
+        "TimesNewRomanPS-BoldItal",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPS-ItalicMT",
+        "TimesNewRomanPSMT"
+      ]
+    }
+  },
+  "llm_configured": true,
+  "model_calls": 0,
+  "ledger_unchanged": true,
+  "synthetic_template_approved": true,
+  "jobs": [
+    {
+      "status": "ready",
+      "pages": 1,
+      "visual": "passed"
+    },
+    {
+      "status": "draft",
+      "pages": 1,
+      "visual": "passed"
+    }
+  ],
+  "zip_ready_docx": 1,
+  "zip_draft_manifest": 1,
+  "real_production": [
+    {
+      "input": "original",
+      "golden_pages": 12,
+      "candidate_pages": 13,
+      "exact_pages": 0
+    },
+    {
+      "input": "neutralized",
+      "golden_pages": 12,
+      "candidate_pages": 13,
+      "exact_pages": 0
+    }
+  ],
+  "real_template_approved": false,
+  "real_approval_http": 409,
+  "real_runtime_status": "needs_review",
+  "code_commit": "1815429899423cd0e263212666e3357ac4e76750",
+  "source_release_sha256": "349a63a743c6d650e2330d4202dca0dc3d31b4ab6891063ec1c7c2da604f499a",
+  "tests": {
+    "unit_integration": 119,
+    "bdd_scenarios": 28,
+    "bdd_steps": 113,
+    "model_calls": 0,
+    "passed": true
+  },
+  "caddy_config_unchanged": true
+}
