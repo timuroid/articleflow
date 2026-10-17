@@ -1,0 +1,113 @@
+{
+  "license": "CC0-1.0",
+  "entries": [
+    {
+      "path": "reference.docx",
+      "family": "nested",
+      "seed": 1,
+      "paragraphs": 236,
+      "sha256": "c579c7d0772b2c4ab81b4df34a0778455a3da3a26596e1fd64a506931b8efa10",
+      "labels_count": 236,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "nested",
+      "seed": 17,
+      "paragraphs": 244,
+      "sha256": "2deefd842b4b48d0baa76a1c985a4a444c48274e0c46445bf1636d11b63ed8ef",
+      "labels_count": 244,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "typography_marked",
+      "seed": 1,
+      "paragraphs": 236,
+      "sha256": "49ec508c4f61a476bac76b598da04ba74498696c1d2d074ba70526baa5314575",
+      "labels_count": 236,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "typography_marked",
+      "seed": 17,
+      "paragraphs": 244,
+      "sha256": "a01c0ac0c7d2e9ee2b3e0195ecdb830bf1e4b9ef753e6c13077bb75d09c77433",
+      "labels_count": 244,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "typography",
+      "seed": 1,
+      "paragraphs": 236,
+      "sha256": "df06f73838050370d2104d8cd7f0986483c480c5d07b3763eb6f5375720228ef",
+      "labels_count": 236,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "typography",
+      "seed": 17,
+      "paragraphs": 244,
+      "sha256": "c06bf6dbfabbe5e265c20a54c6c9a9b6a224d5300592aeb82c73b3601373a11a",
+      "labels_count": 244,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "ambiguous",
+      "seed": 1,
+      "paragraphs": 236,
+      "sha256": "b35ff3a4cc23b03ad8405dfac9d5e5ffe8d537aa534d7cebcfede7f332e3aefb",
+      "labels_count": 236,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "ambiguous",
+      "seed": 17,
+      "paragraphs": 244,
+      "sha256": "7320208831d8282554f16cf9d6dc8becc8e7e8aa221b22161271d5791af90f01",
+      "labels_count": 244,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "columns",
+      "seed": 1,
+      "paragraphs": 151,
+      "sha256": "ffd234302eda65bc9dfd9c2655930bed74287be768f9cbef0693ac994e212d89",
+      "labels_count": 151,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "columns",
+      "seed": 17,
+      "paragraphs": 159,
+      "sha256": "05c721aa6ae4f72c8ee0ebecfe39c99fc5aa9b68768a837e3d37c1a5e809b89c",
+      "labels_count": 159,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "stories",
+      "seed": 1,
+      "paragraphs": 151,
+      "sha256": "0bf250ce50d30cb2ef411b0e7f62b0e8d1900218e433215decddf7b85de9dd2f",
+      "labels_count": 151,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    },
+    {
+      "path": "reference.docx",
+      "family": "stories",
+      "seed": 17,
+      "paragraphs": 159,
+      "sha256": "dfb4ad29469a8e4f67a979c6c9bc71d0ea3d71b3823e1891022dbf66b1b30770",
+      "labels_count": 159,
+      "labels_source": "deterministic generator; full labels saved in output manifest"
+    }
+  ]
+}

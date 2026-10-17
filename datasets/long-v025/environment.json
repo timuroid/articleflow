@@ -1,0 +1,57 @@
+{
+  "engine": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+  "os": "Linux",
+  "architecture": "x86_64",
+  "dpi": 144,
+  "color": "RGB",
+  "fonts": [
+    {
+      "file": "Arial.TTF",
+      "sha256": "35c0f3559d8db569e36c31095b8a60d441643d95f59139de40e23fada819b833"
+    },
+    {
+      "file": "Arialbd.TTF",
+      "sha256": "4044aa6b5bebbc36980206b45b0aaaaa5681552a48bcadb41746d5d1d71fd7b4"
+    },
+    {
+      "file": "Arialbi.TTF",
+      "sha256": "2f371cd9d96b3ac544519d85c16dc43ceacdfcea35090ee8ddf3ec5857c50328"
+    },
+    {
+      "file": "Ariali.TTF",
+      "sha256": "70ade233175a6a6675e4501461af9326e6f78b1ffdf787ca0da5ab0fc8c9cfd6"
+    },
+    {
+      "file": "Times.TTF",
+      "sha256": "4e98adeff8ccc8ef4e3ece8d4547e288ff85fdc9c7ca711a4599c234874bbe86"
+    },
+    {
+      "file": "Timesbd.TTF",
+      "sha256": "4357b63cef20c01661a53c5dae70ffd20cb4765503aaed6d38b17a57c5a90bff"
+    },
+    {
+      "file": "Timesbi.TTF",
+      "sha256": "192e1b0d18e90334e999a99f8c32808d6a2e74b3698b8cd90c943c2249a46549"
+    },
+    {
+      "file": "Timesi.TTF",
+      "sha256": "c25ae529b4cecdbca148b6ccb862ee0abad770af8b1fd29c8dba619d1b8da78a"
+    }
+  ],
+  "requested_font_resolution": {
+    "Arial": "Arial",
+    "Times New Roman": "Times New Roman",
+    "KaiTi": "OpenAI Sans",
+    "Calibri": "OpenAI Sans"
+  },
+  "libraries": {
+    "lxml": "6.1.1",
+    "python-docx": "1.2.0",
+    "PyMuPDF": "1.26.6",
+    "numpy": "2.3.5",
+    "httpx": "0.28.1"
+  },
+  "field_policy": "LibreOffice default, no external updates; no fields detected in specimen",
+  "word_compatibility": "not tested",
+  "font_manifest_scope": "fonts explicitly used by stress fixtures"
+}

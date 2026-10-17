@@ -1,0 +1,304 @@
+{
+  "schema": "long-stress-025",
+  "mode": "known_roles_not_model_trial",
+  "api_attempts": 0,
+  "fresh_model_trials": 0,
+  "split": "seed 1 reference; seed 17 held out",
+  "cases": [
+    {
+      "family": "nested",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 236,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 15,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "negative_control": {
+        "mutation": "title size 16 to 24pt",
+        "detected": true
+      },
+      "training_conflicts": 0,
+      "conflict_kinds": {},
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 3.253
+    },
+    {
+      "family": "nested",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 244,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 16,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 2.494
+    },
+    {
+      "family": "typography_marked",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 236,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 15,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "negative_control": {
+        "mutation": "title size 16 to 24pt",
+        "detected": true
+      },
+      "training_conflicts": 0,
+      "conflict_kinds": {},
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 3.506
+    },
+    {
+      "family": "typography_marked",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 244,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 18,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 2.875
+    },
+    {
+      "family": "typography",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 236,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 15,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "negative_control": {
+        "mutation": "title size 16 to 24pt",
+        "detected": true
+      },
+      "training_conflicts": 5,
+      "conflict_kinds": {
+        "character": 5
+      },
+      "transfer": {
+        "status": "needs_review",
+        "unresolved": 147
+      },
+      "status": "evaluated",
+      "seconds": 2.577
+    },
+    {
+      "family": "typography",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 244,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 18,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "transfer": {
+        "status": "needs_review",
+        "unresolved": 171
+      },
+      "status": "evaluated",
+      "seconds": 1.794
+    },
+    {
+      "family": "ambiguous",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 236,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 15,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "negative_control": {
+        "mutation": "title size 16 to 24pt",
+        "detected": true
+      },
+      "training_conflicts": 6,
+      "conflict_kinds": {
+        "paragraph": 1,
+        "character": 5
+      },
+      "transfer": {
+        "status": "needs_review",
+        "unresolved": 179
+      },
+      "status": "evaluated",
+      "seconds": 2.595
+    },
+    {
+      "family": "ambiguous",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 244,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 18,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "transfer": {
+        "status": "needs_review",
+        "unresolved": 211
+      },
+      "status": "evaluated",
+      "seconds": 1.789
+    },
+    {
+      "family": "columns",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 151,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 6,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "negative_control": {
+        "mutation": "title size 16 to 24pt",
+        "detected": true
+      },
+      "training_conflicts": 0,
+      "conflict_kinds": {},
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 2.242
+    },
+    {
+      "family": "columns",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 159,
+      "oracle": {
+        "integrity": {
+          "content_exact": true,
+          "placements_exact": true,
+          "nested_topology_exact": true,
+          "protected_vertical_exact": true
+        },
+        "pages": 7,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "transfer": {
+        "status": "rendered_unverified",
+        "unresolved": 0,
+        "pixel_exact": true,
+        "differing_pixel_ratio": 0.0
+      },
+      "status": "evaluated",
+      "seconds": 1.788
+    },
+    {
+      "family": "stories",
+      "seed": 1,
+      "split": "train",
+      "paragraphs": 151,
+      "status": "rejected",
+      "error": "CATALOGUE_STORY_UNSUPPORTED",
+      "seconds": 0.059
+    },
+    {
+      "family": "stories",
+      "seed": 17,
+      "split": "held_out",
+      "paragraphs": 159,
+      "status": "rejected",
+      "error": "CATALOGUE_STORY_UNSUPPORTED",
+      "seconds": 0.06
+    }
+  ]
+}
