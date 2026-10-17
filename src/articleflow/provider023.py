@@ -56,7 +56,7 @@ def call(config, messages, directory, *, max_tokens=8192, validate=lambda x: x):
         if max(spent, delta)+reserve > Decimal(state['additional_cap_usd']) or reserve > Decimal(balance['available_usd']):
             raise DocumentError('BUDGET_EXCEEDED')
         attempt = {'id': uuid.uuid4().hex, 'at': balance['at'], 'model': config['model'],
-                   'reserve_usd': str(reserve), 'cost_usd': None, 'status': 'reserved', 'series': '023'}
+                   'reserve_usd': str(reserve), 'cost_usd': None, 'status': 'reserved', 'series': config.get('series','023')}
         state['attempts'].append(attempt)
         save_private(ledger, state)
         start = time.monotonic()
