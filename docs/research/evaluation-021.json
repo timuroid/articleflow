@@ -1,0 +1,184 @@
+{
+  "series": "021",
+  "baseline_commit": "6fd6eff2340d4d8b09ccadfa2f9168e092fa47cf",
+  "model_calls": 0,
+  "paid_cost_usd": 0,
+  "plan_provenance": "offline replay of unchanged 020 model plan; no new accuracy estimate",
+  "before": {
+    "source_sha256": "6a8daa006361223813b3c7ee61ccc1770c8326c8f6fb9be78644944a5d30fbcd",
+    "candidate_sha256": "b0dbb5f99926ad4981725cb455f50e3675f263be1efdd6acae43ee26b751ac69",
+    "reference_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+    "bibliography_entries": 8,
+    "bibliography_geometry_matching": 0,
+    "bibliography_ordinals_exact": false,
+    "native_numbering": 0,
+    "keyword_separate_headings": 0,
+    "scientific_payload_exact_after_declared_representation_reversal": true,
+    "media_identical": true,
+    "media_count": 2,
+    "tables": 3,
+    "drawings": 2,
+    "page_geometry_exact": false
+  },
+  "after": {
+    "source_sha256": "6a8daa006361223813b3c7ee61ccc1770c8326c8f6fb9be78644944a5d30fbcd",
+    "candidate_sha256": "690f9934b0a2c40ef4f2d355f347df9ebcc2282836b4663500bd34e4988c5fe7",
+    "reference_sha256": "2a299af6dea621444d6a90c9eb87c339f0a1b6baf1e8579d1ea0338d572f9e7e",
+    "bibliography_entries": 8,
+    "bibliography_geometry_matching": 8,
+    "bibliography_ordinals_exact": true,
+    "native_numbering": 8,
+    "heading_layout_spacers": 9,
+    "keyword_separate_headings": 1,
+    "scientific_payload_exact_after_declared_representation_reversal": true,
+    "media_identical": true,
+    "media_count": 2,
+    "tables": 3,
+    "drawings": 2,
+    "page_geometry_exact": true
+  },
+  "visual_gate": {
+    "approve_http": 200,
+    "layout_validation": {
+      "status": "passed",
+      "scope": "heading-boundary probes; not full document fidelity",
+      "rows": [
+        {
+          "context": "body.heading.1",
+          "reference_gap_pt": 14.316,
+          "candidate_gap_pt": 14.316,
+          "negative_control_gap_pt": 0.516,
+          "gap_pass": true,
+          "negative_control_detected": true,
+          "pixels": {
+            "golden_pages": 1,
+            "candidate_pages": 1,
+            "pages_equal": true,
+            "page_sizes_equal": true,
+            "pixel_exact": true,
+            "differing_pixel_ratio": 0.0,
+            "mae": 0.0,
+            "matched_page_diagnostics": [
+              {
+                "page": 1,
+                "same_size": true,
+                "pixel_exact": true,
+                "differing_pixels": 0
+              }
+            ]
+          }
+        }
+      ],
+      "model_calls": 0
+    }
+  },
+  "render": {
+    "pages": 10,
+    "all_pages_visually_reviewed": true,
+    "final_rasters_identical_to_reviewed": true,
+    "fonts": [
+      "Arial-BoldMT",
+      "ArialMT",
+      "TimesNewRomanPS-BoldMT",
+      "TimesNewRomanPSMT"
+    ],
+    "bibliography_labels": [
+      {
+        "number": "1.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "2.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "3.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "4.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "5.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "6.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "7.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      },
+      {
+        "number": "8.",
+        "page": 10,
+        "font": "TimesNewRomanPSMT",
+        "size": 12.0,
+        "number_x": 56.8,
+        "text_x": 78.9
+      }
+    ],
+    "docx_sha256": "690f9934b0a2c40ef4f2d355f347df9ebcc2282836b4663500bd34e4988c5fe7",
+    "pdf_sha256": "0474a8748db104f29a0fc3decb27622d52c67ac48ec95d21471d0ca4cda9de4f"
+  },
+  "regression": {
+    "roles_correct": 152,
+    "roles_total": 152,
+    "documents_roles_exact": 7,
+    "scientific_payload_exact": 7,
+    "pixel_exact": 6
+  },
+  "missing_keywords_control": {
+    "status": "draft",
+    "missing": [
+      "authors",
+      "keywords"
+    ]
+  },
+  "manual_editorial_changes": [
+    "Russian author placeholder",
+    "keep caption and short table 3 together"
+  ],
+  "limitations": [
+    "single development manuscript",
+    "heading-boundary probe is not full layout coverage",
+    "no new production deployment",
+    "authors absent; udc affiliation city email observed but absent",
+    "Calibri substituted in two synthetic reference pairs"
+  ],
+  "tests": {
+    "unit_integration": 106,
+    "bdd_scenarios": 24,
+    "bdd_steps": 101
+  }
+}

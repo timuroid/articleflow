@@ -199,3 +199,36 @@ def no_output(c):
 
 @then('исходный научный абзац остаётся доступным без изменений')
 def same_source(c):assert c.source020.read_bytes()==c.bytes020
+
+@given('в статье есть только заголовок ключевых слов без самого списка')
+def empty_keywords021(c):
+    setup(c);c.doc019=Document();c.doc019.add_paragraph('Ключевые слова:')
+    c.source021=c.work019/'source021.docx';c.doc019.save(c.source021)
+
+@when('сборщик проверяет обязательные ключевые слова')
+def require_keywords021(c):
+    c.out021=c.work019/'out021.docx'
+    c.report021=compile_document(c.source021,c.out021,assignments={'n-000001':'keywords'},required=['keywords'],approved=True,fonts_ok=True)
+
+@then('отсутствие списка явно отражается в отчёте и заполнителе черновика')
+def report_keywords021(c):
+    assert c.report021['missing']==['keywords'] and c.report021['status']=='draft'
+    assert any('keywords' in q for q in c.report021['questions'])
+    assert '[ЗАПОЛНИТЬ: keywords]' in [p.text for p in Document(c.out021).paragraphs]
+
+@given('извлечённый шаблон ожидает проверку интервалов рендером')
+def visual_template021(c):
+    uploaded(c)
+
+@when('визуальный контроль сообщает несовпадение')
+def visual_mismatch021(c):
+    from unittest.mock import patch
+    selected={r:next(iter(v)) for r,v in c.spec019['variants'].items()}
+    with patch('articleflow.templatecheck021.validate_samples',return_value={'status':'failed','rows':[]}):
+        c.visual_response021=c.client019.post('/api/v017/templates/'+c.template019+'/approve',headers=c.headers019,json={'selected':selected})
+
+@then('версия шаблона остаётся неутверждённой с причиной ошибки')
+def visual_block021(c):
+    assert c.visual_response021.status_code==409
+    assert c.visual_response021.json()['detail']['code']=='TEMPLATE_LAYOUT_MISMATCH'
+    assert not c.client019.get('/api/v017/templates/'+c.template019).json()['approved']

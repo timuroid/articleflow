@@ -52,3 +52,5 @@
 - [Серверный smoke и состояние бюджета 019](deployment-019-results.json).
 
 - [Замысел рукописи 020](manuscript-020-brief.md), [протокол](transfer-020-protocol.md), [результаты](evaluation-020.md) и [машинная сводка](evaluation-020.json).
+
+- [Повторный перенос и ошибки полноты 021](evaluation-021.md).

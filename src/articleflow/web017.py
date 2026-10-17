@@ -345,6 +345,16 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             if not set(body.required) <= set(SLOTS):
                 raise HTTPException(400, "REQUIRED_SLOT_INVALID")
             spec.setdefault("structure", {})["required"] = body.required
+        from .templatecheck021 import validate_samples
+        profiles = {role: spec["styles"][role][key] for role, key in selected.items()}
+        paths = sorted(store.path("templates", template_id, "samples").glob("*.docx"))
+        try:
+            check = validate_samples(paths, spec, profiles, store.path("templates", template_id, "layout-checks", _uid()))
+        except Exception as exc:
+            raise HTTPException(409, {"code": "TEMPLATE_LAYOUT_CHECK_UNAVAILABLE"}) from exc
+        if check["status"] == "failed":
+            raise HTTPException(409, {"code": "TEMPLATE_LAYOUT_MISMATCH", "validation": check})
+        spec["layout_validation"] = check
         spec["selected"] = selected
         spec["approved"] = True
         with store.connect() as con:

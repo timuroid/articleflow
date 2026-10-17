@@ -15,7 +15,7 @@ from lxml import etree as ET
 
 from .docx_engine import NS, W, DocumentError, digest, load_package, paragraph_text, parse_xml, write_package, xml_bytes
 from . import typography019 as typo
-from . import fragments019, bookmarks020
+from . import fragments019, bookmarks020, representation021 as rep, layout021
 
 SLOTS = (
     "udc", "title", "authors", "affiliation", "city", "email",
@@ -189,6 +189,8 @@ def inspect_templates(paths: list[Path], plans: dict | None = None) -> dict:
                 node = _block_nodes(body, block)[0]
                 role = (plans or {}).get(inv["source_sha256"], {}).get("contexts", {}).get(block["id"]) or typo.context(role, node, block.get("format_hints"))
                 style = typo.table_profile(node, resolver) if node.tag == typo.tag("tbl") else typo.measure(node, resolver, role)
+                if role.startswith("body.heading."):
+                    style["leading_spacing"] = layout021.preceding_profiles(body, block["index"], resolver)
                 key = digest(json.dumps(style, sort_keys=True).encode())[:16]
                 variants.setdefault(role, {}).setdefault(key, []).append(path.name)
                 styles.setdefault(role, {})[key] = style
@@ -197,7 +199,8 @@ def inspect_templates(paths: list[Path], plans: dict | None = None) -> dict:
     conflicts = {role: sources for role, sources in variants.items() if len(sources) > 1}
     return {"schema_version": "web-019", "samples": samples, "variants": variants,
             "styles": styles, "conflicts": conflicts, "approved": False,
-            "structure": {"order": list(SLOTS), "required": [r for r in REQUIRED if r in variants]},
+            "structure": {"order": list(SLOTS), "required": [r for r in (*REQUIRED, "keywords") if r in variants],
+                          "observed": [r for r in SLOTS if r != "body" and r in variants]},
             "role_evidence": "model" if plans else "heuristic"}
 
 
@@ -270,7 +273,7 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
                      approved: bool = False, fonts_ok: bool = False,
                      styles: dict[str, dict] | None = None,
                      editorial_output: Path | None = None, contexts: dict[str, str] | None = None,
-                     required: tuple | list = REQUIRED, supplied: dict[str, str] | None = None, model_assigned: bool = False) -> dict:
+                     required: tuple | list | None = None, supplied: dict[str, str] | None = None, model_assigned: bool = False) -> dict:
     parts = load_package(source)
     root, body = _body(parts)
     inv = inventory(source)
@@ -290,19 +293,33 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
     if set(assignments or {}) != set(suggested):
         questions.append("Роли всех исходных блоков ещё не подтверждены")
     resolver = typo.Resolver(parts)
+    ordinals = rep.source_ordinals(body, resolver)
+    representations = []
+    pending_layout = []
     original_bookmarks = bookmarks020.signature(body)
     original = [n for block in inv["blocks"] for n in _block_nodes(body, block)]
     ordered = []
     reordered_source = []
     editorial = []
     supplied = supplied or {}
+    if required is None:
+        required = [*REQUIRED, *(["keywords"] if (styles or {}).get("keywords") else [])]
     if not set(required) <= set(SLOTS) or not set(supplied) <= set(required) or any(not isinstance(t, str) or not t.strip() or len(t)>10000 for t in supplied.values()):
         raise DocumentError("SUPPLIED_DATA_INVALID")
-    absent = [role for role in required if role not in suggested.values()]
+    present = {suggested[b["id"]] for b in inv["blocks"] if rep.has_value(suggested[b["id"]], b["text"])}
+    observed = [r for r in SLOTS if r != "body" and r in (styles or {})]
+    if any(not rep.has_value(role, text) for role, text in supplied.items()):
+        raise DocumentError("SUPPLIED_DATA_INVALID")
+    absent = [role for role in required if role not in present]
+    coverage = {r: {"present": r in present or r in supplied, "required": r in required} for r in dict.fromkeys([*observed, *required])}
+    for r in observed:
+        if r not in present and r not in required:
+            questions.append(f"В образце есть блок {r}, в статье он отсутствует; проверьте обязательность")
     if not set(supplied) <= set(absent):
         raise DocumentError("SUPPLIED_DATA_DUPLICATE")
     missing = [role for role in absent if role not in supplied]
     for role in SLOTS:
+        placeholder = None
         if role in absent:
             placeholder = _placeholder(role)
             if role in supplied:
@@ -312,7 +329,7 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
                 typo.apply(placeholder, styles[role], resolver, role)
                 if role in missing:
                     placeholder.find("w:pPr", NS).append(typo.prop("shd", fill="FFF59D"))
-            ordered.append(placeholder)
+            if role != "keywords": ordered.append(placeholder)
         for block in inv["blocks"]:
             if suggested[block["id"]] == role:
                 nodes = _block_nodes(body, block)
@@ -324,6 +341,16 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
                 style = (styles or {}).get(key) or (styles or {}).get(role)
                 if style and style.get("conditional_style_review"):
                     questions.append(f"Условное оформление таблицы требует проверки: {block['id']}")
+                source_numbering = None
+                if nodes[0].tag == typo.tag("p"):
+                    effective, _ = resolver.resolve(nodes[0])
+                    source_numbering = typo.child(effective, "numPr")
+                if source_numbering is not None and typo.value(source_numbering, "numId") != "0" and (
+                    block["index"] not in ordinals or
+                    (key != "body.references" and nodes[0].find("w:pPr/w:numPr", NS) is None)
+                ):
+                    questions.append(f"Нумерация требует проверки; исходное оформление блока сохранено ({block['id']})")
+                    style = None
                 if style and style.get("schema") == "typography-019":
                     if nodes[0].tag == typo.tag("tbl"):
                         typo.apply_table(nodes[0], style, resolver)
@@ -333,6 +360,8 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
                     _apply_style(nodes[0], style)
                 ordered.extend(nodes)
                 reordered_source.extend(nodes)
+                pending_layout.append((nodes[0], block, role, key, style))
+        if placeholder is not None and role == "keywords": ordered.append(placeholder)
     for block in inv["blocks"]:
         if suggested[block["id"]] == "editorial":
             editorial.extend(_block_nodes(body, block))
@@ -345,6 +374,48 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
     # A valid combined stream must not conceal a range split across two files.
     bookmarks020.signature(reordered_source)
     bookmarks020.signature(editorial)
+    # Representation changes are separate from the unchanged scientific payload
+    # audit above. Each restricted transform proves its own reversible text change.
+    if (styles or {}).get("body.references"):
+        found_references = any(key == "body.references" and block["text"].strip() for _, block, _, key, _ in pending_layout)
+        coverage["body.references"] = {"present": found_references, "required": False}
+        if not found_references:
+            questions.append("В образце есть список литературы, в статье он не обнаружен; проверьте обязательность")
+    writer = rep.NumberingWriter(parts)
+    for node, block, role, key, style in pending_layout:
+        replacement, change, warning = [node], None, None
+        if key == "body.references" and block["text"].strip() and style:
+            replacement, change, warning = rep.bibliography(node, style, ordinals.get(block["index"]), writer)
+        elif role == "keywords" and style and (styles or {}).get("keywords"):
+            replacement, change, warning = rep.keywords(node, styles, resolver)
+        if warning: questions.append(f"{warning} ({block['id']})")
+        if change:
+            representations.append({"block_id": block["id"], **change})
+            index = ordered.index(node); ordered[index:index+1] = replacement
+    spacing_changes, spacing_warnings = layout021.apply_boundaries(ordered, pending_layout, resolver)
+    representations.extend(spacing_changes)
+    questions.extend(spacing_warnings)
+    writer.save()
+    if (styles or {}).get("keywords.heading"):
+        keyword_nodes = [n for n in ordered if n.tag == typo.tag("p") and rep.KEYWORD_LABEL.match(_node_text(n))]
+        if not any(not rep.has_value("keywords", _node_text(n)) for n in keyword_nodes):
+            heading_style = styles["keywords.heading"]
+            literal = heading_style.get("literal", "")
+            if re.fullmatch(r"(?:ключевые слова|keywords)\s*:??", literal, re.I):
+                # A service label observed in the approved template is not article content.
+                paragraph = _placeholder("keywords")
+                paragraph.find("w:r/w:t", NS).text = literal
+                typo.apply(paragraph, heading_style, resolver, "keywords.heading")
+                targets = [node for node, _, role, _, _ in pending_layout if role == "keywords" and node in ordered]
+                if "keywords" in absent:
+                    targets = [n for n in ordered if _node_text(n) in {supplied.get("keywords"), "[ЗАПОЛНИТЬ: keywords]"}]
+                if targets:
+                    ordered.insert(ordered.index(targets[0]), paragraph)
+                    representations.append({"kind": "insert_keyword_label", "literal": literal, "provenance": "approved keywords.heading", "text_preserved": True})
+                else:
+                    questions.append("Нет блока ключевых слов для заголовка из образца")
+            else:
+                questions.append("Нет отдельного заголовка блока ключевых слов, наблюдаемого в образце")
     sect = copy.deepcopy(body.find("w:sectPr", NS))
     if (styles or {}).get("__document__"):
         typo.apply_section(sect, styles["__document__"])
@@ -380,6 +451,6 @@ def compile_document(source: Path, output: Path, *, assignments: dict[str, str] 
     return {
         "status": "ready" if not questions else "draft", "source_sha256": inv["source_sha256"],
         "output_sha256": digest(output.read_bytes()), "assignments": suggested,
-        "questions": questions, "missing": missing, "supplied_slots": list(supplied), "source_blocks": len(original),
+        "questions": questions, "missing": missing, "coverage": coverage, "representation_changes": representations, "supplied_slots": list(supplied), "source_blocks": len(original),
         "output_blocks": len(ordered), "editorial_blocks": len(editorial),
     }

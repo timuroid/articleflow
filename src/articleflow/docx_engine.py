@@ -118,7 +118,7 @@ def paragraph_text(p) -> str:
     for node in p.iter():
         if node.tag == f"{{{W}}}t":
             pieces.append(node.text or "")
-        elif node.tag == f"{{{W}}}tab":
+        elif node.tag == f"{{{W}}}tab" and node.getparent() is not None and node.getparent().tag == f"{{{W}}}r":
             pieces.append("\t")
         elif node.tag in {f"{{{W}}}br", f"{{{W}}}cr"}:
             pieces.append("\n")
@@ -201,7 +201,7 @@ def _atomize(p, object_dir: Path, index: list, source_parts: dict) -> list[dict]
             return
         if node.tag == f"{{{W}}}t":
             add_text(node.text or "")
-        elif node.tag == f"{{{W}}}tab":
+        elif node.tag == f"{{{W}}}tab" and node.getparent() is not None and node.getparent().tag == f"{{{W}}}r":
             add_text("\t")
         elif node.tag in {f"{{{W}}}br", f"{{{W}}}cr"}:
             if node.get(f"{{{W}}}type") not in {None, "textWrapping"}:

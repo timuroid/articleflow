@@ -57,6 +57,7 @@ def stable_xml(node):
     # Do not hash namespace maps copied from particular Word documents.
     out = ET.Element(node.tag, nsmap={"w": W})
     orders = {
+        "lvl": "start numFmt lvlRestart pStyle isLgl suff lvlText lvlPicBulletId legacy lvlJc pPr rPr",
         "pPr": "pStyle keepNext keepLines pageBreakBefore framePr widowControl numPr suppressLineNumbers pBdr shd tabs suppressAutoHyphens kinsoku wordWrap overflowPunct topLinePunct autoSpaceDE autoSpaceDN bidi adjustRightInd snapToGrid spacing ind contextualSpacing mirrorIndents suppressOverlap jc textDirection textAlignment textboxTightWrap outlineLvl divId cnfStyle rPr sectPr pPrChange",
         "rPr": "rStyle rFonts b bCs i iCs caps smallCaps strike dstrike outline shadow emboss imprint noProof snapToGrid vanish webHidden color spacing w kern position sz szCs highlight u effect bdr shd fitText vertAlign rtl cs em lang eastAsianLayout specVanish oMath rPrChange",
         "sectPr": "headerReference footerReference footnotePr endnotePr type pgSz pgMar paperSrc pgBorders lnNumType pgNumType cols formProt vAlign noEndnote titlePg textDirection bidi rtlGutter docGrid printerSettings sectPrChange",
@@ -79,6 +80,7 @@ class Resolver:
         self.styles = parse_xml(parts.get("word/styles.xml", f'<w:styles xmlns:w="{W}"/>'.encode()))
         self.by_id = {s.get(tag("styleId")): s for s in self.styles.findall(tag("style"))}
         self.default = next((k for k, s in self.by_id.items() if s.get(tag("default")) == "1" and s.get(tag("type")) == "paragraph"), None)
+        self.numbering = parse_xml(parts.get("word/numbering.xml", f'<w:numbering xmlns:w="{W}"/>'.encode()))
         self.theme = {}
         if "word/theme/theme1.xml" in parts:
             root = parse_xml(parts["word/theme/theme1.xml"])
@@ -87,6 +89,25 @@ class Resolver:
                 n = root.find(f".//a:fontScheme/a:{kind}Font/a:latin", a)
                 if n is not None:
                     self.theme[kind] = n.get("typeface")
+
+    def numbering_level(self, ppr):
+        num = child(ppr, "numPr")
+        nid = value(num, "numId")
+        if nid in {None, "0"}: return None
+        ilvl = value(num, "ilvl", "0")
+        if not nid.isdigit() or not ilvl.isdigit(): return None
+        instance = self.numbering.find(f'w:num[@w:numId="{nid}"]', NS)
+        aid = value(instance, "abstractNumId")
+        abstract = self.numbering.find(f'w:abstractNum[@w:abstractNumId="{aid}"]', NS)
+        if abstract is None or child(abstract, "numStyleLink") is not None: return None
+        level = abstract.find(f'w:lvl[@w:ilvl="{ilvl}"]', NS)
+        override = instance.find(f'w:lvlOverride[@w:ilvl="{ilvl}"]', NS)
+        if override is not None and child(override, "lvl") is not None: level = child(override, "lvl")
+        if level is None: return None
+        level = copy.deepcopy(level)
+        start = value(override, "startOverride")
+        if start is not None: _replace(level, "start", prop("start", val=start))
+        return level
 
     def chain(self, sid, visited=None):
         visited = set() if visited is None else visited
@@ -109,7 +130,13 @@ class Resolver:
                 merge(p, child(style, "pPr"))
                 merge(r, child(style, "rPr"), toggle=True)
         ppr = child(paragraph, "pPr")
-        for style in self.chain(value(ppr, "pStyle", self.default)):
+        paragraph_styles = self.chain(value(ppr, "pStyle", self.default))
+        binding = copy.deepcopy(p)
+        for style in paragraph_styles: merge(binding, child(style, "pPr"))
+        merge(binding, ppr)
+        level = self.numbering_level(binding)
+        if level is not None: merge(p, child(level, "pPr"))
+        for style in paragraph_styles:
             merge(p, child(style, "pPr"))
             merge(r, child(style, "rPr"), toggle=True)
         merge(p, ppr)
@@ -170,6 +197,8 @@ def context(role, node, hints=None):
 def measure(paragraph, resolver, key):
     p, base = resolver.resolve(paragraph)
     # A numbering ID belongs to the source package, never to a portable style.
+    from .representation021 import numbering_spec
+    portable_numbering = numbering_spec(resolver, p)
     numbering = child(p, "numPr")
     if numbering is not None:
         p.remove(numbering)
@@ -187,7 +216,19 @@ def measure(paragraph, resolver, key):
             merge(base, font_only)
         else:
             base = font_source
+    if dominant is None:
+        merge(base, child(child(paragraph, "pPr"), "rPr"))
     result = {"schema": "typography-019", "pPr": stable_xml(p), "rPr": stable_xml(base)}
+    if key == "keywords.heading" and re.fullmatch(r"(?:ключевые слова|keywords)\s*:??", paragraph_text(paragraph).strip(), re.I):
+        result["literal"] = paragraph_text(paragraph).strip()
+    if portable_numbering is not None:
+        result["numbering"] = portable_numbering
+        if "level" in portable_numbering:
+            # List glyphs use the paragraph mark, not the first visible run.
+            _, mark = resolver.resolve(paragraph)
+            merge(mark, child(child(paragraph, "pPr"), "rPr"))
+            merge(mark, child(parse_xml(portable_numbering["level"].encode()), "rPr"))
+            portable_numbering["rPr"] = stable_xml(mark)
     # Word may split a label before its punctuation (e.g. bold word, plain dot).
     match = re.match(r"^\s*(?:постановка\s+(?:проблемы|задачи)|проблема|цель(?:\s+(?:исследования|работы))?|результаты?|практическая\s+значимость)([.:])\s*", paragraph_text(paragraph), re.I)
     if key.startswith("abstract_") and key != "abstract_heading" and match and len(text_runs) > 1:
@@ -249,6 +290,8 @@ def apply(paragraph, profile, resolver, key):
         for n in source_p:
             if ET.QName(n).localname in {"numPr", "sectPr"}:
                 p.append(copy.deepcopy(n))
+    if not paragraph_text(paragraph) and not paragraph.xpath(".//w:drawing | .//m:oMath", namespaces=NS):
+        p.append(parse_xml(profile["rPr"].encode()))
     _replace(paragraph, "pPr", p)
     offset = 0
     label = re.match(r"^[^.:]{1,80}[.:]\s*", paragraph_text(paragraph)) if profile.get("label_rPr") else None
@@ -310,10 +353,11 @@ def apply_base(parts, profile):
 
 
 def apply_section(section, profile):
-    for n in parse_xml(profile["section"].encode()):
-        old = section.find(n.tag)
-        if old is not None:
+    # An absent target property must not inherit the arbitrary source grid.
+    for old in list(section):
+        if ET.QName(old).localname in {"pgSz", "pgMar", "cols", "docGrid"}:
             section.remove(old)
+    for n in parse_xml(profile["section"].encode()):
         section.append(copy.deepcopy(n))
 
 

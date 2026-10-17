@@ -40,6 +40,7 @@ def required_fonts(styles):
     while profiles:
         profile = profiles.pop()
         profiles.extend(v for v in profile.values() if isinstance(v, dict))
+        profiles.extend(item for v in profile.values() if isinstance(v, list) for item in v if isinstance(item, dict))
         for key in ("rPr", "label_rPr"):
             if not profile.get(key):
                 continue

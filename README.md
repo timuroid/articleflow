@@ -61,3 +61,5 @@ python scripts/build_synthetic_corpus.py --verify
 Для запуска восстановленного локального Web 017: `python -m pip install -e '.[web,dev]'`, затем `ARTICLEFLOW_DATA_DIR=/закрытый/каталог uvicorn articleflow.web017:create_app --factory --host 127.0.0.1 --port 8769`. Публичный сервер ставится по [инструкции для Caddy](docs/tech/deployment-caddy-017.md); без обратного прокси и авторизации этот запуск использовать только на loopback.
 
 Для PDF нужен `soffice` и зафиксированные шрифты. `extract-catalogue` и `render-catalogue` работают без API; порядок запуска — в [контракте 0.4](docs/tech/catalogue-renderer.md). Для платной серии нужны приватный DOCX, подготовленные исследователем annotations/definitions и `OPENROUTER_API_KEY`; обычные тесты API не вызывают. `catalogue-trials` измеряет новый выбор вариантов; runner `trials` сохраняет исторический контракт 0.3.
+
+Обновление 021: [полнота извлечения, нумерация и визуальная проверка](docs/research/evaluation-021.md).
