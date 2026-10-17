@@ -2,6 +2,6 @@
 
 | Файл | Содержание |
 | --- | --- |
-| [research_pilot.py](research_pilot.py) | Step definitions SC-054–SC-067, реальные функции прототипа и mock HTTP без платных вызовов |
+| [research_pilot.py](research_pilot.py) | Step definitions SC-054–SC-067 и SC-086, реальные функции прототипа и mock HTTP без платных вызовов |
 
 Вверх: [карта сценариев](../map.md). Остальные продуктовые сценарии пока не реализованы; запускать только `research-pilot.feature`.

@@ -1,6 +1,6 @@
 # Карта сценариев Given / When / Then
 
-Формат — Gherkin, UTF-8, English keywords, русский текст шагов. Каждый сценарий имеет уникальный тег `@SC-*` и тег требования `@PRD-*`. SC-054–SC-067 исполняются через behave; для SC-001–SC-053 и новых SC-080–SC-085 step definitions ещё отсутствуют. Наличие спецификации не означает пройденный тест.
+Формат — Gherkin, UTF-8, English keywords, русский текст шагов. Каждый сценарий имеет уникальный тег `@SC-*` и тег требования `@PRD-*`. SC-054–SC-067 и SC-086 исполняются через behave; для SC-001–SC-053 и новых SC-080–SC-085 step definitions ещё отсутствуют. Наличие спецификации не означает пройденный тест.
 
 | Файл | Сценарии | Область |
 | --- | --- | --- |
@@ -11,8 +11,8 @@
 | [security.feature](security.feature) | SC-025–SC-029 | Изоляция, разрешение обработки, injection и удаление |
 | [template-plans.feature](template-plans.feature) | SC-035–SC-038 | Inline spans, literals, object bindings |
 | [research.feature](research.feature) | SC-039–SC-045, SC-053 | One-pass, бенчмарк и сравнение методов |
-| [research-pilot.feature](research-pilot.feature) | SC-054–SC-067 | Исполняемые проверки текущего исследовательского среза |
-| [steps/map.md](steps/map.md) | SC-054–SC-067 | Реальные step definitions без платных вызовов |
+| [research-pilot.feature](research-pilot.feature) | SC-054–SC-067 и SC-086 | Исполняемые проверки текущего исследовательского среза |
+| [steps/map.md](steps/map.md) | SC-054–SC-067 и SC-086 | Реальные step definitions без платных вызовов |
 | [batches.feature](batches.feature) | SC-046–SC-052 | Очередь, частичные ZIP, бюджет и удаление |
 | [structure-web.feature](structure-web.feature) | SC-080–SC-085 | Перенос смысловых фрагментов, пропуски, эталоны и пакет |
 

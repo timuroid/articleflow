@@ -21,6 +21,19 @@ from articleflow.source_aware import format_source, ROLE_VERSION
 from articleflow.docx_engine import digest
 
 
+@when("в пакет добавлен сильно сжимаемый объект и пакет сохранён сборщиком")
+def compressible_package(context):
+    context.roundtrip_parts = load_package(context.source)
+    context.roundtrip_parts["word/media/synthetic.bin"] = b"A" * 100000
+    context.roundtrip_output = context.root / "roundtrip.docx"
+    write_package(context.roundtrip_output, context.roundtrip_parts)
+
+
+@then("результат проходит прежние входные ограничения с неизменными байтами объекта")
+def roundtrip_import(context):
+    assert load_package(context.roundtrip_output) == context.roundtrip_parts
+
+
 @when("выделения восстановлены из отдельного payload исходных marks")
 def restore_source_marks(context):
     marks = extract_marks(context.source, context.package / "content/content.json")

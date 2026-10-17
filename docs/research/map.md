@@ -2,6 +2,11 @@
 
 | Файл | Содержание |
 | --- | --- |
+| [evaluation-018.md](evaluation-018.md) | Исторические метрики и свежая оценка Web 017, ограничения и исправление ZIP |
+| [evaluation-018-protocol.md](evaluation-018-protocol.md) | Зафиксированный до прогона протокол бесплатной оценки |
+| [evaluation-018-baseline.json](evaluation-018-baseline.json) | Все измерения исходной версии, включая отказы повторного импорта |
+| [evaluation-018-patched.json](evaluation-018-patched.json) | Полный повтор после исправления ZIP, hashes и render environment |
+| [evaluation-018-attempts.csv](evaluation-018-attempts.csv) | Все 70 детерминированных повторов после исправления |
 | [study.md](study.md) | Вопросы, гипотезы, этапы и границы выводов |
 | [manuscript-reconstructed.md](manuscript-reconstructed.md) | Новый черновик научной статьи по сохранившимся сводкам; исходная рукопись не восстановлена |
 | [methods.md](methods.md) | Сравнение способов извлечения, хранения и применения |

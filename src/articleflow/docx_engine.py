@@ -10,9 +10,10 @@ import copy
 import hashlib
 import json
 import unicodedata
+import zlib
 from collections import Counter
 from pathlib import Path, PurePosixPath
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZipFile, ZIP_DEFLATED, ZIP_STORED
 
 from lxml import etree as ET
 
@@ -103,7 +104,12 @@ def write_package(path: Path, parts: dict[str, bytes]) -> None:
     temp = path.with_suffix(".tmp")
     with ZipFile(temp, "w", ZIP_DEFLATED) as z:
         for name, data in sorted(parts.items()):
-            z.writestr(name, data)
+            # Highly compressible legitimate parts (e.g. flat images) must not
+            # make our own output fail the unchanged defensive import limit.
+            compressor = zlib.compressobj(wbits=-15)
+            compressed_size = len(compressor.compress(data) + compressor.flush())
+            method = ZIP_STORED if len(data) > max(1, compressed_size) * 100 else ZIP_DEFLATED
+            z.writestr(name, data, compress_type=method)
     temp.replace(path)
 
 
