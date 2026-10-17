@@ -100,6 +100,10 @@ class Store:
                     approved INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL,
                     PRIMARY KEY(template_id,version),
                     FOREIGN KEY(template_id) REFERENCES templates(id));
+                CREATE TABLE IF NOT EXISTS template_runs (
+                    id TEXT PRIMARY KEY, template_id TEXT NOT NULL, base_version INTEGER NOT NULL,
+                    status TEXT NOT NULL, report_json TEXT NOT NULL DEFAULT '{}', created_at TEXT NOT NULL,
+                    FOREIGN KEY(template_id) REFERENCES templates(id));
                 CREATE TABLE IF NOT EXISTS batches (
                     id TEXT PRIMARY KEY, template_id TEXT NOT NULL, template_version INTEGER NOT NULL,
                     created_at TEXT NOT NULL, FOREIGN KEY(template_id) REFERENCES templates(id));
@@ -116,6 +120,7 @@ class Store:
                                                 ("batches", "use_llm", "INTEGER NOT NULL DEFAULT 0")):
                 if column not in {r[1] for r in con.execute(f"PRAGMA table_info({table})")}:
                     con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {declaration}")
+            con.execute("UPDATE template_runs SET status='interrupted' WHERE status IN ('queued','running')")
             con.execute("UPDATE jobs SET status='interrupted' WHERE status IN ('queued','processing')")
         os.chmod(self.db_path, 0o600)
 
@@ -196,6 +201,22 @@ def _process_job(store: Store, job_id: str):
                                   styles=styles, editorial_output=editorial,
                                   required=spec.get("structure", {}).get("required", list(REQUIRED)),
                                   supplied=json.loads(job["supplied_json"]), model_assigned=model_meta is not None)
+        from .documentcheck022 import check as check_document
+        try:
+            visual = check_document(output, folder / "visual", repair=True)
+        except Exception as exc:
+            visual = {"status": "unavailable", "error_type": type(exc).__name__}
+        report["visual_validation"] = visual
+        if visual["status"] != "passed":
+            report["status"] = "draft"
+            report["questions"].append("Проверка всех страниц требует внимания; откройте PDF и отчёт")
+        # A complete extraction catalogue does not certify coarse role transfer.
+        extraction = spec.get("extraction_validation", {})
+        if extraction.get("status") != "passed" or extraction.get("acceptance_contract") != "production-roundtrip-022-v1":
+            report["status"] = "draft"
+            report["questions"].append("У этой версии шаблона нет полной проверки 022; запустите проверку и утвердите новую версию")
+        from .docx_engine import digest
+        report["output_sha256"] = digest(output.read_bytes())
         report["model"] = model_meta
         report["template_id"] = batch["template_id"]
         report["template_version"] = batch["template_version"]
@@ -247,7 +268,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
 
     @app.get("/healthz")
     def healthz():
-        return {"status": "ok", "mode": "model_available" if model_config() else "local_review_only"}
+        return {"status": "ok", "web_version":"022", "release":os.environ.get("ARTICLEFLOW_RELEASE", "development"), "mode": "model_available" if model_config() else "local_review_only"}
 
     @app.get("/")
     def index():
@@ -274,7 +295,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                             ORDER BY t.created_at DESC""")
 
     @app.post("/api/v017/templates", dependencies=[Depends(csrf)])
-    async def create_template(name: str = Form(...), files: list[UploadFile] = File(...)):
+    async def create_template(background: BackgroundTasks, name: str = Form(...), files: list[UploadFile] = File(...)):
         if not 1 <= len(files) <= MAX_TEMPLATES or not 1 <= len(name.strip()) <= 120:
             raise HTTPException(400, "TEMPLATE_INPUT_INVALID")
         template_id = _uid()
@@ -295,7 +316,10 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             con.execute("INSERT INTO templates VALUES (?,?,?)", (template_id, name.strip(), _now()))
             con.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
                         (template_id, 1, json.dumps(spec, ensure_ascii=False), 0, _now()))
-        return {"id": template_id, "version": 1, "spec": spec}
+        run_id=_uid()
+        store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)", (run_id,template_id,1,"queued","{}",_now()))
+        background.add_task(run_extraction,run_id)
+        return {"id": template_id, "version": 1, "spec": spec, "extraction_run_id":run_id}
 
     @app.get("/api/v017/templates/{template_id}")
     def template(template_id: str):
@@ -331,6 +355,100 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                           (template_id, version["version"] + 1, json.dumps(spec, ensure_ascii=False), 0, _now()))
         return {"id": template_id, "version": version["version"] + 1, "spec": spec}
 
+    def run_extraction(run_id, selected=None, required=None):
+        with store.batch_lock:
+            row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+            version = store.one("SELECT * FROM template_versions WHERE template_id=? AND version=?", (row["template_id"], row["base_version"]))
+            paths = sorted(store.path("templates", row["template_id"], "samples").glob("*.docx"))
+            from .templateagent022 import run
+            def progress(report):
+                store.execute("UPDATE template_runs SET status=?,report_json=? WHERE id=?",
+                              (report["status"], json.dumps(report, ensure_ascii=False), run_id))
+            try:
+                spec = json.loads(version["spec_json"])
+                if required is not None: spec.setdefault("structure", {})["required"] = required
+                report = run(paths, spec, store.path("template-runs", run_id), progress, **({"selected": selected} if selected is not None else {}))
+                progress(report)
+            except Exception as exc:
+                progress({"status":"unavailable", "error_type":type(exc).__name__})
+
+    @app.post("/api/v017/templates/{template_id}/refine", dependencies=[Depends(csrf)])
+    def refine_template(template_id: str, background: BackgroundTasks):
+        version = _latest(store, template_id)
+        old_spec = json.loads(version["spec_json"])
+        if old_spec.get("extractor_revision") != "022-v1":
+            # Re-read source evidence with the new extractor, retaining semantic
+            # annotations. Re-running an old cached spec would miss new fields.
+            from .structure017 import suggest_roles
+            paths=sorted(store.path("templates",template_id,"samples").glob("*.docx"))
+            plans={}
+            for path in paths:
+                inv=inventory(path);roles,_=suggest_roles(inv["blocks"])
+                sample=next(s for s in old_spec["samples"] if s["sha256"]==inv["source_sha256"])
+                contexts={o["block_id"]:o["role"] for o in sample["observations"]}
+                roles.update({bid:key.split('.')[0] for bid,key in contexts.items()})
+                plans[inv["source_sha256"]]={"assignments":roles,"contexts":contexts}
+            fresh=inspect_templates(paths,plans)
+            fresh["role_evidence"]=old_spec.get("role_evidence","heuristic")
+            fresh["structure"]["required"]=old_spec.get("structure",{}).get("required",fresh["structure"]["required"])
+            store.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",(template_id,version["version"]+1,json.dumps(fresh,ensure_ascii=False),0,_now()))
+            version=_latest(store,template_id)
+        pending = store.all("SELECT id FROM template_runs WHERE template_id=? AND base_version=? AND status IN ('queued','running')", (template_id, version["version"]))
+        if pending: return {"id":pending[0]["id"], "status":"running"}
+        run_id = _uid()
+        store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)", (run_id,template_id,version["version"],"queued","{}",_now()))
+        background.add_task(run_extraction,run_id)
+        return {"id":run_id,"status":"queued"}
+
+    @app.get("/api/v017/templates/{template_id}/runs")
+    def template_runs(template_id: str):
+        store.one("SELECT id FROM templates WHERE id=?", (template_id,))
+        return store.all("SELECT * FROM template_runs WHERE template_id=? ORDER BY created_at DESC", (template_id,))
+
+    @app.get("/api/v017/template-runs/{run_id}")
+    def template_run(run_id: str):
+        row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+        row["report"] = json.loads(row.pop("report_json"))
+        return row
+
+    @app.get("/api/v017/template-runs/{run_id}/preview/{sample_index}")
+    def template_preview(run_id: str, sample_index: int):
+        row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+        report = json.loads(row["report_json"])
+        if not 1 <= sample_index <= len(report.get("samples", [])): raise HTTPException(404,"NOT_FOUND")
+        path=store.path("template-runs",run_id,f"sample-{sample_index}","reconstructed","reconstructed.pdf")
+        if not path.is_file(): raise HTTPException(404,"NOT_FOUND")
+        return FileResponse(path,media_type="application/pdf")
+
+    @app.get("/api/v017/template-runs/{run_id}/comparison/{sample_index}/{mode}")
+    def template_comparison(run_id: str, sample_index: int, mode: str):
+        row=store.one("SELECT * FROM template_runs WHERE id=?",(run_id,))
+        report=json.loads(row["report_json"])
+        if not 1<=sample_index<=len(report.get("samples",[])) or mode not in {"reference","original","neutralized"}:
+            raise HTTPException(404,"NOT_FOUND")
+        folder=store.path("template-runs",run_id,f"sample-{sample_index}")
+        candidates=list((folder/"reference").glob("*.pdf")) if mode=="reference" else [folder/"production"/mode/f"{mode}-formatted.pdf"]
+        if len(candidates)!=1 or not candidates[0].is_file():raise HTTPException(404,"NOT_FOUND")
+        return FileResponse(candidates[0],media_type="application/pdf")
+
+    @app.get("/api/v017/template-runs/{run_id}/catalogue")
+    def template_catalogue(run_id: str):
+        row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+        report = json.loads(row["report_json"])
+        if row["status"] != "passed": raise HTTPException(409,"CATALOGUE_NOT_VERIFIED")
+        path=store.path("template-runs",run_id,"runtime-catalogues.zip")
+        if path.is_file(): return FileResponse(path,filename="articleflow-runtime-catalogues.zip")
+        temporary=path.with_name(_uid()+".zip")
+        with ZipFile(temporary,"w",ZIP_DEFLATED) as archive:
+            for index,sample in enumerate(report["samples"],1):
+                for name in ("rules.json","resources.zip"):
+                    source=store.path("template-runs",run_id,f"sample-{index}","catalogue","template",name)
+                    archive.write(source,f"sample-{index}/{name}")
+            archive.writestr("manifest.json",json.dumps({"schema":"catalogues-022","samples":[{**s["runtime_catalogue"],"path":f"sample-{i+1}"} for i,s in enumerate(report["samples"])],"transfer_validation":"not_measured"}))
+        os.chmod(temporary,0o600)
+        temporary.replace(path)
+        return FileResponse(path,filename="articleflow-runtime-catalogues.zip")
+
     @app.post("/api/v017/templates/{template_id}/approve", dependencies=[Depends(csrf)])
     def approve(template_id: str, body: Approval):
         version = _latest(store, template_id)
@@ -354,10 +472,23 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             raise HTTPException(409, {"code": "TEMPLATE_LAYOUT_CHECK_UNAVAILABLE"}) from exc
         if check["status"] == "failed":
             raise HTTPException(409, {"code": "TEMPLATE_LAYOUT_MISMATCH", "validation": check})
+        # The selected production profiles, not a different oracle renderer,
+        # must pass. Never reuse evidence for another selection/required slots.
+        run_id = _uid()
+        store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)", (run_id,template_id,version["version"],"queued","{}",_now()))
+        run_extraction(run_id, selected, spec.get("structure", {}).get("required", []))
+        row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+        evidence = json.loads(row["report_json"])
+        if row["status"] != "passed" or evidence.get("acceptance_contract") != "production-roundtrip-022-v1":
+            raise HTTPException(409,{"code":"FULL_DOCUMENT_CHECK_FAILED", "run_id":run_id})
+        spec["extraction_validation"] = evidence
+        spec["extraction_run_id"] = run_id
         spec["layout_validation"] = check
         spec["selected"] = selected
         spec["approved"] = True
         with store.connect() as con:
+            current=con.execute("SELECT MAX(version) FROM template_versions WHERE template_id=?",(template_id,)).fetchone()[0]
+            if current != version["version"]: raise HTTPException(409,"TEMPLATE_VERSION_CHANGED")
             con.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
                         (template_id, version["version"] + 1, json.dumps(spec, ensure_ascii=False), 1, _now()))
         return {"template_id": template_id, "version": version["version"] + 1, "approved": True}
@@ -477,6 +608,13 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             os.chmod(path, 0o600)
             store.execute("INSERT INTO exports VALUES (?,?,?)", (export_id, batch_id, manifest["created_at"]))
             return {"id": export_id, "url": f"/api/v017/exports/{export_id}", "manifest": manifest}
+
+    @app.get("/api/v017/jobs/{job_id}/preview")
+    def job_preview(job_id: str):
+        job=store.one("SELECT * FROM jobs WHERE id=?",(job_id,))
+        path=store.path("jobs",job_id,"revisions",str(job["revision"]),"visual","preview.pdf")
+        if not path.is_file(): raise HTTPException(404,"PREVIEW_UNAVAILABLE")
+        return FileResponse(path,media_type="application/pdf")
 
     @app.get("/api/v017/exports/{export_id}")
     def export(export_id: str):

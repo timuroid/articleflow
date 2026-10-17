@@ -117,7 +117,12 @@ def uploaded(c, variants=False):
     web(c);files=[]
     for i in range(2 if variants else 1):
         c.doc019.styles['Normal'].font.name='Arial' if i==0 else 'Times New Roman'
-        buffer=io.BytesIO();c.doc019.save(buffer);files.append(('files',(str(i)+'.docx',buffer.getvalue(),'application/octet-stream')))
+        buffer=io.BytesIO();c.doc019.save(buffer)
+        template=Document(io.BytesIO(buffer.getvalue()))
+        problem=next(p for p in template.paragraphs if p.text.startswith('Постановка'))
+        goal=next(p for p in template.paragraphs if p.text.startswith('Цель'))
+        goal._p.addprevious(problem._p)
+        buffer=io.BytesIO();template.save(buffer);files.append(('files',(str(i)+'.docx',buffer.getvalue(),'application/octet-stream')))
     response=c.client019.post('/api/v017/templates',headers=c.headers019,data={'name':'Synthetic'},files=files)
     assert response.status_code==200;c.template019=response.json()['id']
     c.spec019=c.client019.get('/api/v017/templates/'+c.template019).json()['spec']
@@ -140,7 +145,14 @@ def not_approved(c):
     assert not c.client019.get('/api/v017/templates/'+c.template019).json()['approved']
     assert c.client019.post('/api/v017/templates/'+c.template019+'/approve',headers=c.headers019,json={'selected':{}}).status_code==409
 
-@then('подтверждённое решение создаёт новую версию шаблона')
+@then('выбор варианта не отменяет несовпадение с эталонами')
+def conflicting_choice_rejected(c):
+    selected={r:next(iter(v)) for r,v in c.spec019['variants'].items()}
+    response=c.client019.post('/api/v017/templates/'+c.template019+'/approve',headers=c.headers019,json={'selected':selected})
+    assert response.status_code==409
+    assert response.json()['detail']['code']=='FULL_DOCUMENT_CHECK_FAILED'
+    assert c.client019.get('/api/v017/templates/'+c.template019).json()['version']==1
+
 def version(c):
     selected={r:next(iter(v)) for r,v in c.spec019['variants'].items()}
     response=c.client019.post('/api/v017/templates/'+c.template019+'/approve',headers=c.headers019,json={'selected':selected})
@@ -232,3 +244,71 @@ def visual_block021(c):
     assert c.visual_response021.status_code==409
     assert c.visual_response021.json()['detail']['code']=='TEMPLATE_LAYOUT_MISMATCH'
     assert not c.client019.get('/api/v017/templates/'+c.template019).json()['approved']
+
+@given('два контрольных PDF отличаются только на последней странице')
+def pdf_pair022(c):
+    import pymupdf
+    setup(c)
+    for name,last in [('a','Original last page'),('b','Changed last page')]:
+        doc=pymupdf.open();doc.new_page().insert_text((70,70),'First page')
+        doc.new_page().insert_text((70,70),last);doc.save(c.work019/(name+'.pdf'));doc.close()
+
+@when('полный визуальный оценщик сравнивает документы')
+def compare022(c):
+    from articleflow.templateagent022 import compare_all
+    c.metric022=compare_all(c.work019/'a.pdf',c.work019/'b.pdf',c.work019/'diff')
+
+@then('последняя страница отмечена как несовпадающая с областью различий')
+def last_page022(c):
+    assert not c.metric022['pixel_exact']
+    assert c.metric022['matched_page_diagnostics'][0]['pixel_exact']
+    assert c.metric022['matched_page_diagnostics'][1]['difference_bbox_px']
+
+@given('контроль обнаружил заголовок без следующего блока')
+def orphan022(c):
+    setup(c);doc=Document();doc.add_paragraph('Введение');doc.add_paragraph('Текст 42.');doc.save(c.work019/'orphan.docx')
+
+@when('выполняется разрешённый ремонт связи переноса')
+def repair022(c):
+    from articleflow.documentcheck022 import repair_keep_links
+    from articleflow.docx_engine import digest
+    c.changes022=repair_keep_links(c.work019/'orphan.docx',c.work019/'fixed.docx',{'issues':[{'code':'ORPHAN_LABEL','text_sha256':digest('введение'.encode())}]})
+
+@then('текст документа неизменен и у заголовка установлена связь со следующим блоком')
+def repair_checked022(c):
+    assert [p.text for p in Document(c.work019/'orphan.docx').paragraphs]==[p.text for p in Document(c.work019/'fixed.docx').paragraphs]
+    assert Document(c.work019/'fixed.docx').paragraphs[0].paragraph_format.keep_with_next
+
+@given('цикл извлечения имеет лимит одной компактной гипотезы')
+def limited022(c):
+    setup(c);c.source022=c.work019/'source022.docx';c.doc019.save(c.source022)
+
+@when('он завершает доступный эксперимент')
+def limited_run022(c):
+    from articleflow.templateagent022 import run
+    c.result022=run([c.source022],inspect_templates([c.source022]),c.work019/'agent',max_attempts=1)
+
+@then('результат требует проверки и перенос на новые статьи не объявлен измеренным')
+def stopped022(c):
+    assert c.result022['status']=='needs_review'
+    assert c.result022['samples'][0]['stop_reason']=='attempt_limit'
+    assert c.result022['transfer_validation']=='not_measured'
+
+@given('полный каталог прошёл сравнение, а рабочая сборка не совпала')
+def mismatched_production022(c):
+    setup(c);c.source022=c.work019/'runtime-source.docx';c.doc019.save(c.source022)
+
+@when('проверяется допуск рабочего шаблона 022')
+def runtime_gate022(c):
+    from unittest.mock import patch
+    from articleflow import templateagent022 as agent
+    from articleflow.structure017 import inspect_templates
+    import pymupdf
+    p=c.work019/'fixed.pdf';doc=pymupdf.open();doc.new_page().insert_text((72,72),'Test');doc.save(p);doc.close()
+    with patch.object(agent,'render_pdf',return_value=p),patch.object(agent,'_negative_controls',return_value=[{'detected':True}]),patch('articleflow.roundtrip022.verify',return_value={'strategy':'production_roundtrip','status':'failed','rows':[]}):
+        c.result022=agent.run([c.source022],inspect_templates([c.source022]),c.work019/'runtime-gate')
+
+@then('шаблон остаётся не прошедшим проверку')
+def runtime_rejected022(c):
+    assert c.result022['samples'][0]['attempts'][1]['status']=='passed'
+    assert c.result022['status']=='needs_review'

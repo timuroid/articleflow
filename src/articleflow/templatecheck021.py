@@ -69,6 +69,47 @@ def verify(reference, spec, profiles, folder):
     result={'status':('passed' if all(r['gap_pass'] and r['pixels']['pixel_exact'] for r in rows) else 'failed') if rows else 'not_applicable','scope':'synthetic heading-boundary probes; not full document fidelity','model_calls':0,'rows':rows}
     (folder/'result.json').write_text(json.dumps(result,indent=2));return result
 
+def verify_table_boundaries(reference,spec,profiles,folder):
+    """Isolate the table-to-body gap; raw source is evaluator evidence only."""
+    import hashlib
+    parts=load_package(reference);body=parse_xml(parts['word/document.xml']).find('w:body',NS)
+    inv=inventory(reference);sample=next(s for s in spec['samples'] if s['sha256']==inv['source_sha256']);rows=[]
+    for key,profile in profiles.items():
+        if 'trailing_spacing' not in profile:continue
+        sk=hashlib.sha256(json.dumps(profile,sort_keys=True).encode()).hexdigest()[:16]
+        obs=next((o for o in sample['observations'] if o['role']==key and o['style_key']==sk),None)
+        if obs is None:continue
+        block=next(b for b in inv['blocks'] if b['id']==obs['block_id']);i=block['index'];end=i+1
+        while end<len(body) and layout021.empty_paragraph(body[end]):end+=1
+        table=copy.deepcopy(body[i])
+        for n,p in enumerate(table.findall('.//w:p',NS)):
+            first=p.find('w:r/w:rPr',NS);first=copy.deepcopy(first)
+            for c in list(p):
+                if c.tag!=t.tag('pPr'):p.remove(c)
+            r=t.prop('r')
+            if first is not None:r.append(first)
+            txt=t.prop('t');txt.text=f'Cell {n+1}';r.append(txt);p.append(r)
+        paths={}
+        for variant in ('reference','candidate','without-boundary-control'):
+            package=dict(parts);root=parse_xml(package['word/document.xml']);b=root.find('w:body',NS)
+            resolver=t.Resolver(package)
+            blanks=[copy.deepcopy(n) for n in body[i+1:end]] if variant=='reference' else [layout021.spacing_node(p,resolver) for p in profile['trailing_spacing']] if variant=='candidate' else []
+            section=t.prop('sectPr');t.apply_section(section,profiles['__document__'])
+            b[:]=[copy.deepcopy(table),*blanks,text_paragraph('After table'),section]
+            package['word/document.xml']=xml_bytes(root)
+            out=folder/f'table-{key}-{variant}.docx';write_package(out,package)
+            paths[variant]=render_pdf(out,folder/f'table-{key}-{variant}')
+        def table_gap(path):
+            with pymupdf.open(path) as pdf:
+                last=pdf[0].search_for(f'Cell {len(table.findall(".//w:p",NS))}')[0]
+                after=pdf[0].search_for('After table')[0]
+                return round(after.y0-last.y1,4)
+        expected,actual,negative=[table_gap(paths[v]) for v in ('reference','candidate','without-boundary-control')]
+        rows.append({'context':key,'boundary':'after_table','reference_gap_pt':expected,'candidate_gap_pt':actual,'negative_control_gap_pt':negative,
+                     'gap_pass':abs(expected-actual)<=0.05,'negative_control_detected':abs(expected-negative)>0.05 if end>i+1 else None,
+                     'pixels':compare_pixels(paths['reference'],paths['candidate'])})
+    return rows
+
 def main():
     p=argparse.ArgumentParser()
     for key in ('reference','spec','profile','output'):p.add_argument('--'+key,type=Path,required=True)
@@ -80,11 +121,12 @@ def main():
 
 
 def validate_samples(paths, spec, profiles, folder):
-    needed={k for k,p in profiles.items() if k.startswith('body.heading.') and p.get('leading_spacing')}
+    needed={k for k,p in profiles.items() if (k.startswith('body.heading.') and p.get('leading_spacing')) or p.get('trailing_spacing')}
     if not needed:return {'status':'not_applicable','scope':'heading-boundary probes','rows':[]}
     rows=[]
     for i,path in enumerate(paths):
         check=verify(path,spec,profiles,folder/str(i));rows.extend(check['rows'])
+        rows.extend(verify_table_boundaries(path,spec,profiles,folder/str(i)))
     covered={row['context'] for row in rows}
-    passed=needed<=covered and all(row['gap_pass'] and row['pixels']['pixel_exact'] for row in rows)
-    return {'status':'passed' if passed else 'failed','scope':'heading-boundary probes; not full document fidelity','rows':rows,'model_calls':0}
+    passed=needed<=covered and all(row['gap_pass'] and row['pixels']['pixel_exact'] and row['negative_control_detected'] is not False for row in rows)
+    return {'status':'passed' if passed else 'failed','scope':'heading/table boundary probes; not full document fidelity','rows':rows,'model_calls':0}

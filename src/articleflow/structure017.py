@@ -189,6 +189,8 @@ def inspect_templates(paths: list[Path], plans: dict | None = None) -> dict:
                 node = _block_nodes(body, block)[0]
                 role = (plans or {}).get(inv["source_sha256"], {}).get("contexts", {}).get(block["id"]) or typo.context(role, node, block.get("format_hints"))
                 style = typo.table_profile(node, resolver) if node.tag == typo.tag("tbl") else typo.measure(node, resolver, role)
+                if node.tag == typo.tag("tbl"):
+                    style["trailing_spacing"] = layout021.following_profiles(body, block["index"], resolver)
                 if role.startswith("body.heading."):
                     style["leading_spacing"] = layout021.preceding_profiles(body, block["index"], resolver)
                 key = digest(json.dumps(style, sort_keys=True).encode())[:16]
@@ -197,7 +199,7 @@ def inspect_templates(paths: list[Path], plans: dict | None = None) -> dict:
                 observations.append({"role": role, "block_id": block["id"], "style_key": key})
         samples.append({"name": path.name, "sha256": inv["source_sha256"], "observations": observations, "questions": questions})
     conflicts = {role: sources for role, sources in variants.items() if len(sources) > 1}
-    return {"schema_version": "web-019", "samples": samples, "variants": variants,
+    return {"schema_version": "web-019", "extractor_revision": "022-v1", "samples": samples, "variants": variants,
             "styles": styles, "conflicts": conflicts, "approved": False,
             "structure": {"order": list(SLOTS), "required": [r for r in (*REQUIRED, "keywords") if r in variants],
                           "observed": [r for r in SLOTS if r != "body" and r in variants]},

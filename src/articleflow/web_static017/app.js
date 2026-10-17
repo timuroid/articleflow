@@ -70,7 +70,38 @@ async function showTemplate(id) {
   target.hidden = false;
   target.replaceChildren(node('h3', '', `${item.name} · версия ${item.version}`));
   const spec = item.spec;
-  target.append(node('p', '', `Эталонов: ${spec.samples.length}. При разных вариантах оформления выберите правило вручную.`));
+  target.append(node('p', '', `Эталонов: ${spec.samples.length}. Сначала запустите проверку всех страниц. Спорные варианты оформления сохраняются для проверки.`));
+  const validation = node('div', 'review stack'); validation.setAttribute('aria-live','polite'); target.append(validation);
+  const stageNames = {inventory:'Инвентаризация документа',compact_experiment:'Проверка профилей ролей',enrich_catalogue:'Сохранение полных свойств',catalogue_experiment:'Сравнение всех страниц',negative_controls:'Проверка обнаружения ошибок',production_roundtrip:'Проверка рабочего сборщика на исходном и очищенном тексте',finished:'Цикл завершён'};
+  const statusNames = {passed:'Рабочий шаблон прошёл контроль',needs_review:'Шаблон не прошёл проверку',unavailable:'Проверка недоступна',interrupted:'Запуск прерван',queued:'В очереди',running:'Выполняется'};
+  async function showRun(runId) {
+    const run = await request(`/template-runs/${runId}`); const r=run.report;
+    validation.replaceChildren(node('strong','',run.status==='passed' && r.acceptance_contract!=='production-roundtrip-022-v1' ? 'Старая проверка: рабочий шаблон не подтверждён' : (statusNames[run.status] || run.status)), node('p','',stageNames[r.stage] || 'Подготовка'));
+    for (const [index,sample] of (r.samples || []).entries()) {
+      const final=sample.attempts?.find(a=>a.strategy==='complete_property_catalogue');
+      const compact=sample.attempts?.find(a=>a.strategy==='compact_role_profiles');
+      if(final?.pixels) validation.append(node('p','',`Каталог свойств, образец ${index+1}: ${final.pixels.golden_pages} страниц; совпадение ${final.pixels.pixel_exact ? 'точное' : 'не достигнуто'}. Это отдельная проверка хранения свойств.`));
+      if(compact?.status==='failed') validation.append(node('p','help','Упрощённые профили потеряли часть оформления. Полный каталог сохранён; применение к новой статье требует отдельной проверки.'));
+      const runtime=sample.attempts?.find(a=>a.strategy==='production_roundtrip');
+      for(const row of runtime?.rows || []) validation.append(node('p',row.status==='passed'?'':'error',`Рабочий сборщик (${row.input==='neutralized'?'текст без оформления':'исходный документ'}): ${row.pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${row.pixels.golden_pages} страниц совпали; получено ${row.pixels.candidate_pages} страниц. ${row.status==='passed'?'Проверка пройдена.':'Шаблон не прошёл проверку.'}`));
+      if(runtime?.rows?.length) for(const [mode,label] of [['reference','Исходный эталон PDF'],['original','Результат рабочего сборщика PDF'],['neutralized','Сборка из текста без оформления PDF']]) {const link=node('a','button',label);link.href=`${api}/template-runs/${runId}/comparison/${index+1}/${mode}`;link.target='_blank';link.rel='noopener';validation.append(link);}
+      if(runtime?.code) validation.append(node('p','error',`Рабочий шаблон не проверен: ${runtime.code}`));
+      if(final?.status==='passed') {
+        const link=node('a','button','Посмотреть восстановленный образец'); link.href=`${api}/template-runs/${runId}/preview/${index+1}`; link.target='_blank'; link.rel='noopener'; validation.append(link);
+      }
+    }
+    if(run.status==='passed' && r.acceptance_contract==='production-roundtrip-022-v1') {
+      const link=node('a','button','Скачать полный каталог шаблона');link.href=`${api}/template-runs/${runId}/catalogue`;validation.append(link);
+      validation.append(node('p','help','Точное восстановление образца подтверждает полноту извлечения. Оно не измеряет точность выбора оформления для нового текста.'));
+    }
+    for(const select of target.querySelectorAll('select[data-role]')) {const choice=r.recommendations?.[select.dataset.role]?.selected;if(!select.value && choice) select.value=choice;}
+    if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}`));
+    if(['queued','running'].includes(run.status) && target.isConnected && target.contains(validation)) setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),1800);
+  }
+  target.append(button('Проверить и доработать шаблон',async()=>{
+    await request(`/templates/${id}/refine`,{method:'POST'}); await showTemplate(id);
+  },'button primary'));
+  const runs=await request(`/templates/${id}/runs`);if(runs.length) await showRun(runs[0].id);
   if (state.llm) {
     const consentLabel = node('label');
     const consent = node('input'); consent.type = 'checkbox';
@@ -84,7 +115,7 @@ async function showTemplate(id) {
     });
     target.append(consentLabel, analyze);
   }
-  if (item.approved) {
+  if (item.approved && spec.extraction_validation?.status === 'passed' && spec.extraction_validation?.acceptance_contract === 'production-roundtrip-022-v1') {
     target.append(node('p', '', 'Версия утверждена и неизменяема. Она доступна для новых пакетов.'));
     return;
   }
@@ -110,6 +141,10 @@ async function showTemplate(id) {
       option.value = key;
       select.append(option);
     }
+    const recommendation=runs[0] ? JSON.parse(runs[0].report_json).recommendations?.[role]?.selected : null;
+    if(spec.selected?.[role] && variants[spec.selected[role]]) select.value=spec.selected[role];
+    else if(recommendation && variants[recommendation]) select.value=recommendation;
+    select.dataset.role=role;
     choices[role] = select;
     target.append(label, select);
     const details = node('details'); details.append(node('summary', '', 'Свойства вариантов и исходные блоки'));
@@ -124,6 +159,7 @@ async function showTemplate(id) {
     target.append(details);
   }
   target.append(button('Утвердить новую версию', async () => {
+    message('Проверяю шаблон и все страницы. Результат появится после завершения цикла.');
     const selected = Object.fromEntries(Object.entries(choices).map(([role, select]) => [role, select.value]));
     if (Object.values(selected).some((value) => !value)) { message('Выберите вариант для каждой спорной роли.', true); return; }
     try {
@@ -177,7 +213,14 @@ async function renderJob(id) {
   const heading = node('div', 'item');
   const top = node('div');
   top.append(node('h3', '', job.source_name), node('span', `badge ${job.status}`, job.status));
-  heading.append(top, node('p', '', `Ревизия ${job.revision}. Структурный просмотр не заменяет проверку страниц в Word.`));
+  heading.append(top, node('p', '', `Ревизия ${job.revision}. Откройте PDF для проверки страниц.`));
+  const visual=job.report?.visual_validation;
+  if(visual) {
+    const count=visual.final?.pages?.length || 0;
+    heading.append(node('p','',`Визуальный контроль: ${visual.status==='passed' ? 'физические проверки пройдены' : 'нужна проверка'} · ${count} страниц.`));
+    if(visual.final) {const preview=node('a','button','Открыть PDF');preview.href=`${api}/jobs/${id}/preview`;preview.target='_blank';preview.rel='noopener';heading.append(preview);}
+    for(const issue of visual.final?.issues || []) heading.append(node('p','error',`Страница ${issue.page}: ${issue.code}`));
+  }
   target.append(heading);
   const actions = node('div', 'actions');
   const links = [['source', 'Исходник'], ['report', 'Отчёт']];

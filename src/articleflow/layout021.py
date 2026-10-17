@@ -16,6 +16,13 @@ def preceding_profiles(body, index, resolver):
     return [t.measure(n,resolver,'body.spacing') for n in nodes]
 
 
+def following_profiles(body, index, resolver):
+    nodes=[]; index+=1
+    while index<len(body) and empty_paragraph(body[index]):
+        nodes.append(body[index]); index+=1
+    return [t.measure(n,resolver,'body.spacing') for n in nodes]
+
+
 def spacing_node(profile, resolver):
     node=t.prop('p');t.apply(node,profile,resolver,'body.spacing')
     return node
@@ -24,6 +31,18 @@ def spacing_node(profile, resolver):
 def apply_boundaries(ordered, pending, resolver):
     changes=[];warnings=[]
     for node, block, _, key, style in pending:
+        if style and node.tag==t.tag('tbl') and 'trailing_spacing' in style:
+            wanted=style['trailing_spacing'];index=ordered.index(node)+1;end=index
+            while end<len(ordered) and empty_paragraph(ordered[end]):end+=1
+            existing=ordered[index:end]
+            if len(wanted)>3 or len(existing)>len(wanted):
+                warnings.append(f"Интервал после таблицы требует проверки ({block['id']})")
+                continue
+            for n,profile in zip(existing,wanted):t.apply(n,profile,resolver,'body.spacing')
+            new=[spacing_node(p,resolver) for p in wanted[len(existing):]]
+            ordered[end:end]=new
+            if new:changes.append({'block_id':block['id'],'kind':'table_spacing','inserted_empty_paragraphs':len(new),'text_preserved':True})
+            continue
         if not style or not key.startswith('body.heading.') or 'leading_spacing' not in style:continue
         wanted=style['leading_spacing']
         if len(wanted)>3:
