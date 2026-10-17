@@ -1,0 +1,32 @@
+[
+  {
+    "id": "canterbury",
+    "pages": 22,
+    "paragraphs": 612,
+    "tables": 2,
+    "sections": 1,
+    "fields": 99,
+    "drawings": 1,
+    "proofing": 36
+  },
+  {
+    "id": "dundee",
+    "pages": 19,
+    "paragraphs": 467,
+    "tables": 5,
+    "sections": 1,
+    "fields": 68,
+    "drawings": 1,
+    "proofing": 4
+  },
+  {
+    "id": "cornwall",
+    "pages": 12,
+    "paragraphs": 288,
+    "tables": 2,
+    "sections": 4,
+    "fields": 0,
+    "drawings": 8,
+    "proofing": 0
+  }
+]

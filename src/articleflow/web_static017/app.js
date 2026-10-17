@@ -79,11 +79,16 @@ async function showTemplate(id) {
     if(r.schema==='teacher-student-023') {
       const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
       validation.replaceChildren(node('strong','',names[run.status]||run.status));
-      const stages={extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
+      const stages={preflight:'Проверяем точную пересборку и адаптируем чтение',extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',stress_testing:'Проверяем изменённое оформление и порядок блоков',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
       const timeline=node('ol','pipeline');
       const current=Object.keys(stages).indexOf(r.stage==='finished' && run.status!=='reference_verified' ? r.last_stage : r.stage);
       Object.entries(stages).forEach(([key,label],index)=>{const item=node('li',index===current?'active':index<current?'done':'',label);if(index===current)item.setAttribute('aria-current','step');timeline.append(item);});
       validation.append(timeline);
+      if(r.limits) validation.append(node('p','help',`Прошло ${Math.round((r.elapsed_seconds||0)/60)} мин. Проверяем эталоны и изменённые копии; результат появится после завершения проверок.`));
+      for(const prep of r.preparation||[]) validation.append(node('p','help',`Эталон ${prep.document}: ${prep.status||'проверяется'}; попыток чтения ${prep.attempts.length}. ${prep.attempts.map(a=>a.code||a.status||'в работе').join(' → ')}`));
+      const latestQuestions=r.questions||r.iterations?.at(-1)?.questions||[];
+      if(latestQuestions.length && run.status!=='reference_verified') {validation.append(node('h4','','Вопросы агента'));for(const q of latestQuestions) validation.append(node('p','',q.question));validation.append(node('p','help','Ответ можно передать как уточнение. После завершения цикла используйте повторную проверку ниже.'));}
+
       if(r.published_version) {validation.append(node('p','success',`Шаблон автоматически сохранён: версия ${r.published_version}.`));if(spec.agent023?.run_id!==runId)validation.append(button('Обновить список шаблонов',async()=>{await loadTemplates();await showTemplate(id);}));}
       if(['queued','running'].includes(run.status)) {
         let pane=target.querySelector('[data-learning-feedback]');
@@ -123,6 +128,7 @@ async function showTemplate(id) {
           if(evidence.truncated)details.append(node('p','help',`Показаны первые ${evidence.groups.length} из ${evidence.total} конфликтов.`));
           validation.append(details);
         }
+        for(const test of iteration.stress||[]) validation.append(node('p',test.passed?'success':'help',`Проверка ${test.variant}, документ ${test.document}: ${test.passed?'совпало':test.code||test.status}.`));
         for(const [index,a] of iteration.applications.entries()) {
           const pixels=a.pixels;
           validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: роли ${a.role_correct}/${a.role_total}. ${pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` : `Неоднозначных назначений: ${a.unresolved?.length||0}.`}`));
@@ -178,7 +184,7 @@ async function showTemplate(id) {
     if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}`));
     if(['queued','running'].includes(run.status) && target.isConnected && target.contains(validation)) setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),1800);
   }
-  target.append(button('Проверить без внешней модели',async()=>{
+  if(!spec.pending_agent) target.append(button('Проверить без внешней модели',async()=>{
     await request(`/templates/${id}/refine`,{method:'POST'}); await showTemplate(id);
   },'button primary'));
   const runs=await request(`/templates/${id}/runs`);if(runs.length) await showRun(runs[0].id);
@@ -190,14 +196,15 @@ async function showTemplate(id) {
     const context=node('textarea');context.dataset.templateContext='true';context.rows=3;context.maxLength=12000;contextLabel.append(context);
     const modeLabel=node('label','','Режим извлечения');const mode=node('select');
     for(const [value,text] of [['automatic','Автоматический — без обязательных ответов'],['assisted','С уточнениями — подтвердить требования перед сохранением']]) {const option=node('option','',text);option.value=value;mode.append(option);}modeLabel.append(mode);
-    const analyze = button('Создать и проверить шаблон', async () => {
+    const analyze = button(item.approved ? 'Исправить по замечанию и проверить новую версию' : 'Создать и проверить шаблон', async () => {
       if (!consent.checked) { message('Для анализа нужно разрешение на отправку текста эталонов.', true); return; }
       analyze.disabled = true; target.setAttribute('aria-busy', 'true'); message('Модель анализирует эталоны. Это может занять несколько минут.');
-      try { await request(`/templates/${id}/learn`, { method: 'POST', body: JSON.stringify({ consent_external: true,context:context.value,mode:mode.value }) }); await showTemplate(id); message('Обучение запущено. Агент сравнит все страницы и доработает правила при ошибках.'); }
+      try { await request(`/templates/${id}/learn`, { method: 'POST', body: JSON.stringify({ consent_external: true,context:context.value,mode:mode.value,validation_job_id:target.querySelector('[data-validation-job]')?.value||null }) }); await showTemplate(id); message('Обучение запущено. Агент сравнит все страницы и доработает правила при ошибках.'); }
       catch (error) { message(`Анализ не завершён: ${error.message}`, true); }
       finally { analyze.disabled = false; target.removeAttribute('aria-busy'); }
     });
-    target.append(modeLabel,contextLabel, consentLabel, analyze);
+    const jobLabel=node('label','','ID документа с замечанием (необязательно)');const jobInput=node('input');jobInput.placeholder='Документ должен относиться к этому шаблону';jobInput.dataset.validationJob='true';jobLabel.append(jobInput);
+    target.append(modeLabel,contextLabel,jobLabel,consentLabel,analyze);
   }
   if(item.approved && spec.agent023) {
     target.append(node('p','','Проверенный шаблон сохранён. Для оформления новых документов включите модель и разрешите передачу текста.'));
@@ -412,8 +419,11 @@ $('template-form').addEventListener('submit', async (event) => {
   const submit = form.querySelector('button[type=submit]');
   submit.disabled = true;
   try {
+    const consent=$('creation-consent').checked;
+    if(!consent || !state.llm) {message('Для автоматического создания шаблона настройте модель и разрешите обработку эталонов.',true);return;}
     const result = await request('/templates', { method: 'POST', body: new FormData(form) });
-    message('Наблюдения сохранены. Проверьте варианты и утвердите шаблон.');
+    await request(`/templates/${result.id}/learn`,{method:'POST',body:JSON.stringify({consent_external:true,mode:'automatic'})});
+    message('Агент начал проверку. Результат и все причины остановки появятся в карточке шаблона.');
     form.reset();
     await loadTemplates();
     await showTemplate(result.id);
@@ -435,4 +445,6 @@ $('batch-form').addEventListener('submit', async (event) => {
   } catch (error) { message(`Пакет не принят: ${error.message}`, true); }
   finally { submit.disabled = false; }
 });
+if(location.pathname==='/templates') {document.body.classList.add('templates-page');$('page-title').textContent='Шаблоны документов';$('template-form').hidden=true;}
+$('create-template').addEventListener('click',()=>{$('template-form').hidden=!$('template-form').hidden;if(!$('template-form').hidden)$('template-name').focus();});
 boot();

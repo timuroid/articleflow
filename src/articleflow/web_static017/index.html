@@ -12,34 +12,39 @@
   <a class="skip" href="#main">Перейти к содержанию</a>
   <header class="topbar">
     <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span>ArticleFlow</span></div>
+    <nav aria-label="Разделы"><a href="/templates">Шаблоны</a> · <a href="/">Документы</a></nav>
     <span class="mode" id="mode">Локальная проверка · без модели</span>
   </header>
   <main id="main" class="shell">
     <section class="intro" aria-labelledby="page-title">
       <p class="eyebrow">Рабочее пространство редактора</p>
       <h1 id="page-title">От образца к проверяемому DOCX</h1>
-      <p>Сначала утвердите оформление по эталону. Затем загрузите статьи и проверьте найденные части. Неопределённые данные остаются черновиком с явными вопросами.</p>
+      <p>Сначала утвердите оформление по эталону. Затем загрузите документы и проверьте результат оформления. Неопределённые данные остаются черновиком с явными вопросами.</p>
       <div class="notice" id="font-notice" role="status">Проверяем установленные шрифты…</div>
     </section>
 
     <div id="message" class="message" role="status" aria-live="polite" hidden></div>
 
     <div class="grid">
-      <section class="panel" aria-labelledby="template-heading">
-        <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Эталоны и шаблон</h2><p>Один или несколько оформленных DOCX одного вида.</p></div></div>
+      <section class="panel template-panel" aria-labelledby="template-heading">
+        <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Шаблоны</h2><p>Один или несколько оформленных DOCX одного вида.</p></div></div>
+        <button type="button" class="button" id="create-template">Создать шаблон</button>
         <form id="template-form">
+          <input type="hidden" name="agentic" value="true">
           <label for="template-name">Название шаблона</label>
           <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
           <label for="template-files">Эталоны DOCX, до 10 файлов</label>
           <input id="template-files" name="files" type="file" accept=".docx" multiple required>
           <p class="help">Исходные файлы хранятся на этом сервере. Отправка текста внешней модели доступна только с вашим отдельным согласием.</p>
-          <button type="submit" class="button primary">Извлечь наблюдения</button>
+          <p class="help">Все эталоны должны соответствовать одному шаблону. Агент проверит пересборку и восстановление испорченных копий. Вы увидите текущий этап и результаты проверки. Если понадобится уточнение, агент задаст вопрос.</p>
+          <label><input type="checkbox" id="creation-consent"> Разрешаю обработку эталонов через OpenRouter и автоматическую проверку шаблона</label>
+          <button type="submit" class="button primary">Создать и проверить</button>
         </form>
         <div id="template-list" class="stack" aria-live="polite"></div>
         <div id="template-review" class="review" hidden></div>
       </section>
 
-      <section class="panel" aria-labelledby="batch-heading">
+      <section class="panel batch-panel" aria-labelledby="batch-heading">
         <div class="panel-head"><span class="step">02</span><div><h2 id="batch-heading">Статьи</h2><p>Обработка продолжается для остальных файлов, если один требует проверки.</p></div></div>
         <form id="batch-form">
           <label for="batch-template">Утверждённый шаблон</label>
@@ -62,6 +67,6 @@
       <div id="job-view" class="empty">Выберите статью из пакета, чтобы увидеть вопросы, блоки и файлы.</div>
     </section>
   </main>
-  <footer class="footer">ArticleFlow · Версия 023 · Обучение шаблона с обратной связью и проверкой всех страниц.</footer>
+  <footer class="footer">ArticleFlow · Версия 028 · Обучение шаблона с обратной связью и проверкой всех страниц.</footer>
 </body>
 </html>

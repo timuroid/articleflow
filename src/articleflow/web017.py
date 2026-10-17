@@ -146,7 +146,7 @@ class Store:
         return path
 
 
-async def _save_upload(upload: UploadFile, path: Path):
+async def _save_upload(upload: UploadFile, path: Path, *, container_only=False):
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     size = 0
     try:
@@ -159,7 +159,10 @@ async def _save_upload(upload: UploadFile, path: Path):
                 stream.write(chunk)
         if size == 0:
             raise HTTPException(400, "EMPTY_DOCX")
-        inventory(path)
+        if container_only:
+            from .docx_engine import load_package
+            load_package(path,allow_unsupported=True)
+        else:inventory(path)
     except Exception:
         path.unlink(missing_ok=True)
         raise
@@ -276,6 +279,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         return {"status": "ok", "web_version":"023", "release":os.environ.get("ARTICLEFLOW_RELEASE", "development"), "mode": "model_available" if model_config() else "local_review_only"}
 
     @app.get("/")
+    @app.get("/templates")
     def index():
         return HTMLResponse((STATIC / "index.html").read_text())
 
@@ -300,27 +304,29 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                             ORDER BY t.created_at DESC""")
 
     @app.post("/api/v017/templates", dependencies=[Depends(csrf)])
-    async def create_template(background: BackgroundTasks, name: str = Form(...), files: list[UploadFile] = File(...)):
+    async def create_template(background: BackgroundTasks, name: str = Form(...), files: list[UploadFile] = File(...), agentic: bool = Form(False)):
         if not 1 <= len(files) <= MAX_TEMPLATES or not 1 <= len(name.strip()) <= 120:
             raise HTTPException(400, "TEMPLATE_INPUT_INVALID")
+        from .docx_engine import digest
         template_id = _uid()
         paths = []
         for index, upload in enumerate(files):
             _safe_name(upload.filename)
             path = store.path("templates", template_id, "samples", f"{index + 1}.docx")
             try:
-                await _save_upload(upload, path)
+                await _save_upload(upload, path,container_only=agentic)
             except DocumentError as exc:
                 raise HTTPException(400, str(exc)) from exc
             paths.append(path)
         try:
-            spec = inspect_templates(paths)
+            spec = ({'samples':[{'sha256':digest(p.read_bytes())} for p in paths],'styles':{},'variants':{},'structure':{},'pending_agent':True} if agentic else inspect_templates(paths))
         except DocumentError as exc:
             raise HTTPException(400, str(exc)) from exc
         with store.connect() as con:
             con.execute("INSERT INTO templates VALUES (?,?,?)", (template_id, name.strip(), _now()))
             con.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
                         (template_id, 1, json.dumps(spec, ensure_ascii=False), 0, _now()))
+        if agentic:return {'id':template_id,'version':1,'spec':spec,'extraction_run_id':None}
         run_id=_uid()
         store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)", (run_id,template_id,1,"queued","{}",_now()))
         background.add_task(run_extraction,run_id)

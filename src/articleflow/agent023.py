@@ -103,6 +103,11 @@ def build_package(samples,labels,definitions,destination,inline_roles=None):
 def apply(source,template_dir,folder,config,*,caller=call):
     """Runtime needs only incoming source, frozen template and a model config."""
     folder.mkdir(parents=True,exist_ok=False)
+    package=json.loads((template_dir/'semantic.json').read_text())
+    adapter=None;original_hash=digest(source.read_bytes())
+    if package.get('import_policy')=='annotations-028':
+        from .adapters028 import normalize
+        normalized=folder/'normalized.docx';adapter=normalize(source,normalized);source=normalized
     content=extract_input(source,folder/'input')
     dump(folder/'input-original.json',content)
     package=json.loads((template_dir/'semantic.json').read_text())
@@ -131,7 +136,7 @@ def apply(source,template_dir,folder,config,*,caller=call):
     unresolved.extend(order_issues)
     if order_issues:plan=None
     report={'schema':'application-023','model':meta,'unresolved':unresolved,'status':'needs_review',
-            'assignments':assignments,'structure_moves':moves,'structure_permutation':permutation,'source_sha256':digest(source.read_bytes())}
+            'assignments':assignments,'structure_moves':moves,'structure_permutation':permutation,'source_sha256':original_hash,'input_adapter':adapter}
     if plan:
         dump(folder/'input/content/content.json',content)
         plan['template_sha256']=digest((template_dir/'rules.json').read_bytes())
@@ -159,8 +164,8 @@ def apply(source,template_dir,folder,config,*,caller=call):
     return report
 
 
-def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None,feedback_provider=None):
-    if not 1<=max_iterations<=5 or not 1<=len(references)<=10:raise DocumentError('AGENT_LIMIT')
+def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None,feedback_provider=None,acceptance_probe=None,adaptive=False):
+    if not 1<=max_iterations<=(8 if adaptive else 5) or not 1<=len(references)<=10:raise DocumentError('AGENT_LIMIT')
     folder.mkdir(parents=True,exist_ok=False)
     report={'schema':'teacher-student-023','status':'running','iterations':[],
             'training_documents':len(references),'student_model':student['model'],'teacher_model':teacher['model'],
@@ -208,10 +213,17 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             user_feedback=feedback_provider() if feedback_provider else {'revision':0,'text':''}
             report['feedback_revision_applied']=user_feedback['revision']
             report['stage']='teacher'
-            row={'number':iteration+1,'status':'running','applications':[]};report['iterations'].append(row);emit()
-            response,meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':user_feedback['text'],'paragraphs':observations,
-                       'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=8000,
-                       validate=lambda r:(expand_groups(r,allblocks) and r))
+            row={'number':iteration+1,'status':'running','applications':[],'started_seconds':time.monotonic()-start};report['iterations'].append(row);emit()
+            try:
+                response,meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':user_feedback['text'],'paragraphs':observations,
+                           'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=8000,
+                           validate=lambda r:(expand_groups(r,allblocks) and r))
+            except DocumentError as exc:
+                recoverable={'QUESTION_SCHEMA','TEACHER_SCHEMA','ROLE_DEFINITION_INVALID','SEMANTIC_GROUP_INVALID','SEMANTIC_GROUP_COVERAGE','SEMANTIC_GROUP_OVERLAP','INLINE_ANCHOR_NOT_FOUND','INLINE_QUOTE_MISMATCH','INLINE_RANGE'}
+                if not adaptive or str(exc) not in recoverable:raise
+                row.update(status='failed',code=str(exc))
+                feedback={'validation_error':str(exc),'instruction':'Return a fresh complete response; all question roles must be keys of roles. Use exact quoted spans and local occurrence numbers.'}
+                emit();continue
             report['stage']='compiling';emit()
             row['teacher']=meta;expanded=expand_groups(response,allblocks)
             labels=[{b['id']:expanded[f'{i}:{b["id"]}'] for b in s['content']['blocks']} for i,s in enumerate(samples)]
@@ -234,7 +246,12 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 incoming=work/f'degraded-{i+1}.docx'
                 neutralize(sample['source'],incoming)
                 report['stage']='student';report['active_document']=i+1;emit()
-                trial=apply(incoming,work/'template',work/f'application-{i+1}',student,caller=caller)
+                try:
+                    trial=apply(incoming,work/'template',work/f'application-{i+1}',student,caller=caller)
+                except DocumentError as exc:
+                    if not adaptive:raise
+                    row['applications'].append({'status':'failed','code':str(exc),'unresolved':[],'passed':False})
+                    emit();continue
                 new_content=json.loads((work/f'application-{i+1}/input-original.json').read_text())
                 old=iter(sample['content']['blocks']);expected={}
                 def content_key(block):
@@ -260,7 +277,14 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 public['passed']=bool(public.get('pixels',{}).get('pixel_exact')) and trial.get('content_exact',False) and trial.get('placements_exact',False)
                 row['applications'].append(public);emit()
             success=not conflicts and all(a['passed'] for a in row['applications'])
+            if success and acceptance_probe is not None:
+                report['stage']='stress_testing';emit()
+                row['stress']=acceptance_probe(samples,work/'template',work)
+                applicable=[r for r in row['stress'] if r.get('status')!='not_applicable']
+                success=bool(applicable) and all(r.get('passed',False) for r in applicable)
+                emit()
             row['status']='passed' if success else 'needs_review'
+            row['finished_seconds']=time.monotonic()-start
             measurements=[{k:v for k,v in a.items() if k not in {'pixels','unresolved'}} |
                           {'pixel_exact':a.get('pixels',{}).get('pixel_exact'),
                            'unresolved_count':len(a.get('unresolved',[])),
@@ -268,6 +292,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             feedback={'conflicts':[{**c,'examples':c.get('examples',[])[:4]} for c in conflicts[:20]],
                       'semantic_confusions':confusions[:40],'measurements':measurements,
                       'previous_roles':response['roles'],'previous_groups':response['groups']}
+            if row.get('stress'):feedback['stress_failures']=[{k:v for k,v in r.items() if k!='pixels'} for r in row['stress'] if not r.get('passed') and r.get('status')!='not_applicable']
             dump(work/'feedback.json',feedback)
             feedback_images=[]
             # Pixel comparison covers every page. Supply a bounded visual example

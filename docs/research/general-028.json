@@ -1,0 +1,140 @@
+{
+  "protocol": {
+    "series": "028",
+    "max_iterations": 8,
+    "teacher": "openai/gpt-6.1-sol",
+    "student": "qwen/qwen3.8-27b",
+    "manual_feedback": false,
+    "manual_repairs": false,
+    "separate_runs_for_each_iteration_limit": false,
+    "source_manifest_sha256": "fd9f8e04c0c22d9ada3e3e9f2e1f1faf91640d84658d3cd4c30b026071d380e7",
+    "implementation_hashes": {
+      "agent028.py": "7b8b1a62cd2e2c2c0c40acb7e6b02701d74258f67e3273229ff04a5bdc32656d",
+      "templateagent022.py": "f343b1621ce12443fd0c3fcde0f1da45ef406eaf07f1b160318ce3573c7b4bc2",
+      "catalogue.py": "aec233327d32a714428dedc2e0cf54a7298b57bedf372b4499ac681bead1c903",
+      "__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "templatecheck021.py": "6a375c273e689009035036198513a369ce41f2e0b5fbcc88c440ccd97788e3c2",
+      "roundtrip022.py": "5db1aae8a818f15c4f849b01db23278270e06559b26558dc686a1b049324f32d",
+      "fragments019.py": "4b2a3da525e7540e29a3de036a19e70fa008761741bb106efcf514118a4868ad",
+      "planner.py": "9eb4c9ddea29b5d28ec3089ca86eae0d4ecc7f09889a4a2f61d17777b45cdc7d",
+      "research.py": "87d62a111d3fd68dd36733ecc515bdadde7774b8d9af958ce9f739f165dbf1a8",
+      "order024.py": "cdc6a270189d8b4245e7997f936891ac2c03225f94fe9925a498363d1a98f257",
+      "structure017.py": "3b0a24f01802443991432f6cadc45d9f175c49da0bd56ec0f25ad466e72c39a3",
+      "stories026.py": "a3b452569dcb026832209d6f733da10e05e1b7dd867ee58ed3bcbb07bc3f0775",
+      "diagnostics024.py": "c47073589e8aef586d048265ef907f532d5bd6f019d2e5eae05ac3da9d8ca664",
+      "planner_research.py": "245354a9bb4005dedbccb09a38ea774640594cdf3653d59bb7cd5d30ae18603b",
+      "fonts019.py": "7e4ff5846f00d492f2c8b0d5286a7bcd34b8cc8cd054e9a14e5d19ad947a8275",
+      "inline026.py": "b4797c61bc2ab2a015b6632cc4f451fbc0bb62902a061f62213635b631e10eb0",
+      "layout021.py": "8905ff740dfc8b1248281c8395595dad859d96ad45c6017806669ad785509061",
+      "docx_engine.py": "a254f857a508b5245017212c719c46301320eeac314c979dc8e98a5937697bce",
+      "context_rules.py": "24f1050421e22725dc48a894579036728918dead83a598e4f7ec914512332b86",
+      "__init__.py": "095618ab6d2e8bd006d0f61075bcf2ea1753fa50c662f623cc4a062860c5591e",
+      "rules023.py": "0edb0a97b3bc1cbb8e10f2ffc35dc050b25c78adb95702232bd89472f78852eb",
+      "source_trials.py": "26e766b4aae8d3a05df0c6241fd8f71b685b53b920db31433ee4e2602d9cdb41",
+      "web017.py": "b371353b887853bfa1b047e82ed8ab59ba64860fd0125f1d29fab6a7f43267b9",
+      "controls023.py": "b3b7f325de947753b481c1125f18e69219121ceb5befdf0f5895df0ce47b2aa0",
+      "documentcheck022.py": "b9fe8a60939051571c18eccd5c6574487bb52737dbe999a494c343dc3bfa0019",
+      "provider023.py": "e1c2690b905d424f554acd56cb6bfcad4cb3f7500ab549ff06b5b2c85a7d1192",
+      "spacers023.py": "8415262738769061b33e84102710fc45b6c85b1409de186eac39768b52cd57fb",
+      "bookmarks020.py": "6ffde6eda956f468ddb8baf9d0248cb19dc18867242aec7d76ef6f43bfe2dd1c",
+      "webagent023.py": "2a44458ba50d4668495c27796d1cf6c1b8c41304d15a6ce019a1e402e91b5cca",
+      "source_aware.py": "0826d672d3ca690ba73e62d43bbcd146fd870f232b34239cebd4cd4ea26f5547",
+      "semantic023.py": "5b5ba17cb95b4a04fae5e8a37f567d9c9e5ff7c0a6c8e7b400c6e8f55a15acec",
+      "model019.py": "672de2df49593e9f27a7eb6f0911943416e4e943a54aa531c44b3c161e396bb7",
+      "integrity023.py": "64d66408989718ceec6bea0b9398a55d551cbf24716dd0f9e340dc0a3c78ebf0",
+      "cli.py": "92bc94cd5a33b67c989a65f73c626d13dbf4d3ac624fb8db53ff8055c9427d6f",
+      "adapters028.py": "3b93d4c178a79f95c2f3a69a884b99d5360a26cf5c1f7e9a8c004ead2c8d154d",
+      "typography019.py": "6b65d43eed7715e386315478984e12f2b619a8e8cc3ebdabddee64b1c659fe5c",
+      "semantic_marks.py": "4bbba1eb26d057d09dbfdecf110641c0dafb34e4da9ab7d775dfd8f77f2ec790",
+      "representation021.py": "34310ebd31e478f9ead371e6440ec4d98c2cf2d8b7755aee332d85c1acaeba71",
+      "agent023.py": "00c5f1b0ed542dd6727043a3fe1deac296767f024e3986ad7d4a1f56cd1ffbc1"
+    }
+  },
+  "documents": [
+    {
+      "id": "canterbury",
+      "status": "needs_review",
+      "code": "UNSUPPORTED_CONSTRUCT",
+      "seconds": 0.4042713399976492,
+      "first_success_iteration": null,
+      "iterations": [],
+      "api_attempts": 0,
+      "cost_usd": "0",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": null,
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "UNSUPPORTED_CONSTRUCT",
+              "adaptation": null,
+              "pixel_exact": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cornwall",
+      "status": "needs_review",
+      "code": "UNSUPPORTED_CONSTRUCT",
+      "seconds": 0.3577742689958541,
+      "first_success_iteration": null,
+      "iterations": [],
+      "api_attempts": 0,
+      "cost_usd": "0",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": null,
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "UNSUPPORTED_CONSTRUCT",
+              "adaptation": null,
+              "pixel_exact": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dundee",
+      "status": "needs_review",
+      "code": "MANUAL_BREAK_UNSUPPORTED",
+      "seconds": 0.368808628001716,
+      "first_success_iteration": null,
+      "iterations": [],
+      "api_attempts": 0,
+      "cost_usd": "0",
+      "certification": null,
+      "preparation": [
+        {
+          "document": 1,
+          "status": null,
+          "attempts": [
+            {
+              "number": 1,
+              "status": "failed",
+              "code": "MANUAL_BREAK_UNSUPPORTED",
+              "adaptation": null,
+              "pixel_exact": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "prefix_success": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "5": 0,
+    "8": 0
+  }
+}

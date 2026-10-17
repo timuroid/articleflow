@@ -13,8 +13,9 @@ from .docx_engine import DocumentError, digest
 class LearnRequest(BaseModel):
     consent_external: bool = False
     context: str = Field(default='',max_length=12000)
-    iterations: int = Field(default=3,ge=1,le=5)
+    iterations: int = Field(default=5,ge=1,le=8)
     mode: Literal['automatic','assisted'] = 'automatic'
+    validation_job_id: str | None = None
 
 
 class LearningFeedback(BaseModel):
@@ -36,8 +37,8 @@ class RequirementAnswers(BaseModel):
 def mount(app,store,csrf):
     from .web017 import _latest,_uid,_now,model_config
     store.execute('CREATE TABLE IF NOT EXISTS learning_feedback024 (run_id TEXT PRIMARY KEY, revision INTEGER NOT NULL, text TEXT NOT NULL)')
-    def learn(run_id,context,iterations,mode):
-        from .agent023 import run
+    def learn(run_id,context,iterations,mode,validation_job_id=None):
+        from .agent028 import run
         with store.batch_lock:
             row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,))
             paths=sorted(store.path('templates',row['template_id'],'samples').glob('*.docx'))
@@ -54,7 +55,7 @@ def mount(app,store,csrf):
                 result=run(paths,store.path('template-runs',run_id),
                        {**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),'reasoning_effort':'low'},
                        {**config,'model':config.get('student023','qwen/qwen3.8-27b'),'reasoning_effort':'none'},
-                       context=context,max_iterations=iterations,progress=progress,feedback_provider=feedback)
+                       context=context,max_iterations=iterations,progress=progress,feedback_provider=feedback,validation_sources=([store.path('jobs',validation_job_id,'source.docx')] if validation_job_id else []))
                 if result['status']=='reference_verified':
                     directory=Path(result['template'])
                     result['package_hashes']={name:digest((directory/name).read_bytes()) for name in ('rules.json','semantic.json','resources.zip')}
@@ -78,7 +79,12 @@ def mount(app,store,csrf):
         if pending:raise HTTPException(409,'TEMPLATE_RUN_IN_PROGRESS')
         run_id=_uid()
         store.execute('INSERT INTO template_runs VALUES (?,?,?,?,?,?)',(run_id,template_id,version['version'],'queued',json.dumps({'schema':'teacher-student-023'}),_now()))
-        background.add_task(learn,run_id,body.context,body.iterations,body.mode)
+        if body.validation_job_id:
+            rows=store.all('SELECT b.template_id FROM jobs j JOIN batches b ON j.batch_id=b.id WHERE j.id=?',(body.validation_job_id,))
+            if not rows or rows[0]['template_id']!=template_id:
+                store.execute('DELETE FROM template_runs WHERE id=?',(run_id,))
+                raise HTTPException(400,'VALIDATION_JOB_TEMPLATE_MISMATCH')
+        background.add_task(learn,run_id,body.context,body.iterations,body.mode,body.validation_job_id)
         return {'id':run_id,'status':'queued'}
 
     @app.post('/api/v017/template-runs/{run_id}/feedback',dependencies=[Depends(csrf)])
@@ -103,8 +109,10 @@ def mount(app,store,csrf):
     def preview(run_id:str,sample:int,mode:str):
         row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,));report=json.loads(row['report_json'])
         if report.get('schema')!='teacher-student-023' or not 1<=sample<=report.get('training_documents',0):raise HTTPException(404,'NOT_FOUND')
-        if mode=='reference':folder=store.path('template-runs',run_id,f'reference-{sample}','reference')
-        elif mode=='result':folder=store.path('template-runs',run_id,f'iteration-{len(report["iterations"])}',f'application-{sample}','render')
+        run_root=store.path('template-runs',run_id)
+        if report.get('contract')=='adaptive-template-028':run_root=run_root/'learning'
+        if mode=='reference':folder=run_root/f'reference-{sample}'/'reference'
+        elif mode=='result':folder=run_root/f'iteration-{len(report["iterations"])}'/f'application-{sample}'/'render'
         else:raise HTTPException(404,'NOT_FOUND')
         files=list(folder.glob('*.pdf'))
         if len(files)!=1:raise HTTPException(404,'PREVIEW_UNAVAILABLE')
@@ -119,7 +127,11 @@ def mount(app,store,csrf):
         if not report.get('negative_controls') or not all(c.get('detected') for c in report['negative_controls']):raise HTTPException(409,'NEGATIVE_CONTROL_REQUIRED')
         paths=sorted(store.path('templates',template_id,'samples').glob('*.docx'))
         if [digest(p.read_bytes()) for p in paths]!=report['source_hashes']:raise HTTPException(409,'REFERENCE_CHANGED')
-        directory=store.path('template-runs',body.run_id,f'iteration-{len(report["iterations"])}','template')
+        run_root=store.path('template-runs',body.run_id)
+        if report.get('contract')=='adaptive-template-028':
+            if not all(report.get('certification',{}).get(k) is True for k in ('instance_replay','stress_passed')):raise HTTPException(409,'STRESS_CERTIFICATION_REQUIRED')
+            run_root=run_root/'learning'
+        directory=run_root/f'iteration-{len(report["iterations"])}'/'template'
         expected=report.get('package_hashes',{})
         if set(expected)!={'rules.json','semantic.json','resources.zip'} or any(digest((directory/n).read_bytes())!=h for n,h in expected.items()):raise HTTPException(409,'PACKAGE_CHANGED')
         feedback_rows=store.all('SELECT revision FROM learning_feedback024 WHERE run_id=?',(body.run_id,))
@@ -131,7 +143,7 @@ def mount(app,store,csrf):
         if report.get('mode','assisted')!='automatic' and any(q['role'] not in body.answers for q in report.get('questions',[])):raise HTTPException(409,'REQUIREMENT_QUESTIONS_UNANSWERED')
         required=sorted((set(body.required_roles)|{r for r,v in body.answers.items() if v})-{r for r,v in body.answers.items() if not v})
         spec=json.loads(version['spec_json']);spec['agent023']={'run_id':body.run_id,'iteration':len(report['iterations']),
-             'mode':report.get('mode','assisted'),'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
+             'contract':report.get('contract'),'mode':report.get('mode','assisted'),'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
              'student_model':report['student_model'],'verification':'reference_verified','held_out_transfer':report['held_out_transfer']}
         with store.connect() as con:
             current=con.execute('SELECT MAX(version) FROM template_versions WHERE template_id=?',(template_id,)).fetchone()[0]
@@ -160,7 +172,9 @@ def process_job(store,job,batch,version,spec):
     folder=store.path('jobs',job['id'],'revisions',str(job['revision']));folder.mkdir(parents=True,exist_ok=True)
     settings=spec['agent023'];config=model_config()
     if not batch.get('use_llm') or config is None:raise DocumentError('AGENT_REQUIRES_MODEL_CONSENT')
-    template=store.path('template-runs',settings['run_id'],f'iteration-{settings["iteration"]}','template')
+    run_root=store.path('template-runs',settings['run_id'])
+    if settings.get('contract')=='adaptive-template-028':run_root=run_root/'learning'
+    template=run_root/f'iteration-{settings["iteration"]}'/'template'
     if any(digest((template/n).read_bytes())!=h for n,h in settings['package_hashes'].items()):raise DocumentError('PACKAGE_CHANGED')
     source=store.path('jobs',job['id'],'source.docx')
     result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],'reasoning_effort':'none'})

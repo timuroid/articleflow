@@ -11,3 +11,5 @@
 | [scenarios/map.md](scenarios/map.md) | Каталог сценариев в Gherkin |
 
 Вверх: [общая карта](../map.md). Технические решения: [tech](../tech/map.md).
+
+- [Автономный сценарий PRD-AGENT-028](product.md#prd-agent-028--автономная-подготовка-и-проверка-шаблона).

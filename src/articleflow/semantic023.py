@@ -42,6 +42,7 @@ def teacher_messages(observations, feedback=None, images=()):
       'Return JSON with roles (snake_case name to general semantic definition), groups '
       '(list of {start,end,role}, inclusive 1-based indices, cover ALL paragraphs exactly once), '
       'questions (list of {role,question} only for critical requirements not inferable from evidence). '
+      'Every question role MUST be a key in roles; never reference an omitted or general role. '
       'Define meaningful roles a SMALL MODEL can identify from new text and table structure WITHOUT source typography. '
       'Do not define roles by paragraph number, copied phrase, author identity, arbitrary hidden style, or document length. '
       'Separate title, metadata, abstract, keywords, headings, body, captions, bibliography, table cells as appropriate; '

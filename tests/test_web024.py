@@ -25,7 +25,7 @@ class LearningModesTests(unittest.TestCase):
                         'iterations':[{'number':1,'applications':[]}],'source_hashes':[digest(p.read_bytes()) for p in paths],
                         'questions':[{'role':'funding','question':'Финансирование обязательно?'}],
                         'negative_controls':[{'detected':True}],'student_model':'fixture','held_out_transfer':'not_measured'}
-            with patch('articleflow.web017.model_config',return_value={'model':'fixture'}),patch('articleflow.templateagent022.run',return_value={'status':'needs_review'}),patch('articleflow.agent023.run',side_effect=fake_run):
+            with patch('articleflow.web017.model_config',return_value={'model':'fixture'}),patch('articleflow.templateagent022.run',return_value={'status':'needs_review'}),patch('articleflow.agent028.run',side_effect=fake_run):
                 app=create_app(root/'web')
                 with TestClient(app) as client:
                     headers={'X-CSRF-Token':client.get('/api/v017/config').json()['csrf_token']}

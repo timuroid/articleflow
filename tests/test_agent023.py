@@ -133,7 +133,7 @@ class WebLearningTests(unittest.TestCase):
                         'iterations':[{'number':1,'applications':[]}],'source_hashes':[digest(p.read_bytes()) for p in paths],
                         'questions':[{'role':'title','question':'Заголовок обязателен?'}],
                         'negative_controls':[{'detected':True}],'student_model':'qwen/qwen3.8-27b','held_out_transfer':'not_measured'}
-            with patch('articleflow.web017.model_config',return_value={'model':'test'}),patch('articleflow.templateagent022.run',return_value={'status':'needs_review'}),patch('articleflow.agent023.run',side_effect=fake_run):
+            with patch('articleflow.web017.model_config',return_value={'model':'test'}),patch('articleflow.templateagent022.run',return_value={'status':'needs_review'}),patch('articleflow.agent028.run',side_effect=fake_run):
                 with TestClient(create_app(root/'web')) as client:
                     headers={'X-CSRF-Token':client.get('/api/v017/config').json()['csrf_token']}
                     response=client.post('/api/v017/templates',data={'name':'Test'},files={'files':('test.docx',source.read_bytes())},headers=headers)

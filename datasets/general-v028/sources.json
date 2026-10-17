@@ -1,0 +1,36 @@
+{
+  "documents": [
+    {
+      "id": "canterbury",
+      "source_page": "https://www.canterbury.gov.uk/budgets-and-transparency/data-protection",
+      "download_url": "https://www.canterbury.gov.uk/sites/default/files/2022-11/Data%20Protection%20Policy.docx",
+      "kind": "public_policy_document",
+      "status": "downloaded",
+      "sha256": "9d2827df58061f902c9cebef052975194da1bc7ba4e03da662be49dea05a5f39",
+      "bytes": 107627
+    },
+    {
+      "id": "cornwall",
+      "source_page": "https://letstalk.cornwall.gov.uk/business-continuity-plan-survey/widgets/17981/documents",
+      "status": "downloaded",
+      "download_url": "https://letstalk.cornwall.gov.uk/6052/widgets/17981/documents/7400/download",
+      "kind": "business_continuity_plan",
+      "sha256": "964ebd3f3c095dae83514ab11d64d5c18dd6e7f1c58d6c626504095c34d38f53",
+      "bytes": 59087
+    },
+    {
+      "id": "dundee",
+      "source_page": "https://www.dundeecity.gov.uk/service-area/corporate-services/democratic-and-legal-services/publications/data-protection-policy-92kb-ms-word-doc",
+      "download_url": "https://www.dundeecity.gov.uk/sites/default/files/publications/dataprotectionpolicy2019.docx",
+      "kind": "public_policy_document",
+      "status": "downloaded",
+      "sha256": "e417a7e69f34de2a9020a0e7a14d815a88bcbac2a017474e67bc1fcf00b7afdf",
+      "bytes": 100561
+    },
+    {
+      "id": "technolog",
+      "source_page": "https://gtifem.technolog.edu.ru/umr/biblioteka-faylov/",
+      "status": "not_downloaded"
+    }
+  ]
+}

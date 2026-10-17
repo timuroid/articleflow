@@ -62,7 +62,7 @@ def xml_bytes(element) -> bytes:
     return ET.tostring(element, encoding="UTF-8", xml_declaration=True, standalone=True)
 
 
-def load_package(path: Path) -> dict[str, bytes]:
+def load_package(path: Path, *, allow_unsupported: bool = False) -> dict[str, bytes]:
     if path.stat().st_size > 25 * 1024**2:
         raise DocumentError("UPLOAD_TOO_LARGE")
     try:
@@ -94,7 +94,7 @@ def load_package(path: Path) -> dict[str, bytes]:
     root = parse_xml(parts["word/document.xml"])
     if root.tag != f"{{{W}}}document":
         raise DocumentError("OOXML_PROFILE_UNSUPPORTED")
-    if root.xpath(".//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk | .//wp:anchor", namespaces=NS):
+    if not allow_unsupported and root.xpath(".//w:ins | .//w:del | .//w:txbxContent | .//w:altChunk | .//wp:anchor", namespaces=NS):
         raise DocumentError("UNSUPPORTED_CONSTRUCT")
     return parts
 
