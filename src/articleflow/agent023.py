@@ -303,4 +303,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         report.update(status='needs_review',code=str(exc))
     except Exception as exc:
         report.update(status='unavailable',error_type=type(exc).__name__)
+    if report.get('iterations') and report['iterations'][-1].get('status')=='running':
+        report['iterations'][-1]['status']='failed'
+        report['iterations'][-1]['code']=report.get('code',report.get('error_type','INTERRUPTED'))
     report['last_stage']=report.get('stage');report['stage']='finished';report['seconds']=time.monotonic()-start;emit();return report

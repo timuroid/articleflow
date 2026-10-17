@@ -23,17 +23,24 @@ def experiment(args):
     common={'key_file':str(args.key_file.resolve()),'ledger':str(args.ledger.resolve()),'series':'026'}
     teacher={**common,'model':args.teacher,'reasoning_effort':'low'}
     student={**common,'model':args.student,'reasoning_effort':'none'}
+    def make_source(path,seed):
+        if args.family=='stories':
+            import sys
+            sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tests'))
+            from test_stories026 import make
+            make(path,seed)
+        else:generate(path,'typography',seed)
     sources=[]
     for seed in (1,2):
-        source=args.output/f'reference-{seed}.docx';generate(source,'typography',seed);sources.append(source)
+        source=args.output/f'reference-{seed}.docx';make_source(source,seed);sources.append(source)
     # Generator labels are deliberately NOT passed to the agent or student.
-    report=run(sources,args.output/'learning',teacher,student,max_iterations=args.iterations)
-    summary={'series':'026','mode':'live_provider_protocol','teacher':args.teacher,'student':args.student,
+    report=run(sources,args.output/'learning',teacher,student,max_iterations=args.iterations,resume_from=args.resume_from)
+    summary={'series':'026','family':args.family,'mode':'live_provider_protocol','teacher':args.teacher,'student':args.student,
              'training_status':report['status'],'held_out':[],'known_roles_supplied':False}
     dump(args.output/'summary.json',summary)
     if report['status']=='reference_verified':
         for seed in (23,31):
-            source=args.output/f'heldout-{seed}.docx';generate(source,'typography',seed)
+            source=args.output/f'heldout-{seed}.docx';make_source(source,seed)
             neutral=args.output/f'heldout-{seed}-neutral.docx';neutralize(source,neutral)
             result=apply(neutral,Path(report['template']),args.output/f'application-{seed}',student)
             row={'seed':seed,'status':result['status'],'unresolved':len(result['unresolved']),'model':result['model']}
@@ -51,5 +58,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('ledger','key-file','output'):p.add_argument('--'+name,required=True,type=Path)
     p.add_argument('--teacher',default='openai/gpt-6.1-sol');p.add_argument('--student',default='qwen/qwen3.8-27b')
+    p.add_argument('--family',choices=('typography','stories'),default='typography')
+    p.add_argument('--resume-from',type=Path)
     p.add_argument('--iterations',type=int,choices=range(1,6),default=2)
     experiment(p.parse_args())

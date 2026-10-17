@@ -1,0 +1,133 @@
+{
+  "schema": "live-results-026",
+  "calls": 16,
+  "cost_usd": "0.962234516",
+  "experiments": {
+    "live026-01": {
+      "series": "026",
+      "mode": "live_provider_protocol",
+      "teacher": "openai/gpt-6.1-sol",
+      "student": "qwen/qwen3.8-27b",
+      "training_status": "needs_review",
+      "held_out": [],
+      "known_roles_supplied": false,
+      "api_attempts": 3,
+      "fresh_model_responses": 3
+    },
+    "live026-02": {
+      "series": "026",
+      "mode": "live_provider_protocol",
+      "teacher": "openai/gpt-6.1-sol",
+      "student": "qwen/qwen3.8-27b",
+      "training_status": "needs_review",
+      "held_out": [],
+      "known_roles_supplied": false,
+      "api_attempts": 2,
+      "fresh_model_responses": 1
+    },
+    "live026-03": {
+      "series": "026",
+      "mode": "live_provider_protocol",
+      "teacher": "openai/gpt-6.1-sol",
+      "student": "qwen/qwen3.8-27b",
+      "training_status": "reference_verified",
+      "held_out": [
+        {
+          "seed": 23,
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "model": {
+            "model": "qwen/qwen3.8-27b",
+            "request_sha256": "152adefdc70de549a89253a0027e109b0f0cea276f2f834c1c8f880196ea84b2",
+            "api_attempts": 1,
+            "status": "valid",
+            "http_status": 200,
+            "cost_usd": "0.004852133",
+            "reserve_usd": "0.05882096",
+            "seconds": 50.351891049002006
+          },
+          "pages": 18,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0
+        },
+        {
+          "seed": 31,
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "model": {
+            "model": "qwen/qwen3.8-27b",
+            "request_sha256": "3e51994037cdfb91408fd0f23bdeaab38286110b98ce8ade7d289bb4d7cf0792",
+            "api_attempts": 1,
+            "status": "valid",
+            "http_status": 200,
+            "cost_usd": "0.004371062",
+            "reserve_usd": "0.05516360",
+            "seconds": 45.11513584799832
+          },
+          "pages": 16,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0
+        }
+      ],
+      "known_roles_supplied": false,
+      "api_attempts": 5,
+      "fresh_model_responses": 5
+    },
+    "student-only026-seed23": {
+      "mode": "live_student_on_evaluator_prepared_template",
+      "status": "failed",
+      "code": "INLINE_ANCHOR_NOT_FOUND"
+    },
+    "live026-stories": {
+      "series": "026",
+      "family": "stories",
+      "mode": "live_provider_protocol",
+      "teacher": "openai/gpt-6.1-sol",
+      "student": "qwen/qwen3.8-27b",
+      "training_status": "reference_verified",
+      "held_out": [
+        {
+          "seed": 23,
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "model": {
+            "model": "qwen/qwen3.8-27b",
+            "request_sha256": "4fa52a9e7b3527f3e104d6b0fd14230484763cc656ed8afe83a0d1a22b21aa87",
+            "api_attempts": 1,
+            "status": "valid",
+            "http_status": 200,
+            "cost_usd": "0.000467911",
+            "reserve_usd": "0.03479264",
+            "seconds": 3.8172547119975206
+          },
+          "pages": 11,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0
+        },
+        {
+          "seed": 31,
+          "status": "rendered_unverified",
+          "unresolved": 0,
+          "model": {
+            "model": "qwen/qwen3.8-27b",
+            "request_sha256": "1fca2e26e611d244e141f0414e0c0ff8ca36b6edb00483321ada971f60a761c3",
+            "api_attempts": 1,
+            "status": "valid",
+            "http_status": 200,
+            "cost_usd": "0.000467911",
+            "reserve_usd": "0.03479264",
+            "seconds": 3.546786407001491
+          },
+          "pages": 11,
+          "pixel_exact": true,
+          "differing_pixel_ratio": 0.0
+        }
+      ],
+      "known_roles_supplied": false,
+      "api_attempts": 5,
+      "fresh_model_responses": 5
+    }
+  },
+  "local_evidence_sha256": "f523744fb269b50e3b3bd9c5370521ba17c40556b87dd38dcc4c8bdd812ae9e1",
+  "primary_evidence_storage": "local_only; public archive upload rejected by automatic review"
+}

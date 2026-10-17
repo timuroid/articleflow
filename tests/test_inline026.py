@@ -22,3 +22,10 @@ class InlineTests(unittest.TestCase):
         rules,conflicts=fit(rows)
         self.assertEqual(conflicts,[])
         self.assertEqual({r['when']['inline_role'] for r in rules},{'plain','variable'})
+
+    def test_exact_anchor_selects_occurrence_without_fuzzy_repair(self):
+        blocks=[{'id':'b','text':'x then x'}]
+        row={'paragraph':1,'quote':'x','occurrence':2,'role':'variable'}
+        self.assertEqual(validate({'inline':[row]},blocks,{'variable':'Variable'})['b'],[{'start':7,'end':8,'role':'variable'}])
+        for patch in [{'quote':'X'},{'occurrence':3},{'occurrence':True},{'quote':''}]:
+            with self.assertRaises(DocumentError):validate({'inline':[{**row,**patch}]},blocks,{'variable':'Variable'})

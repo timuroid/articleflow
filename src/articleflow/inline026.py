@@ -16,11 +16,20 @@ def validate(response, blocks, definitions=None):
     if not isinstance(rows,list) or len(rows)>20000:raise DocumentError('INLINE_SCHEMA')
     result={b['id']:[] for b in blocks}
     for row in rows:
-        if not isinstance(row,dict) or set(row)!={'paragraph','start','end','role','quote'}:raise DocumentError('INLINE_SCHEMA')
-        n,a,z=row['paragraph'],row['start'],row['end']
-        if any(type(v)!=int for v in (n,a,z)) or not 1<=n<=len(blocks):raise DocumentError('INLINE_RANGE')
+        if not isinstance(row,dict) or set(row) not in ({'paragraph','start','end','role','quote'},{'paragraph','occurrence','role','quote'}):raise DocumentError('INLINE_SCHEMA')
+        n=row['paragraph']
+        if type(n)!=int or not 1<=n<=len(blocks):raise DocumentError('INLINE_RANGE')
         b=blocks[n-1];text=b['text']
-        if not 0<=a<z<=len(text) or row['role'] not in definitions:raise DocumentError('INLINE_RANGE')
+        if 'occurrence' in row:
+            occurrence=row['occurrence'];quote=row['quote']
+            if type(occurrence)!=int or not 1<=occurrence<=len(text) or not isinstance(quote,str) or not quote:raise DocumentError('INLINE_ANCHOR_INVALID')
+            a=-1
+            for _ in range(occurrence):
+                a=text.find(quote,a+1)
+                if a<0:raise DocumentError('INLINE_ANCHOR_NOT_FOUND')
+            z=a+len(quote)
+        else:a,z=row['start'],row['end']
+        if any(type(v)!=int for v in (a,z)) or not 0<=a<z<=len(text) or row['role'] not in definitions:raise DocumentError('INLINE_RANGE')
         if text[a:z]!=row['quote']:raise DocumentError('INLINE_QUOTE_MISMATCH')
         result[b['id']].append({'start':a,'end':z,'role':row['role']})
     for spans in result.values():
