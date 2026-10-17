@@ -341,3 +341,42 @@ def coverage023(c):
 @then('неполный план отклонён до сборки')
 def rejected023(c):
     assert c.error023=='SEMANTIC_GROUP_COVERAGE'
+
+@given('образец задаёт порядок название аннотация ключевые слова')
+def reference_order024(c):
+    setup(c)
+
+@when('вход с неверным порядком обрабатывается с правильными ролями')
+def apply_order024(c):
+    import importlib.util
+    path=Path(__file__).resolve().parents[4]/'scripts/probe_agent023_order.py'
+    spec=importlib.util.spec_from_file_location('probe_order024',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    c.order024=module.probe(c.work019/'order024')
+
+@then('порядок соответствует образцу без изменения исходного содержания')
+def assert_order024(c):
+    assert c.order024['target_order_repaired']
+    assert c.order024['status']=='rendered_unverified'
+    assert c.order024['unresolved']==0
+
+@given('цикл извлечения находится в состоянии выполнения')
+def learning_live024(c):
+    setup(c);c.app024=create_app(c.work019/'web024');store=c.app024.state.store
+    store.execute('INSERT INTO templates VALUES (?,?,?)',('synthetic','Synthetic','now'))
+    store.execute('INSERT INTO template_runs VALUES (?,?,?,?,?,?)',('run','synthetic',1,'running',json.dumps({'schema':'teacher-student-023'}),'now'))
+
+@when('пользователь сохраняет уточнение обязательности блока')
+def feedback024(c):
+    with TestClient(c.app024) as client:
+        headers={'X-CSRF-Token':client.get('/api/v017/config').json()['csrf_token']}
+        body={'expected_revision':0,'text':'Сведения о финансировании необязательны'}
+        response=client.post('/api/v017/template-runs/run/feedback',json=body,headers=headers)
+        assert response.status_code==200
+        c.feedback024=response.json()
+        c.stale024=client.post('/api/v017/template-runs/run/feedback',json=body,headers=headers).status_code
+
+@then('уточнение принято для следующей итерации и защищено номером версии')
+def assert_feedback024(c):
+    assert c.feedback024=={'revision':1,'applies':'next_iteration','already_applied':False}
+    assert c.stale024==409

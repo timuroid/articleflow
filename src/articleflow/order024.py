@@ -91,6 +91,12 @@ and an issue. A caller must not present it as a correctly ordered result.
         if node['kind'] != 'paragraph':
             return False
         block = blocks[node['id']]
+        # Preserve immediate neighbours of objects/tables as possible captions.
+        for neighbour in (index-1,index+1):
+            if not 0<=neighbour<len(original):continue
+            nearby=original[neighbour]
+            if nearby['kind']!='paragraph' or any(a['kind']!='text' for a in blocks[nearby['id']]['atoms']):
+                return False
         # Marker/hyperlink/object atoms stay fixed; no caption binding is invented.
         if not block['text'] or any(a['kind'] != 'text' for a in block['atoms']):
             return False

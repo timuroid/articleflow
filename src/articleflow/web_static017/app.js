@@ -79,8 +79,28 @@ async function showTemplate(id) {
     if(r.schema==='teacher-student-023') {
       const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
       validation.replaceChildren(node('strong','',names[run.status]||run.status));
+      const stages={extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
+      const timeline=node('ol','pipeline');
+      const current=Object.keys(stages).indexOf(r.stage==='finished' && run.status!=='reference_verified' ? r.last_stage : r.stage);
+      Object.entries(stages).forEach(([key,label],index)=>{const item=node('li',index===current?'active':index<current?'done':'',label);if(index===current)item.setAttribute('aria-current','step');timeline.append(item);});
+      validation.append(timeline);
+      if(r.published_version) {validation.append(node('p','success',`Шаблон автоматически сохранён: версия ${r.published_version}.`));if(spec.agent023?.run_id!==runId)validation.append(button('Обновить список шаблонов',async()=>{await loadTemplates();await showTemplate(id);}));}
+      if(['queued','running'].includes(run.status)) {
+        let pane=target.querySelector('[data-learning-feedback]');
+        if(!pane || pane.dataset.learningFeedback!==runId) {
+          if(pane)pane.remove();pane=node('details','review');pane.dataset.learningFeedback=runId;
+          pane.append(node('summary','','Уточнить требования во время работы'));
+          const label=node('label','','Дополнение для следующей итерации');const input=node('textarea');input.rows=3;input.maxLength=12000;label.append(input);pane.append(label);
+          pane.append(node('p','help','Например: сведения о финансировании необязательны. Уже выполняющийся запрос не меняется. Если цикл завершится раньше, уточнение понадобится в новом запуске.'));
+          pane.dataset.revision=String(r.feedback_revision_received||0);
+          pane.append(button('Передать уточнение',async()=>{const result=await request(`/template-runs/${runId}/feedback`,{method:'POST',body:JSON.stringify({text:input.value,expected_revision:Number(pane.dataset.revision)})});pane.dataset.revision=String(result.revision);message('Уточнение сохранено. Оно будет прочитано перед следующей итерацией.');}));
+          target.insertBefore(pane,validation.nextSibling);
+        }
+        validation.append(node('p','help',`Уточнения: принято ${r.feedback_revision_received||0}, учтено ${r.feedback_revision_applied||0}.`));
+      } else {const pane=target.querySelector('[data-learning-feedback]');if(pane)pane.remove();}
       for(const iteration of r.iterations||[]) {
         validation.append(node('p','',`Итерация ${iteration.number}: проверено документов ${iteration.applications.length}; противоречивых правил ${iteration.conflicting_groups ?? '—'}.`));
+        if(iteration.conflict_properties?.length){const details=node('details');details.append(node('summary','','Какие свойства расходятся'));details.append(node('p','help',iteration.conflict_properties.join(', ')));validation.append(details);}
         for(const [index,a] of iteration.applications.entries()) {
           const pixels=a.pixels;
           validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: роли ${a.role_correct}/${a.role_total}. ${pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` : `Неоднозначных назначений: ${a.unresolved?.length||0}.`}`));
@@ -90,7 +110,8 @@ async function showTemplate(id) {
         const link=node('a','button',`${label} ${i} · PDF`);link.href=`${api}/template-runs/${runId}/agent-preview/${i}/${mode}`;link.target='_blank';link.rel='noopener';validation.append(link);
       }
       if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}. История попыток сохранена.`));
-      if(run.status==='reference_verified' && spec.agent023?.run_id!==runId) {
+      if(r.publication_blocked) validation.append(node('p','error',`Шаблон не сохранён: ${r.publication_blocked}. Для неприменённого уточнения запустите новый цикл, указав его в дополнительных требованиях.`));
+      if(run.status==='reference_verified' && !r.published_version && spec.agent023?.run_id!==runId) {
         validation.append(node('p','help','Проверено восстановление эталонов. Точное совпадение для любого нового текста этим не гарантируется.'));
         const answers={};
         for(const q of r.questions||[]) {
@@ -105,8 +126,8 @@ async function showTemplate(id) {
           }
         }
         validation.append(button('Сохранить проверенный шаблон',async()=>{
-          if(Object.values(answers).some(s=>!s.value)){message('Ответьте на вопросы об обязательных блоках.',true);return;}
-          const result=await request(`/templates/${id}/approve-agent`,{method:'POST',body:JSON.stringify({run_id:runId,answers:Object.fromEntries(Object.entries(answers).map(([r,s])=>[r,s.value==='yes']))})});
+          if(r.mode!=='automatic' && Object.values(answers).some(s=>!s.value)){message('Ответьте на вопросы об обязательных блоках.',true);return;}
+          const result=await request(`/templates/${id}/approve-agent`,{method:'POST',body:JSON.stringify({run_id:runId,answers:Object.fromEntries(Object.entries(answers).filter(([,s])=>s.value).map(([r,s])=>[r,s.value==='yes']))})});
           await loadTemplates();await showTemplate(id);message(`Сохранена версия ${result.version}.`);
         },'button primary'));
       }
@@ -145,14 +166,16 @@ async function showTemplate(id) {
     consentLabel.append(consent, document.createTextNode(' Разрешаю передать текст эталонов в OpenRouter для анализа ролей'));
     const contextLabel=node('label','','Дополнительные требования к шаблону (необязательно)');
     const context=node('textarea');context.rows=3;context.maxLength=12000;contextLabel.append(context);
-    const analyze = button('Обучить шаблон и проверить с Qwen', async () => {
+    const modeLabel=node('label','','Режим извлечения');const mode=node('select');
+    for(const [value,text] of [['automatic','Автоматический — без обязательных ответов'],['assisted','С уточнениями — подтвердить требования перед сохранением']]) {const option=node('option','',text);option.value=value;mode.append(option);}modeLabel.append(mode);
+    const analyze = button('Создать и проверить шаблон', async () => {
       if (!consent.checked) { message('Для анализа нужно разрешение на отправку текста эталонов.', true); return; }
       analyze.disabled = true; target.setAttribute('aria-busy', 'true'); message('Модель анализирует эталоны. Это может занять несколько минут.');
-      try { await request(`/templates/${id}/learn`, { method: 'POST', body: JSON.stringify({ consent_external: true,context:context.value }) }); await showTemplate(id); message('Обучение запущено. Агент сравнит все страницы и доработает правила при ошибках.'); }
+      try { await request(`/templates/${id}/learn`, { method: 'POST', body: JSON.stringify({ consent_external: true,context:context.value,mode:mode.value }) }); await showTemplate(id); message('Обучение запущено. Агент сравнит все страницы и доработает правила при ошибках.'); }
       catch (error) { message(`Анализ не завершён: ${error.message}`, true); }
       finally { analyze.disabled = false; target.removeAttribute('aria-busy'); }
     });
-    target.append(contextLabel, consentLabel, analyze);
+    target.append(modeLabel,contextLabel, consentLabel, analyze);
   }
   if(item.approved && spec.agent023) {
     target.append(node('p','','Проверенный шаблон сохранён. Для оформления новых документов включите модель и разрешите передачу текста.'));
@@ -298,6 +321,9 @@ async function renderJob(id) {
     questionPane.append(list);
   } else questionPane.append(node('p', '', 'Блокирующих вопросов нет. Проверьте DOCX визуально.'));
   if(job.report?.schema==='application-023') {
+    if(job.report.structure_moves?.length) {const details=node('details');details.append(node('summary','',`Переставлено блоков: ${job.report.structure_moves.length}`));const list=node('ul');for(const m of job.report.structure_moves)list.append(node('li','',`${roleName(m.role)}: позиция ${m.from+1} → ${m.to+1}`));details.append(list);questionPane.append(details);}
+    if(job.report.unconfirmed_missing?.length)questionPane.append(node('p','help','В эталонах также встречались: '+job.report.unconfirmed_missing.map(roleName).join(', ')+'. Их обязательность не установлена.'));
+
     questionPane.append(node('p','help','Обязательность блоков можно уточнить в шаблоне. Недостающий текст добавьте в исходную статью и загрузите её снова; это будет отдельная обработка с моделью.'));
     questionPane.append(button('Открыть требования шаблона',()=>showTemplate(job.report.template_id)));
     target.append(questionPane);target.scrollIntoView({behavior:'smooth',block:'start'});return;

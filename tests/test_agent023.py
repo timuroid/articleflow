@@ -140,7 +140,7 @@ class WebLearningTests(unittest.TestCase):
                     self.assertEqual(response.status_code,200,response.text);tid=response.json()['id']
                     endpoint=f'/api/v017/templates/{tid}'
                     self.assertEqual(client.post(endpoint+'/learn',json={},headers=headers).status_code,400)
-                    response=client.post(endpoint+'/learn',json={'consent_external':True},headers=headers)
+                    response=client.post(endpoint+'/learn',json={'consent_external':True,'mode':'assisted'},headers=headers)
                     self.assertEqual(response.status_code,200,response.text);rid=response.json()['id']
                     self.assertEqual(client.post(endpoint+'/approve-agent',json={'run_id':rid},headers=headers).status_code,409)
                     response=client.post(endpoint+'/approve-agent',json={'run_id':rid,'answers':{'title':True}},headers=headers)

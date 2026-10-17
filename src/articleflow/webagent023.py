@@ -2,6 +2,7 @@
 import json
 import shutil
 from pathlib import Path
+from typing import Literal
 from fastapi import BackgroundTasks, Depends, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -13,6 +14,12 @@ class LearnRequest(BaseModel):
     consent_external: bool = False
     context: str = Field(default='',max_length=12000)
     iterations: int = Field(default=3,ge=1,le=5)
+    mode: Literal['automatic','assisted'] = 'automatic'
+
+
+class LearningFeedback(BaseModel):
+    expected_revision: int = Field(ge=0)
+    text: str = Field(min_length=1,max_length=12000)
 
 
 class LearnApproval(BaseModel):
@@ -28,12 +35,17 @@ class RequirementAnswers(BaseModel):
 
 def mount(app,store,csrf):
     from .web017 import _latest,_uid,_now,model_config
-    def learn(run_id,context,iterations):
+    store.execute('CREATE TABLE IF NOT EXISTS learning_feedback024 (run_id TEXT PRIMARY KEY, revision INTEGER NOT NULL, text TEXT NOT NULL)')
+    def learn(run_id,context,iterations,mode):
         from .agent023 import run
         with store.batch_lock:
             row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,))
             paths=sorted(store.path('templates',row['template_id'],'samples').glob('*.docx'))
+            def feedback():
+                rows=store.all('SELECT revision,text FROM learning_feedback024 WHERE run_id=?',(run_id,))
+                return dict(rows[0]) if rows else {'revision':0,'text':''}
             def progress(r):
+                r={**r,'mode':mode,'feedback_revision_received':feedback()['revision']}
                 store.execute('UPDATE template_runs SET status=?,report_json=? WHERE id=?',
                               (r['status'],json.dumps(r,ensure_ascii=False),run_id))
             try:
@@ -42,11 +54,18 @@ def mount(app,store,csrf):
                 result=run(paths,store.path('template-runs',run_id),
                        {**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),'reasoning_effort':'low'},
                        {**config,'model':config.get('student023','qwen/qwen3.8-27b'),'reasoning_effort':'none'},
-                       context=context,max_iterations=iterations,progress=progress)
+                       context=context,max_iterations=iterations,progress=progress,feedback_provider=feedback)
                 if result['status']=='reference_verified':
                     directory=Path(result['template'])
                     result['package_hashes']={name:digest((directory/name).read_bytes()) for name in ('rules.json','semantic.json','resources.zip')}
                 progress(result)
+                if mode=='automatic' and result['status']=='reference_verified':
+                    try:
+                        published=approve(row['template_id'],LearnApproval(run_id=run_id))
+                        result['published_version']=published['version']
+                    except HTTPException as exc:
+                        result['publication_blocked']=exc.detail
+                    progress(result)
             except Exception as exc:
                 progress({'schema':'teacher-student-023','status':'needs_review',
                           'code':str(exc) if isinstance(exc,DocumentError) else 'LEARNING_UNAVAILABLE'})
@@ -59,8 +78,26 @@ def mount(app,store,csrf):
         if pending:raise HTTPException(409,'TEMPLATE_RUN_IN_PROGRESS')
         run_id=_uid()
         store.execute('INSERT INTO template_runs VALUES (?,?,?,?,?,?)',(run_id,template_id,version['version'],'queued',json.dumps({'schema':'teacher-student-023'}),_now()))
-        background.add_task(learn,run_id,body.context,body.iterations)
+        background.add_task(learn,run_id,body.context,body.iterations,body.mode)
         return {'id':run_id,'status':'queued'}
+
+    @app.post('/api/v017/template-runs/{run_id}/feedback',dependencies=[Depends(csrf)])
+    def submit_feedback(run_id:str,body:LearningFeedback):
+        if not body.text.strip():raise HTTPException(400,'FEEDBACK_EMPTY')
+        with store.connect() as con:
+            con.execute('BEGIN IMMEDIATE')
+            row=con.execute('SELECT status,report_json FROM template_runs WHERE id=?',(run_id,)).fetchone()
+            if row is None:raise HTTPException(404,'NOT_FOUND')
+            report=json.loads(row['report_json'])
+            if report.get('schema')!='teacher-student-023' or row['status'] not in ('queued','running'):
+                raise HTTPException(409,'LEARNING_FINISHED_START_NEW_RUN')
+            previous=con.execute('SELECT revision FROM learning_feedback024 WHERE run_id=?',(run_id,)).fetchone()
+            revision=previous['revision'] if previous else 0
+            if revision!=body.expected_revision:raise HTTPException(409,'FEEDBACK_VERSION_CHANGED')
+            con.execute('INSERT OR REPLACE INTO learning_feedback024 VALUES (?,?,?)',(run_id,revision+1,body.text))
+            report['feedback_revision_received']=revision+1
+            con.execute('UPDATE template_runs SET report_json=? WHERE id=?',(json.dumps(report,ensure_ascii=False),run_id))
+        return {'revision':revision+1,'applies':'next_iteration','already_applied':False}
 
     @app.get('/api/v017/template-runs/{run_id}/agent-preview/{sample}/{mode}')
     def preview(run_id:str,sample:int,mode:str):
@@ -85,13 +122,16 @@ def mount(app,store,csrf):
         directory=store.path('template-runs',body.run_id,f'iteration-{len(report["iterations"])}','template')
         expected=report.get('package_hashes',{})
         if set(expected)!={'rules.json','semantic.json','resources.zip'} or any(digest((directory/n).read_bytes())!=h for n,h in expected.items()):raise HTTPException(409,'PACKAGE_CHANGED')
+        feedback_rows=store.all('SELECT revision FROM learning_feedback024 WHERE run_id=?',(body.run_id,))
+        if feedback_rows and feedback_rows[0]['revision']>report.get('feedback_revision_applied',0):
+            raise HTTPException(409,'FEEDBACK_NOT_APPLIED_START_NEW_RUN')
         package=json.loads((directory/'semantic.json').read_text())
         roles=set(package['roles'])
         if not set(body.required_roles)<=roles or not set(body.answers)<=roles:raise HTTPException(400,'REQUIRED_ROLE_INVALID')
-        if any(q['role'] not in body.answers for q in report.get('questions',[])):raise HTTPException(409,'REQUIREMENT_QUESTIONS_UNANSWERED')
+        if report.get('mode','assisted')!='automatic' and any(q['role'] not in body.answers for q in report.get('questions',[])):raise HTTPException(409,'REQUIREMENT_QUESTIONS_UNANSWERED')
         required=sorted((set(body.required_roles)|{r for r,v in body.answers.items() if v})-{r for r,v in body.answers.items() if not v})
         spec=json.loads(version['spec_json']);spec['agent023']={'run_id':body.run_id,'iteration':len(report['iterations']),
-             'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
+             'mode':report.get('mode','assisted'),'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
              'student_model':report['student_model'],'verification':'reference_verified','held_out_transfer':report['held_out_transfer']}
         with store.connect() as con:
             current=con.execute('SELECT MAX(version) FROM template_versions WHERE template_id=?',(template_id,)).fetchone()[0]
@@ -138,9 +178,9 @@ def process_job(store,job,batch,version,spec):
         shutil.copyfile(folder/'application/result.docx',folder/'result.docx')
         visual=check(folder/'result.docx',folder/'visual',repair=False);report['visual_validation']=visual
         fonts=font_audit();report['font_audit']=fonts
-        if visual['status']=='passed' and fonts['exact'] and not missing and not unconfirmed_missing:report['status']='ready'
+        if visual['status']=='passed' and fonts['exact'] and not missing and (not unconfirmed_missing or settings.get('mode')=='automatic'):report['status']='ready'
     if missing:report['questions'].append('Отсутствуют обязательные блоки: '+', '.join(missing))
-    if unconfirmed_missing:report['questions'].append('В эталоне были блоки, которых нет в статье. Уточните, допустимо ли их отсутствие: '+', '.join(unconfirmed_missing))
+    if unconfirmed_missing and settings.get('mode')!='automatic':report['questions'].append('В эталоне были блоки, которых нет в статье. Уточните, допустимо ли их отсутствие: '+', '.join(unconfirmed_missing))
     if result.get('unresolved'):report['questions'].append('Для части блоков нет однозначного правила оформления.')
     report.pop('assignments',None);report.pop('pdf',None)
     (folder/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))

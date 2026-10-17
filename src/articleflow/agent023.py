@@ -79,6 +79,8 @@ def build_package(samples,labels,definitions,destination):
         spacer_samples.append((sample['content'],plan))
     if len(sections)!=1:raise DocumentError('SECTION_RULE_AMBIGUOUS')
     fitted,conflicts=rules.fit(examples)
+    from .diagnostics024 import explain
+    conflicts=explain(conflicts,merged)
     from .spacers023 import fit as fit_spacers
     spacers,spacer_conflicts=fit_spacers(spacer_samples);conflicts.extend(spacer_conflicts)
     from .order024 import fit as fit_order
@@ -139,7 +141,7 @@ def apply(source,template_dir,folder,config,*,caller=call):
     return report
 
 
-def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None):
+def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None,feedback_provider=None):
     if not 1<=max_iterations<=5 or not 1<=len(references)<=10:raise DocumentError('AGENT_LIMIT')
     folder.mkdir(parents=True,exist_ok=False)
     report={'schema':'teacher-student-023','status':'running','iterations':[],
@@ -151,6 +153,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         dump(folder/'result.json',report)
         if progress:progress(copy.deepcopy(report))
     samples=[];observations=[];allblocks=[];feedback=None;feedback_images=[];start=time.monotonic()
+    report['stage']='extracting';emit()
     try:
         for i,source in enumerate(references):
             local=folder/f'reference-{i+1}';content=extract_input(source,local/'extracted')
@@ -159,6 +162,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             sample={'source':source,'content':content,'extracted':local/'extracted',
                     'semantics':rules.semantic_spans(source),'golden':render_pdf(source,local/'reference')}
             samples.append(sample)
+            report['extracted_documents']=len(samples);emit()
             for b,p in zip(content['blocks'],plan['blocks']):
                 bid=f'{i}:{b["id"]}';allblocks.append({'id':bid})
                 observations.append({'n':len(observations)+1,'document':i+1,'text':b['text'],
@@ -183,20 +187,26 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         for iteration in range(max_iterations):
             if time.monotonic()-start>1800:raise DocumentError('AGENT_TIME_LIMIT')
             work=folder/f'iteration-{iteration+1}';work.mkdir()
+            user_feedback=feedback_provider() if feedback_provider else {'revision':0,'text':''}
+            report['feedback_revision_applied']=user_feedback['revision']
+            report['stage']='teacher'
             row={'number':iteration+1,'status':'running','applications':[]};report['iterations'].append(row);emit()
-            response,meta=caller(teacher,teacher_messages({'user_context':context,'paragraphs':observations,
+            response,meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':user_feedback['text'],'paragraphs':observations,
                        'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=8000,
                        validate=lambda r:(expand_groups(r,allblocks) and r))
+            report['stage']='compiling';emit()
             row['teacher']=meta;expanded=expand_groups(response,allblocks)
             labels=[{b['id']:expanded[f'{i}:{b["id"]}'] for b in s['content']['blocks']} for i,s in enumerate(samples)]
             package,conflicts=build_package(samples,labels,response['roles'],work/'template')
             row['conflicting_groups']=len(conflicts);row['questions']=response['questions']
+            row['conflict_properties']=sorted({p for c in conflicts for p in c.get('differing_properties',[])})
             dump(work/'training-conflicts.json',conflicts)
             confusions=[]
             for i,sample in enumerate(samples):
                 # Render an actual degraded DOCX, not just a filtered prompt.
                 incoming=work/f'degraded-{i+1}.docx'
                 neutralize(sample['source'],incoming)
+                report['stage']='student';report['active_document']=i+1;emit()
                 trial=apply(incoming,work/'template',work/f'application-{i+1}',student,caller=caller)
                 new_content=json.loads((work/f'application-{i+1}/input-original.json').read_text())
                 old=iter(sample['content']['blocks']);expected={}
@@ -217,6 +227,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                      'expected':expected[b['id']],'predicted':trial['assignments'][b['id']]}
                      for j,b in enumerate(new_content['blocks'])
                      if expected[b['id']]!=trial['assignments'][b['id']])
+                report['stage']='comparing';emit()
                 if trial.get('pdf'):
                     public['pixels']=compare_all(sample['golden'],Path(trial['pdf']),work/f'diff-{i+1}')
                 public['passed']=bool(public.get('pixels',{}).get('pixel_exact')) and trial.get('content_exact',False) and trial.get('placements_exact',False)
@@ -247,6 +258,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 feedback['visual_evidence']={'document':i+1,'page':index+1,'order':['reference','candidate'],'display_width':640}
                 break
             if success:
+                report['stage']='negative_controls';emit()
                 from .controls023 import verify as negative_controls
                 controls=[]
                 for i,sample in enumerate(samples):
@@ -264,4 +276,4 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         report.update(status='needs_review',code=str(exc))
     except Exception as exc:
         report.update(status='unavailable',error_type=type(exc).__name__)
-    report['seconds']=time.monotonic()-start;emit();return report
+    report['last_stage']=report.get('stage');report['stage']='finished';report['seconds']=time.monotonic()-start;emit();return report

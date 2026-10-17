@@ -1,0 +1,877 @@
+{
+  "schema": "order-024-benchmark",
+  "mode": "known_roles_compiler_test",
+  "api_attempts": 0,
+  "fresh_model_trials": 0,
+  "held_out_text_seeds": [
+    3,
+    7,
+    11
+  ],
+  "cases": [
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 0
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 3,
+      "permutation": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 0
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 7,
+      "permutation": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 0
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 3
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 2
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    },
+    {
+      "seed": 11,
+      "permutation": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "passed": true,
+      "pixel_exact": true,
+      "moves": 4
+    }
+  ]
+}
