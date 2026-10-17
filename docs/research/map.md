@@ -8,6 +8,7 @@
 | [evaluation-018-patched.json](evaluation-018-patched.json) | Полный повтор после исправления ZIP, hashes и render environment |
 | [evaluation-018-attempts.csv](evaluation-018-attempts.csv) | Все 70 детерминированных повторов после исправления |
 | [study.md](study.md) | Вопросы, гипотезы, этапы и границы выводов |
+| [cloud-review-023.md](cloud-review-023.md) | Независимый запуск опубликованной ветки в облаке: 128 тестов, 30 сценариев, replay, CI и пробел порядка блоков |
 | [manuscript-reconstructed.md](manuscript-reconstructed.md) | Новый черновик научной статьи по сохранившимся сводкам; исходная рукопись не восстановлена |
 | [methods.md](methods.md) | Сравнение способов извлечения, хранения и применения |
 | [benchmark.md](benchmark.md) | Протокол входа, защита от утечки, 10 повторов и измерение пикселей |
