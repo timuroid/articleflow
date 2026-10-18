@@ -92,7 +92,12 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                         if not observation['adaptation']['removed_nodes']:raise DocumentError('NO_APPLICABLE_IMPORT_ADAPTER')
                     extracted=work/'extracted';agent023.extract_input(candidate,extracted)
                     plan=json.loads((extracted/'oracle-plan.json').read_text())
-                    rebuilt=work/'reconstructed.docx';render_catalogue(extracted/'template',extracted/'content',plan,rebuilt)
+                    rebuilt=work/'reconstructed.docx'
+                    from .sandbox034 import ACTIVE
+                    if ACTIVE.get():
+                        from .engine034 import render
+                        render(ACTIVE.get(),extracted/'template',extracted/'content',plan,rebuilt)
+                    else:render_catalogue(extracted/'template',extracted/'content',plan,rebuilt)
                     integrity=check(candidate,rebuilt)
                     from .format032 import audit
                     observation['format']=audit(candidate,rebuilt);integrity['format_properties_exact']=observation['format']['property_exact']

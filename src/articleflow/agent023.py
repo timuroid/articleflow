@@ -36,6 +36,10 @@ def question_evidence(questions, samples, labels):
 
 
 def extract_input(source,folder):
+    from .sandbox034 import ACTIVE
+    if ACTIVE.get():
+        from .engine034 import extract
+        return extract(ACTIVE.get(),source,folder)
     from .stories026 import paragraphs
     count=len(paragraphs(load_package(source)))
     if not 1<=count<=2000: raise DocumentError('AGENT_PARAGRAPH_LIMIT')
@@ -58,6 +62,10 @@ def relabel(extracted, labels, definitions):
 
 
 def build_package(samples,labels,definitions,destination,inline_roles=None):
+    from .sandbox034 import ACTIVE
+    if ACTIVE.get():
+        from .engine034 import build
+        return build(ACTIVE.get(),samples,labels,definitions,destination,inline_roles)
     destination.mkdir(parents=True,exist_ok=False)
     merged=None;examples=[];sections=set();observed_top=set();spacer_samples=[]
     for document,(sample,assignment) in enumerate(zip(samples,labels),1):
@@ -102,6 +110,10 @@ def build_package(samples,labels,definitions,destination,inline_roles=None):
 
 def apply(source,template_dir,folder,config,*,caller=call):
     """Runtime needs only incoming source, frozen template and a model config."""
+    from .sandbox034 import ACTIVE
+    if ACTIVE.get():
+        from .engine034 import apply as sandbox_apply
+        return sandbox_apply(ACTIVE.get(),source,template_dir,folder,config,caller)
     folder.mkdir(parents=True,exist_ok=False)
     package=json.loads((template_dir/'semantic.json').read_text())
     adapter=None;original_hash=digest(source.read_bytes())

@@ -38,7 +38,7 @@ def mount(app,store,csrf):
     from .web017 import _latest,_uid,_now,model_config
     store.execute('CREATE TABLE IF NOT EXISTS learning_feedback024 (run_id TEXT PRIMARY KEY, revision INTEGER NOT NULL, text TEXT NOT NULL)')
     def learn(run_id,context,iterations,mode,validation_job_id=None):
-        from .agent028 import run
+        from .managed034 import run
         with store.batch_lock:
             row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,))
             paths=sorted(store.path('templates',row['template_id'],'samples').glob('*.docx'))
@@ -110,7 +110,7 @@ def mount(app,store,csrf):
         row=store.one('SELECT * FROM template_runs WHERE id=?',(run_id,));report=json.loads(row['report_json'])
         if report.get('schema')!='teacher-student-023' or not 1<=sample<=report.get('training_documents',0):raise HTTPException(404,'NOT_FOUND')
         run_root=store.path('template-runs',run_id)
-        if report.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/'learning'
+        if report.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/('engine-replay/learning' if report.get('engine_learning_root')=='engine-replay/learning' else 'learning')
         if mode=='reference':folder=run_root/f'reference-{sample}'/'reference'
         elif mode=='result':folder=run_root/f'iteration-{len(report["iterations"])}'/f'application-{sample}'/'render'
         else:raise HTTPException(404,'NOT_FOUND')
@@ -131,20 +131,24 @@ def mount(app,store,csrf):
         if report.get('contract') in {'adaptive-template-028','adaptive-template-032'}:
             if report.get('contract')=='adaptive-template-032' and report.get('certification',{}).get('format_properties_exact') is not True:raise HTTPException(409,'PROPERTY_CERTIFICATION_REQUIRED')
             if not all(report.get('certification',{}).get(k) is True for k in ('instance_replay','stress_passed')):raise HTTPException(409,'STRESS_CERTIFICATION_REQUIRED')
-            run_root=run_root/'learning'
+            run_root=run_root/('engine-replay/learning' if report.get('engine_learning_root')=='engine-replay/learning' else 'learning')
         directory=run_root/f'iteration-{len(report["iterations"])}'/'template'
         expected=report.get('package_hashes',{})
         if set(expected)!={'rules.json','semantic.json','resources.zip'} or any(digest((directory/n).read_bytes())!=h for n,h in expected.items()):raise HTTPException(409,'PACKAGE_CHANGED')
         feedback_rows=store.all('SELECT revision FROM learning_feedback024 WHERE run_id=?',(body.run_id,))
         if feedback_rows and feedback_rows[0]['revision']>report.get('feedback_revision_applied',0):
             raise HTTPException(409,'FEEDBACK_NOT_APPLIED_START_NEW_RUN')
+        if report.get('engine_profile'):
+            from .managed034 import load_engine
+            try:load_engine(store.path('template-runs',body.run_id),report['engine_profile'])
+            except DocumentError as exc:raise HTTPException(409,str(exc))
         package=json.loads((directory/'semantic.json').read_text())
         roles=set(package['roles'])
         if not set(body.required_roles)<=roles or not set(body.answers)<=roles:raise HTTPException(400,'REQUIRED_ROLE_INVALID')
         if report.get('mode','assisted')!='automatic' and any(q['role'] not in body.answers for q in report.get('questions',[])):raise HTTPException(409,'REQUIREMENT_QUESTIONS_UNANSWERED')
         required=sorted((set(body.required_roles)|{r for r,v in body.answers.items() if v})-{r for r,v in body.answers.items() if not v})
         spec=json.loads(version['spec_json']);spec['agent023']={'run_id':body.run_id,'iteration':len(report['iterations']),
-             'contract':report.get('contract'),'mode':report.get('mode','assisted'),'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
+             'contract':report.get('contract'),'engine_profile':report.get('engine_profile'),'engine_learning_root':report.get('engine_learning_root'),'mode':report.get('mode','assisted'),'package_hashes':expected,'required_roles':required,'answers':body.answers,'roles':package['roles'],
              'student_model':report['student_model'],'verification':'reference_verified','held_out_transfer':report['held_out_transfer']}
         with store.connect() as con:
             current=con.execute('SELECT MAX(version) FROM template_versions WHERE template_id=?',(template_id,)).fetchone()[0]
@@ -174,11 +178,15 @@ def process_job(store,job,batch,version,spec):
     settings=spec['agent023'];config=model_config()
     if not batch.get('use_llm') or config is None:raise DocumentError('AGENT_REQUIRES_MODEL_CONSENT')
     run_root=store.path('template-runs',settings['run_id'])
-    if settings.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/'learning'
+    if settings.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/('engine-replay/learning' if settings.get('engine_learning_root')=='engine-replay/learning' else 'learning')
     template=run_root/f'iteration-{settings["iteration"]}'/'template'
     if any(digest((template/n).read_bytes())!=h for n,h in settings['package_hashes'].items()):raise DocumentError('PACKAGE_CHANGED')
     source=store.path('jobs',job['id'],'source.docx')
-    result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],'reasoning_effort':'none'})
+    from .sandbox034 import use
+    from .managed034 import load_engine
+    engine=load_engine(store.path('template-runs',settings['run_id']),settings['engine_profile']) if settings.get('engine_profile') else None
+    with use(engine):
+        result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],'reasoning_effort':'none'})
     content=json.loads((folder/'application/input-original.json').read_text())
     present={result['assignments'][b['id']] for b in content['blocks'] if b['text'].strip()}
     missing=[r for r in settings['required_roles'] if r not in present]

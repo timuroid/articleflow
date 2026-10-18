@@ -24,3 +24,24 @@ def limited(c):control('test_controller_stops_at_budget_and_does_not_certify');c
 @then('агент не выпускает шаблон и передаёт ошибку следующей итерации')
 @then('сохраняется причина остановки без сертификации')
 def verified(c):assert c.checked
+
+def repair_control(name):
+    path=Path(__file__).resolve().parents[4]/'tests/test_repair034.py'
+    spec=importlib.util.spec_from_file_location('repair034_contract_tests',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    result=module.RepairIsolationTests(name).run()
+    assert result.wasSuccessful(),str(result.errors+result.failures)
+
+@given('модель предлагает изменение защищённого компонента')
+@given('кандидат проходит диагностический пример и проваливает закрытый')
+def repair_setup(c):pass
+
+@when('проверяется область разрешённого патча')
+def protected_patch(c):repair_control('test_patch_cannot_edit_evaluator_or_escape_directory');c.checked=True
+
+@when('агент получает обратную связь для следующего исправления')
+def hidden_feedback(c):repair_control('test_sealed_failure_is_redacted_in_real_repair_loop_feedback');c.checked=True
+
+@then('патч отклонён и исходный движок не изменён')
+@then('содержимое закрытого примера остаётся скрытым и движок не принят')
+def repair_checked(c):assert c.checked

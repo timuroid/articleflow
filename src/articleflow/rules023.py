@@ -19,6 +19,10 @@ def key(x):
 
 
 def semantic_spans(source):
+    from .sandbox034 import ACTIVE
+    if ACTIVE.get():
+        from .engine034 import simple
+        return simple(ACTIVE.get(),"semantics",{}, {"source.docx":source})
     parts = load_package(source)
     root = parse_xml(parts['word/document.xml'])
     resolver = Resolver(parts)
@@ -46,6 +50,10 @@ def semantic_spans(source):
 
 
 def features(content, assignments):
+    from .sandbox034 import ACTIVE
+    if ACTIVE.get():
+        from .engine034 import simple
+        return simple(ACTIVE.get(),"features",{"content":content,"assignments":assignments},{})
     if set(assignments) != {b['id'] for b in content['blocks']}:
         raise DocumentError('SEMANTIC_COVERAGE')
     result = {'paragraph': {}, 'layout': {}, 'drawing': {}}
