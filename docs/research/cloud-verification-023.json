@@ -1,0 +1,21 @@
+{
+  "commit": "2b3bfbe16f8bfc1e3c1b341a3025d957ae2c32da",
+  "source": "fresh GitHub clone",
+  "unit_tests_passed": 128,
+  "api_attempts": 0,
+  "fresh_model_trials": 0,
+  "families": [
+    {
+      "family": "article",
+      "training_status": "reference_verified",
+      "held_out_pixel_exact": true,
+      "held_out_pages": 10
+    },
+    {
+      "family": "nested",
+      "training_status": "reference_verified",
+      "held_out_pixel_exact": true,
+      "held_out_pages": 16
+    }
+  ]
+}

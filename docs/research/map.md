@@ -41,3 +41,5 @@
 - [Длинный прогон033](convergence-033-general.json), [offline-аудит свойств длинных экземпляров](long-properties-033.json).
 
 - [Управляемое исправление сборщика034](engine-repair-034.md): полные автоматические прогоны, неуспехи, расходы и архив кандидатного кода.
+
+- [Чистый GitHub checkout023](cloud-verification-023.json): историческая проверка128 тестов и offline replay.
