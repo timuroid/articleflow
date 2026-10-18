@@ -11,7 +11,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 
-import fitz
+import pymupdf as fitz
 import httpx
 import numpy as np
 from jsonschema import Draft202012Validator

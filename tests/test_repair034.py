@@ -42,7 +42,7 @@ class RepairIsolationTests(unittest.TestCase):
 
     def test_runtime_rejects_changed_engine_before_docker(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);snapshot(root/'engine');profile={'path':'engine','hashes':file_hashes(root/'engine'),'image':'sha256:test'}
+            root=Path(td).resolve();snapshot(root/'engine');profile={'path':'engine','hashes':file_hashes(root/'engine'),'image':'sha256:test'}
             with (root/'engine/order024.py').open('a') as f:f.write('\n# changed\n')
             with patch('articleflow.managed034.Engine') as docker:
                 with self.assertRaisesRegex(DocumentError,'ENGINE_PROFILE_CHANGED'):load_engine(root,profile)

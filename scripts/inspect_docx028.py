@@ -12,7 +12,7 @@ def inventory(source,render_folder=None):
     queries={'paragraphs':'.//w:p','tables':'.//w:tbl','sections':'.//w:sectPr','fields':'.//w:fldChar','drawings':'.//w:drawing','floating_drawings':'.//wp:anchor','text_boxes':'.//w:txbxContent','content_controls':'.//w:sdt','proofing':'.//w:proofErr'}
     row={'id':source.stem,'sha256':digest(source.read_bytes()),'counts':{k:sum(len(r.xpath(q,namespaces=NS)) for r in stories) for k,q in queries.items()}}
     if render_folder is not None:
-        import fitz
+        import pymupdf as fitz
         pdf=render_pdf(source,render_folder)
         with fitz.open(pdf) as document:row['pages']=len(document)
     return row
