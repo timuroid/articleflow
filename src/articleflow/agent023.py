@@ -241,6 +241,18 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 feedback={'validation_error':str(exc),'instruction':'Return a fresh complete response; all question roles must be keys of roles. Use exact quoted spans and local occurrence numbers.'}
                 if str(exc)=='MODEL_INCOMPLETE':feedback['instruction']='The previous answer was truncated. Output budget increased. Group consecutive paragraphs and use only necessary semantic inline annotations; return complete JSON.'
                 emit();continue
+            if response['questions'] and feedback_provider and not report.get('question_window') and teacher.get('question_wait_seconds',0)>0 and iteration+1>=teacher.get('question_after_iteration',1):
+                from .questions035 import wait
+                expanded_questions=expand_groups(response,allblocks)
+                question_labels=[{b['id']:expanded_questions[f'{i}:{b["id"]}'] for b in sample['content']['blocks']} for i,sample in enumerate(samples)]
+                def question_progress(state):
+                    report.update(stage='awaiting_optional_answer',question_window=state,questions=question_evidence(response['questions'],samples,question_labels));emit()
+                latest,window=wait(response['questions'],user_feedback,feedback_provider,question_progress,seconds=min(30,teacher['question_wait_seconds']))
+                if latest['revision']>user_feedback['revision']:
+                    response,answer_meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':latest['text'],'paragraphs':observations,'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher-clarified',max_tokens=teacher_output_limit,validate=lambda r:(expand_groups(r,allblocks) and r))
+                    # Keep the effective response discoverable by controlled compiler replay.
+                    dump(work/'effective-teacher.json',response)
+                    row['clarification_teacher']=answer_meta;report['feedback_revision_applied']=latest['revision']
             report['stage']='compiling';emit()
             row['teacher']=meta;expanded=expand_groups(response,allblocks)
             labels=[{b['id']:expanded[f'{i}:{b["id"]}'] for b in s['content']['blocks']} for i,s in enumerate(samples)]
@@ -315,20 +327,30 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             if row.get('stress'):feedback['stress_failures']=[{k:v for k,v in r.items() if k!='pixels'} for r in row['stress'] if not r.get('passed') and r.get('status')!='not_applicable']
             dump(work/'feedback.json',feedback)
             feedback_images=[]
-            # Pixel comparison covers every page. Supply a bounded visual example
-            # of the first differing page to the teacher on the next iteration.
-            for i,a in enumerate(row['applications']):
-                different=next((p for p in a.get('pixels',{}).get('matched_page_diagnostics',[]) if not p['pixel_exact']),None)
-                if different is None:continue
-                import base64,pymupdf
-                index=a['pixels']['matched_page_diagnostics'].index(different)
-                candidate=next((work/f'application-{i+1}/render').glob('*.pdf'))
-                for pdf in (samples[i]['golden'],candidate):
-                    with pymupdf.open(pdf) as doc:
-                        page=doc[index];pix=page.get_pixmap(matrix=pymupdf.Matrix(640/page.rect.width,640/page.rect.width),alpha=False)
-                        feedback_images.append('data:image/jpeg;base64,'+base64.b64encode(pix.tobytes('jpeg',jpg_quality=65)).decode())
-                feedback['visual_evidence']={'document':i+1,'page':index+1,'order':['reference','candidate'],'display_width':640}
-                break
+            if teacher.get('visual_review'):
+                from .visual035 import inspect,summary
+                visual=[]
+                for i,application in enumerate(row['applications']):
+                    pdfs=list((work/f'application-{i+1}/render').glob('*.pdf'))
+                    if pdfs:
+                        visual.append({'document':i+1,**summary(inspect(samples[i]['golden'],pdfs[0],work/f'visual-{i+1}',teacher,caller))})
+                row['visual']=visual;feedback['visual']=visual
+                dump(work/'feedback.json',feedback);emit()
+            else:
+                # Pixel comparison covers every page. Supply a bounded visual example
+                # of the first differing page to the teacher on the next iteration.
+                for i,a in enumerate(row['applications']):
+                    different=next((p for p in a.get('pixels',{}).get('matched_page_diagnostics',[]) if not p['pixel_exact']),None)
+                    if different is None:continue
+                    import base64,pymupdf
+                    index=a['pixels']['matched_page_diagnostics'].index(different)
+                    candidate=next((work/f'application-{i+1}/render').glob('*.pdf'))
+                    for pdf in (samples[i]['golden'],candidate):
+                        with pymupdf.open(pdf) as doc:
+                            page=doc[index];pix=page.get_pixmap(matrix=pymupdf.Matrix(640/page.rect.width,640/page.rect.width),alpha=False)
+                            feedback_images.append('data:image/jpeg;base64,'+base64.b64encode(pix.tobytes('jpeg',jpg_quality=65)).decode())
+                    feedback['visual_evidence']={'document':i+1,'page':index+1,'order':['reference','candidate'],'display_width':640}
+                    break
             if success:
                 report['stage']='negative_controls';emit()
                 from .controls023 import verify as negative_controls

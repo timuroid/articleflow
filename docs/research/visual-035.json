@@ -1,0 +1,37 @@
+{
+  "mode": "offline_replay_not_new_model_trial",
+  "status": "reference_verified",
+  "code": null,
+  "source_sha256": "539dddee1624c8f5c588597f755873ed6c83007845c6558f9e19b55b18b035f0",
+  "calls": [
+    {
+      "api_attempts": 0,
+      "mode": "offline_replay",
+      "source_sha256": "461f03403d31c67c23a1bf2fdf9abaf4b2dbdfa7131ff02a2ba9aaf4d82f3d91"
+    },
+    {
+      "api_attempts": 0,
+      "mode": "offline_replay",
+      "source_sha256": "236847dc0cbba58470e246cf2e48a08e159eea6e53a5c7451a534c55d1432db2"
+    },
+    {
+      "api_attempts": 0,
+      "mode": "offline_replay",
+      "source_sha256": "5c97bdbb051349680579d7aa647165733d039b40e8b9d943da9b03d8c435b8fb"
+    },
+    {
+      "api_attempts": 0,
+      "mode": "offline_replay",
+      "source_sha256": "3759181390333587d8a055926314f586d9555eed5cfff3ec92f7d724824b4390"
+    }
+  ],
+  "visual_comparisons": 4,
+  "screenshotted_page_pairs": 4,
+  "certification": {
+    "instance_replay": true,
+    "stress_passed": true,
+    "format_properties_exact": true,
+    "scope": "references_and_applicable_mutations",
+    "universal_accuracy_proven": false
+  }
+}

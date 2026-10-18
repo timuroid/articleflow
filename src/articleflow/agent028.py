@@ -103,6 +103,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     observation['format']=audit(candidate,rebuilt);integrity['format_properties_exact']=observation['format']['property_exact']
                     pixels=compare_pixels(golden,render_pdf(rebuilt,work/'render'))
                     observation.update(integrity=integrity,pixels=pixels)
+                    if teacher.get('visual_review'):
+                        from .visual035 import inspect,summary
+                        observation['visual']=summary(inspect(golden,next((work/'render').glob('*.pdf')),work/'visual',teacher,bounded))
                     if not all(integrity.values()) or not pixels['pixel_exact']:raise DocumentError('INSTANCE_REPLAY_MISMATCH')
                     observation['status']='passed';accepted=candidate;break
                 except DocumentError as exc:
@@ -131,6 +134,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                             from .format032 import audit
                             row['format']=audit(sample['source'],base/name/'result.docx')
                             row['passed']=pixels['pixel_exact'] and result.get('content_exact',False) and row['format']['property_exact']
+                            if teacher.get('visual_review'):
+                                from .visual035 import inspect,summary
+                                row['visual']=summary(inspect(sample['golden'],Path(result['pdf']),base/name/'visual',teacher,bounded))
                         else:row['passed']=False
                     except DocumentError as exc:row.update(code=str(exc),passed=False)
             for i,source in enumerate(validation_sources,1):

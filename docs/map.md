@@ -43,3 +43,5 @@
 - [Управляемое исправление движка034](tech/managed-repair-034.md).
 
 - [Исследование034](research/engine-repair-034.md) и [передача034](tech/cloud-handoff-034.md).
+
+- [Визуальная обратная связь035](tech/visual-questions-035.md).

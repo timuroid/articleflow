@@ -28,7 +28,7 @@ def collect(references,folder,result):
             normalized=folder/f'preparation-{i}/attempt-2/normalized.docx'
             cases.append({'id':f'instance-{i}','kind':'instance','split':'development','source':normalized if normalized.exists() else reference,'golden':reference})
         return cases
-    response=json.loads((work/'teacher/validated.json').read_text());samples=[];allblocks=[]
+    response=json.loads((work/'effective-teacher.json' if (work/'effective-teacher.json').exists() else work/'teacher/validated.json').read_text());samples=[];allblocks=[]
     for i,reference in enumerate(references,1):
         normalized=folder/f'preparation-{i}/attempt-2/normalized.docx';source=normalized if normalized.exists() else reference
         extracted=folder/f'learning/reference-{i}/extracted'

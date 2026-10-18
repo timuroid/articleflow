@@ -53,7 +53,7 @@ def mount(app,store,csrf):
                 config=model_config()
                 if config is None:raise DocumentError('MODEL_NOT_PROVISIONED')
                 result=run(paths,store.path('template-runs',run_id),
-                       {**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),'reasoning_effort':'low'},
+                       {**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),'reasoning_effort':'low','visual_review':True,'question_wait_seconds':30},
                        {**config,'model':config.get('student023','qwen/qwen3.8-27b'),'reasoning_effort':'none'},
                        context=context,max_iterations=iterations,progress=progress,feedback_provider=feedback,validation_sources=([store.path('jobs',validation_job_id,'source.docx')] if validation_job_id else []))
                 if result['status']=='reference_verified':

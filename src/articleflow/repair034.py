@@ -124,9 +124,19 @@ def run(base,cases,folder,config,*,caller=call,max_attempts=2,image='articleflow
     def emit():
         report['seconds']=round(time.monotonic()-started,3);dump(folder/'report.json',report)
         if progress:progress(dict(report))
+    def diagnose(engine,case,where):
+        row=evaluate(engine,case,where)
+        if config.get('visual_review') and case['split']=='development' and row.get('pixels'):
+            from .visual035 import inspect,summary
+            golden=list((where/'golden').glob('*.pdf'))
+            actual=list((where/'application/render').glob('*.pdf')) or list((where/'render').glob('*.pdf'))
+            if golden and actual:
+                row['visual']=summary(inspect(golden[0],actual[0],where/'visual',config,caller))
+                dump(where/'probe.json',row)
+        return row
     rows=[];report['baseline']=rows;emit()
     for c in cases:
-        rows.append(evaluate(engine,c,folder/'baseline'/c['id']));emit()
+        rows.append(diagnose(engine,c,folder/'baseline'/c['id']));emit()
     if all(r['passed'] for r in rows):report.update(status='already_passes',stage='finished');emit();return report
     if modules is None:
         failures=[r for r in rows if r['split']=='development' and not r['passed']]
@@ -145,7 +155,7 @@ def run(base,cases,folder,config,*,caller=call,max_attempts=2,image='articleflow
             candidate=Engine(work/'engine',engine.image);report['stage']='testing_patch';emit()
             development=[];item['development']=development
             for c in cases:
-                if c['split']=='development':development.append(evaluate(candidate,c,work/c['id']));emit()
+                if c['split']=='development':development.append(diagnose(candidate,c,work/c['id']));emit()
             complete=all(r['passed'] for r in development)
             partial=improves(rows,development)
             if not complete and not partial:
