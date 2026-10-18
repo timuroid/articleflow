@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>ArticleFlow — проверка научных DOCX</title>
+  <title>ArticleFlow — документы и шаблоны</title>
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
 </head>
@@ -12,76 +12,93 @@
   <a class="skip" href="#main">Перейти к содержанию</a>
   <header class="topbar">
     <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span>ArticleFlow</span></div>
-    <nav aria-label="Разделы"><a href="/templates">Шаблоны</a> · <a href="/">Документы</a></nav>
+    <nav aria-label="Разделы">
+      <a href="/templates" data-page="templates">Шаблоны</a>
+      <a href="/documents" data-page="documents">Загрузить документы</a>
+      <a href="/history" data-page="history">История проверок</a>
+    </nav>
     <span class="mode" id="mode">Локальная проверка · без модели</span>
   </header>
   <main id="main" class="shell">
     <section class="intro" aria-labelledby="page-title">
       <p class="eyebrow">Рабочее пространство редактора</p>
-      <h1 id="page-title">От образца к проверяемому DOCX</h1>
-      <p>Подготовьте смысловую разметку эталонов в Codex, импортируйте её вместе с DOCX и проверьте оформление. После утверждения Qwen применит шаблон к новым документам.</p>
+      <h1 id="page-title">ArticleFlow</h1>
+      <p id="page-description"></p>
       <div class="notice" id="font-notice" role="status">Проверяем установленные шрифты…</div>
     </section>
-
     <div id="message" class="message" role="status" aria-live="polite" hidden></div>
 
-    <div class="grid">
-      <section class="panel template-panel" aria-labelledby="template-heading">
-        <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Шаблоны</h2><p>Один или несколько оформленных DOCX одного вида.</p></div></div>
-        <details class="review" id="semantic-import" open>
-          <summary>Импорт шаблона из Codex · основной режим</summary>
-          <p class="help">Подготовьте приватный <code>packet.json</code> и <code>codex-prompt.md</code> командой <code>PYTHONPATH=src python scripts/export_semantic_packet037.py ПАПКА ЭТАЛОНЫ.docx...</code>. Передайте оба файла и те же DOCX в Codex; сохраните ответ как <code>teacher.json</code>. Полная инструкция — <code>docs/tech/external-semantic-import-037.md</code>.</p>
-          <form id="semantic-import-form">
-            <label for="import-name">Название шаблона</label>
-            <input id="import-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
-            <label for="import-files">Эталонные DOCX в порядке разметки, до 10 файлов</label>
-            <input id="import-files" name="files" type="file" accept=".docx" multiple required>
-            <label for="import-json">Структурированная разметка Codex — teacher.json</label>
-            <input id="import-json" name="teacher_json" type="file" accept=".json,application/json" required>
-            <label><input type="checkbox" name="span_grammar" value="true"> Извлечь переносимые правила для выделений внутри абзацев</label>
-            <p class="help">Импорт выполняется локально, без вызова модели. Получится черновик: проверьте вопросы и противоречия, затем запустите проверку на эталонах и новом документе.</p>
-            <button type="submit" class="button primary">Импортировать черновик</button>
-          </form>
-        </details>
-        <button type="button" class="button" id="create-template" aria-expanded="false">Автоматическое извлечение · эксперимент</button>
-        <form id="template-form" hidden>
-          <input type="hidden" name="agentic" value="true">
-          <label for="template-name">Название шаблона</label>
-          <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
-          <label for="template-files">Эталоны DOCX, до 10 файлов</label>
-          <input id="template-files" name="files" type="file" accept=".docx" multiple required>
-          <p class="help">Исходные файлы хранятся на этом сервере. Отправка текста внешней модели доступна только с вашим отдельным согласием.</p>
-          <p class="help">Все эталоны должны соответствовать одному шаблону. Агент проверит пересборку и восстановление испорченных копий. Вы увидите текущий этап и результаты проверки. Если понадобится уточнение, агент задаст вопрос.</p>
-          <label><input type="checkbox" id="creation-consent"> Разрешаю обработку эталонов через OpenRouter и автоматическую проверку шаблона</label>
-          <button type="submit" class="button primary">Создать и проверить</button>
-        </form>
-        <div id="template-list" class="stack" aria-live="polite"></div>
-        <div id="template-review" class="review" hidden></div>
-      </section>
+    <section class="panel template-panel page-panel" data-view="templates" aria-labelledby="template-heading" hidden>
+      <div class="section-toolbar">
+        <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Шаблоны</h2><p>Оформление, эталоны и состояние проверки.</p></div></div>
+        <button type="button" class="button primary" id="create-template">Создать шаблон</button>
+      </div>
+      <div id="template-list" class="table-wrap" aria-live="polite"></div>
+      <div id="template-review" class="review" hidden></div>
+    </section>
 
-      <section class="panel batch-panel" aria-labelledby="batch-heading">
-        <div class="panel-head"><span class="step">02</span><div><h2 id="batch-heading">Статьи</h2><p>Обработка продолжается для остальных файлов, если один требует проверки.</p></div></div>
-        <form id="batch-form">
-          <label for="batch-template">Утверждённый шаблон</label>
-          <select id="batch-template" name="template_id" required><option value="">Сначала утвердите шаблон</option></select>
-          <label for="batch-files">Статьи DOCX, до 200 файлов</label>
-          <input id="batch-files" name="files" type="file" accept=".docx" multiple required>
-          <p class="help">Не более 25 МиБ на файл. Исходники и все ревизии остаются доступны.</p>
-          <label><input type="checkbox" name="use_llm" value="true" id="use-llm"> Определить роли небольшой моделью</label>
-          <label><input type="checkbox" name="consent_external" value="true" id="external-consent"> Разрешаю отправить текст этих статей в OpenRouter</label>
-          <p class="help">Для шаблона из Codex — один вызов Qwen на документ. Расходы ограничены общим бюджетом; ошибки модели сохраняются в отчёте.</p>
-          <button type="submit" class="button primary">Начать обработку</button>
-        </form>
-        <div id="batch-history" class="stack"></div>
-      <div id="batch-view" class="stack" aria-live="polite"></div>
-      </section>
-    </div>
+    <section class="panel batch-panel page-panel" data-view="documents" aria-labelledby="batch-heading" hidden>
+      <div class="panel-head"><span class="step">02</span><div><h2 id="batch-heading">Загрузить документы</h2><p>Выберите утверждённый шаблон и отправьте один или несколько DOCX.</p></div></div>
+      <form id="batch-form">
+        <label for="batch-template">Утверждённый шаблон</label>
+        <select id="batch-template" name="template_id" required><option value="">Сначала утвердите шаблон</option></select>
+        <label for="batch-files">Документы DOCX, до 200 файлов</label>
+        <input id="batch-files" name="files" type="file" accept=".docx" multiple required>
+        <p class="help">Не более 25 МиБ на файл. Исходники и все ревизии остаются доступны.</p>
+        <label><input type="checkbox" name="use_llm" value="true" id="use-llm"> Определить роли небольшой моделью</label>
+        <label><input type="checkbox" name="consent_external" value="true" id="external-consent"> Разрешаю отправить текст этих документов в OpenRouter</label>
+        <p class="help">Для шаблона из Codex — один вызов Qwen на документ. Расходы ограничены общим бюджетом; ошибки сохраняются в истории.</p>
+        <button type="submit" class="button primary">Начать обработку</button>
+      </form>
+    </section>
 
-    <section class="panel result" aria-labelledby="review-heading">
-      <div class="panel-head"><span class="step">03</span><div><h2 id="review-heading">Проверка и результат</h2><p>Готовый DOCX доступен только после обязательных проверок. Черновик можно скачать отдельно.</p></div></div>
-      <div id="job-view" class="empty">Выберите статью из пакета, чтобы увидеть вопросы, блоки и файлы.</div>
+    <section class="page-panel history-page" data-view="history" aria-labelledby="history-heading" hidden>
+      <div class="panel" id="history-list-panel">
+        <div class="panel-head"><span class="step">03</span><div><h2 id="history-heading">История проверок и исправлений</h2><p>Пакеты, статусы файлов, замечания и результаты.</p></div></div>
+        <div id="batch-history" class="table-wrap" aria-live="polite"></div>
+      </div>
+      <div id="batch-view" class="panel history-detail" aria-live="polite" hidden></div>
+      <div id="job-panel" class="panel history-detail" hidden>
+        <div class="panel-head"><span class="step">04</span><div><h2>Документ и результат</h2><p>Проверьте замечания и скачайте доступные файлы.</p></div></div>
+        <div id="job-view" class="empty">Выберите документ из пакета.</div>
+      </div>
     </section>
   </main>
-  <footer class="footer">ArticleFlow · Импорт шаблона из Codex и проверяемое оформление DOCX.</footer>
+
+  <dialog id="template-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <div><p class="eyebrow">Новый шаблон</p><h2 id="dialog-title">Создать шаблон</h2></div>
+      <button type="button" class="button" id="close-template-dialog" aria-label="Закрыть окно">Закрыть</button>
+    </div>
+    <div id="dialog-message" class="message" role="status" aria-live="polite" hidden></div>
+    <p class="help">Основной путь: разметьте эталоны в Codex и загрузите полученный JSON вместе с теми же DOCX.</p>
+    <details class="review" id="semantic-import" open>
+      <summary>Импорт шаблона из Codex</summary>
+      <p class="help">Подготовьте приватные <code>packet.json</code> и <code>codex-prompt.md</code> командой <code>PYTHONPATH=src python scripts/export_semantic_packet037.py ПАПКА ЭТАЛОНЫ.docx...</code>. Передайте их и те же DOCX в Codex; сохраните ответ как <code>teacher.json</code>. Полная инструкция — <code>docs/tech/external-semantic-import-037.md</code>.</p>
+      <form id="semantic-import-form">
+        <label for="import-name">Название шаблона</label>
+        <input id="import-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
+        <label for="import-files">Эталонные DOCX в порядке разметки, до 10 файлов</label>
+        <input id="import-files" name="files" type="file" accept=".docx" multiple required>
+        <label for="import-json">Разметка Codex — teacher.json</label>
+        <input id="import-json" name="teacher_json" type="file" accept=".json,application/json" required>
+        <label><input type="checkbox" name="span_grammar" value="true"> Извлечь переносимые правила выделений внутри абзацев</label>
+        <p class="help">Импорт создаст черновик без вызова модели. Перед массовой обработкой проверьте эталоны и спорные правила.</p>
+        <button type="submit" class="button primary">Импортировать черновик</button>
+      </form>
+    </details>
+    <button type="button" class="button secondary-action" id="experimental-extraction" aria-expanded="false">Автоматическое извлечение · эксперимент</button>
+    <form id="template-form" hidden>
+      <input type="hidden" name="agentic" value="true">
+      <label for="template-name">Название шаблона</label>
+      <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
+      <label for="template-files">Эталоны DOCX, до 10 файлов</label>
+      <input id="template-files" name="files" type="file" accept=".docx" multiple required>
+      <p class="help">Все эталоны должны соответствовать одному шаблону. Автоматический агент проверяет пересборку и восстановление испорченных копий.</p>
+      <label><input type="checkbox" id="creation-consent"> Разрешаю обработку эталонов через OpenRouter и автоматическую проверку шаблона</label>
+      <button type="submit" class="button primary">Создать и проверить</button>
+    </form>
+  </dialog>
+  <footer class="footer">ArticleFlow · Шаблоны, оформление документов и история проверок.</footer>
 </body>
 </html>

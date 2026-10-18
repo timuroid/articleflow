@@ -16,6 +16,7 @@
 | [batches.feature](batches.feature) | SC-046–SC-052 | Очередь, частичные ZIP, бюджет и удаление |
 | [structure-web.feature](structure-web.feature) | SC-080–SC-085 | Перенос смысловых фрагментов, пропуски, эталоны и пакет |
 | [semantic-import-037.feature](semantic-import-037.feature) | SC-IMPORT-037-01–06 | Импорт внешней разметки, проба, точный replay и явное утверждение |
+| [web-navigation-038.feature](web-navigation-038.feature) | SC-WEB-038-01–03 | Таблицы шаблонов и проверок, модальное создание, раздельные страницы и вход Caddy |
 
 Общие fixtures: авторизованный редактор своего workspace, синтетические source documents, mock provider, версия шаблона с подтверждёнными правилами. Для сценариев успешного оформления setup включает готовую статью, разрешение анализа и бюджет; негативный сценарий явно заменяет соответствующую предпосылку. «Поддерживаемый DOCX» означает пакет, соответствующий [матрице](../../tech/docx-compatibility.md), с известным payload baseline. Все состояния и error codes соответствуют [API](../../tech/api.md).
 

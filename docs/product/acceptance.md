@@ -7,6 +7,7 @@
 | Требование | Сценарии | Техническая спецификация |
 | --- | --- | --- |
 | PRD-001 | SC-001–SC-003 | [Совместимость DOCX](../tech/docx-compatibility.md), [безопасность](../tech/security.md) |
+| PRD-WEB-038 | SC-WEB-038-01–03 | [Интерфейс](interface.md), [локальный веб-срез](../tech/web-017-local.md); браузерная проверка маршрутов, модального окна и таблиц |
 | PRD-002 | SC-004–SC-005 | [Извлечение шаблона](../tech/template-extraction.md) |
 | PRD-003 | SC-006–SC-008 | [Модель данных](../tech/data-model.md), [API](../tech/api.md) |
 | PRD-004 | SC-009–SC-010 | [Pipeline](../tech/document-pipeline.md) |

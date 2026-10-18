@@ -310,6 +310,8 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
 
     @app.get("/")
     @app.get("/templates")
+    @app.get("/documents")
+    @app.get("/history")
     def index():
         return HTMLResponse((STATIC / "index.html").read_text())
 

@@ -1,7 +1,9 @@
 const api = '/api/v017';
 const state = { csrf: '', templates: [], batchId: null, timer: null, llm: false };
+const currentPage = location.pathname === '/templates' ? 'templates' : location.pathname === '/history' ? 'history' : 'documents';
 
 const roleLabels = {udc:'УДК',title:'Название статьи',authors:'Авторы',affiliation:'Организация',city:'Город',email:'Электронная почта',abstract_heading:'Заголовок аннотации',abstract_problem:'Постановка проблемы',abstract_goal:'Цель',abstract_results:'Результаты',abstract_practical:'Практическая значимость',abstract_remainder:'Неразобранная часть аннотации',keywords:'Ключевые слова','keywords.heading':'Заголовок ключевых слов',body:'Основной текст','body.table':'Таблицы','body.table_caption':'Подписи таблиц','body.figure':'Иллюстрации','body.figure_caption':'Подписи иллюстраций',editorial:'Редакторские заметки',__base__:'Основное оформление документа',__document__:'Размер страницы и поля'};
+const jobStatus = {queued:'В очереди',processing:'Обрабатывается',draft:'Нужна проверка',ready:'Готово',error:'Ошибка',failed:'Ошибка',needs_review:'Нужна проверка'};
 const roleName = role => roleLabels[role] || (role.startsWith('body.heading.') ? `Заголовок уровня ${role.split('.').pop()}` : role);
 const $ = (id) => document.getElementById(id);
 const node = (tag, className = '', value = '') => {
@@ -20,11 +22,31 @@ const button = (label, onClick, className = 'button') => {
   });
   return item;
 };
+const table = (headers) => {
+  const element = node('table', 'data-table');
+  const head = node('thead');
+  const row = node('tr');
+  for (const title of headers) {
+    const cell = node('th', '', title);
+    cell.scope = 'col';
+    row.append(cell);
+  }
+  head.append(row);
+  const body = node('tbody');
+  element.append(head, body);
+  return { element, body };
+};
+const cell = (row, value, className = '') => {
+  const item = node('td', className, value);
+  row.append(item);
+  return item;
+};
 const message = (value, error = false) => {
-  const target = $('message');
-  target.textContent = value;
-  target.className = error ? 'message error' : 'message';
-  target.hidden = !value;
+  for (const target of [$('message'), $('dialog-message')]) {
+    target.textContent = value;
+    target.className = error ? 'message error' : 'message';
+    target.hidden = !value;
+  }
 };
 async function request(path, options = {}) {
   const headers = { ...(options.headers || {}) };
@@ -47,25 +69,28 @@ async function loadTemplates() {
   const select = $('batch-template');
   select.replaceChildren(node('option', '', 'Выберите утверждённый шаблон'));
   select.firstChild.value = '';
+  const { element, body } = table(['Название', 'Версия', 'Эталоны', 'Статус', 'Создан', 'Действие']);
   for (const item of state.templates) {
-    const card = node('div', 'item');
-    const top = node('div');
-    top.append(node('strong', '', item.name), node('span', `badge ${item.approved ? 'ready' : 'draft'}`, item.approved ? `Версия ${item.version} утверждена` : 'Требует проверки'));
-    card.append(top);
-    const count = item.spec.samples?.length || 0;
-    const disputed = item.spec.external_import?.training_conflicts ?? Object.keys(item.spec.conflicts || {}).length;
-    card.append(node('p', '', `${count} эталонных DOCX · ${disputed} спорных правил`));
-    card.append(button('Открыть шаблон', () => showTemplate(item.id)));
-    list.append(card);
+    const row = node('tr');
+    cell(row, item.name);
+    cell(row, String(item.version));
+    cell(row, String(item.spec.samples?.length || 0));
+    const status = cell(row, '');
+    status.append(node('span', `badge ${item.approved ? 'ready' : 'draft'}`, item.approved ? 'Утверждён' : 'Требует проверки'));
+    cell(row, new Date(item.created_at).toLocaleDateString('ru-RU'));
+    cell(row, '').append(button('Открыть', () => showTemplate(item.id)));
+    body.append(row);
     if (item.approved) {
       const option = node('option', '', `${item.name} · версия ${item.version}`);
       option.value = item.id;
       select.append(option);
     }
   }
-  if (!rows.length) list.append(node('p', 'help', 'Шаблонов пока нет. Начните с эталонного DOCX.'));
+  if (rows.length) list.append(element);
+  else list.append(node('p', 'empty', 'Шаблонов пока нет. Создайте первый из эталонных DOCX.'));
 }
 async function showTemplate(id) {
+  if (currentPage !== 'templates') { window.location.href = `/templates?template=${encodeURIComponent(id)}`; return; }
   const item = await request(`/templates/${id}`);
   const target = $('template-review');
   target.hidden = false;
@@ -404,26 +429,41 @@ async function showTemplate(id) {
 }
 async function loadBatches() {
   const rows = await request('/batches'); const target = $('batch-history'); target.replaceChildren();
-  if (rows.length) target.append(node('h3', '', 'Недавние пакеты'));
-  for (const row of rows) target.append(button(`${row.template_name} · ${row.job_count} файлов · ${new Date(row.created_at).toLocaleString('ru-RU')}`, async () => { state.batchId = row.id; await renderBatch(row.id); }));
+  if (!rows.length) { target.append(node('p', 'empty', 'Проверок пока нет. Загрузите документы, чтобы начать.')); return; }
+  const { element, body } = table(['Дата', 'Шаблон', 'Документов', 'Действие']);
+  for (const item of rows) {
+    const row = node('tr');
+    cell(row, new Date(item.created_at).toLocaleString('ru-RU'));
+    cell(row, item.template_name);
+    cell(row, String(item.job_count));
+    cell(row, '').append(button('Открыть проверку', async () => {
+      state.batchId = item.id;
+      window.history.replaceState(null, '', `/history?batch=${encodeURIComponent(item.id)}`);
+      await renderBatch(item.id);
+    }));
+    body.append(row);
+  }
+  target.append(element);
 }
 async function renderBatch(id) {
   const batch = await request(`/batches/${id}`);
   const target = $('batch-view');
+  target.hidden = false;
   target.replaceChildren(node('h3', '', `Пакет ${id.slice(0, 8)}`));
   const counts = {};
   for (const job of batch.jobs) counts[job.status] = (counts[job.status] || 0) + 1;
   target.append(node('p', 'help', Object.entries(counts).map(([status, count]) => `${status}: ${count}`).join(' · ')));
+  const { element, body } = table(['Документ', 'Статус', 'Вопросы', 'Ревизия', 'Действие']);
   for (const job of batch.jobs) {
-    const card = node('div', 'item');
-    const top = node('div');
-    top.append(node('strong', '', job.source_name), node('span', `badge ${job.status}`, job.status));
-    card.append(top);
-    const count = job.report?.questions?.length || 0;
-    card.append(node('p', '', `${count} вопросов · ревизия ${job.revision}`));
-    card.append(button('Проверить', () => renderJob(job.id)));
-    target.append(card);
+    const row = node('tr');
+    cell(row, job.source_name);
+    cell(row, '').append(node('span', `badge ${job.status}`, jobStatus[job.status] || job.status));
+    cell(row, String(job.report?.questions?.length || 0));
+    cell(row, String(job.revision));
+    cell(row, '').append(button('Проверить', () => renderJob(job.id)));
+    body.append(row);
   }
+  target.append(element);
   target.append(button('Создать ZIP-снимок', async () => {
     try {
       const result = await request(`/batches/${id}/exports`, { method: 'POST' });
@@ -439,12 +479,13 @@ async function renderBatch(id) {
 }
 async function renderJob(id) {
   const job = await request(`/jobs/${id}`);
+  $('job-panel').hidden = false;
   const target = $('job-view');
   target.className = '';
   target.replaceChildren();
   const heading = node('div', 'item');
   const top = node('div');
-  top.append(node('h3', '', job.source_name), node('span', `badge ${job.status}`, job.status));
+  top.append(node('h3', '', job.source_name), node('span', `badge ${job.status}`, jobStatus[job.status] || job.status));
   heading.append(top, node('p', '', `Ревизия ${job.revision}. Откройте PDF для проверки страниц.`));
   const visual=job.report?.visual_validation;
   if(visual) {
@@ -535,7 +576,15 @@ async function boot() {
     $('font-notice').textContent = exact ? 'Arial и Times New Roman обнаружены. Итоговый DOCX всё равно проверьте визуально.' : 'Точные Arial и Times New Roman пока не подтверждены. Результаты остаются черновиками.';
     if (!exact) $('font-notice').classList.add('warn');
     await loadTemplates();
-    await loadBatches();
+    if (currentPage === 'history') {
+      await loadBatches();
+      const batch = new URLSearchParams(location.search).get('batch');
+      if (batch) { state.batchId = batch; await renderBatch(batch); }
+    }
+    if (currentPage === 'templates') {
+      const template = new URLSearchParams(location.search).get('template');
+      if (template) await showTemplate(template);
+    }
   } catch (error) { message(`Приложение недоступно: ${error.message}`, true); }
 }
 $('template-form').addEventListener('submit', async (event) => {
@@ -549,7 +598,7 @@ $('template-form').addEventListener('submit', async (event) => {
     const result = await request('/templates', { method: 'POST', body: new FormData(form) });
     await request(`/templates/${result.id}/learn`,{method:'POST',body:JSON.stringify({consent_external:true,mode:'automatic'})});
     message('Агент начал проверку. Результат и все причины остановки появятся в карточке шаблона.');
-    form.reset();
+    form.reset(); $('template-dialog').close();
     await loadTemplates();
     await showTemplate(result.id);
   } catch (error) { message(`Эталон не обработан: ${error.message}`, true); }
@@ -561,7 +610,7 @@ $('semantic-import-form').addEventListener('submit', async (event) => {
   submit.disabled=true;
   try {
     const result=await request('/templates/import-semantic',{method:'POST',body:new FormData(form)});
-    form.reset();await loadTemplates();await showTemplate(result.id);
+    form.reset();$('template-dialog').close();await loadTemplates();await showTemplate(result.id);
     message(`Разметка импортирована как черновик. Противоречий: ${result.report.training_conflicts}. Проверьте вопросы и правила.`);
   } catch(error) {message(`Импорт не выполнен: ${error.message}`,true);}
   finally {submit.disabled=false;}
@@ -573,14 +622,27 @@ $('batch-form').addEventListener('submit', async (event) => {
   submit.disabled = true;
   try {
     const result = await request('/batches', { method: 'POST', body: new FormData(form) });
-    state.batchId = result.id;
-    await loadBatches();
-    message('Пакет принят. Статусы появятся ниже.');
-    form.reset();
-    await renderBatch(result.id);
+    window.location.href = `/history?batch=${encodeURIComponent(result.id)}`;
   } catch (error) { message(`Пакет не принят: ${error.message}`, true); }
   finally { submit.disabled = false; }
 });
-if(location.pathname==='/templates') {document.body.classList.add('templates-page');$('page-title').textContent='Шаблоны документов';}
-$('create-template').addEventListener('click',()=>{const form=$('template-form');form.hidden=!form.hidden;$('create-template').setAttribute('aria-expanded',String(!form.hidden));if(!form.hidden)$('template-name').focus();});
+const pageText = {
+  templates: ['Шаблоны документов', 'Создавайте и проверяйте шаблоны оформления по эталонным DOCX.'],
+  documents: ['Загрузить документы', 'Оформляйте новые DOCX по утверждённому шаблону.'],
+  history: ['История проверок', 'Просматривайте результаты, замечания и предыдущие исправления.'],
+};
+$('page-title').textContent = pageText[currentPage][0];
+$('page-description').textContent = pageText[currentPage][1];
+document.title = `${pageText[currentPage][0]} — ArticleFlow`;
+document.querySelector(`[data-view="${currentPage}"]`).hidden = false;
+document.querySelector(`nav [data-page="${currentPage}"]`).setAttribute('aria-current', 'page');
+$('create-template').addEventListener('click', () => { message(''); $('template-dialog').showModal(); $('import-name').focus(); });
+$('close-template-dialog').addEventListener('click', () => $('template-dialog').close());
+$('template-dialog').addEventListener('click', event => { if (event.target === $('template-dialog')) $('template-dialog').close(); });
+$('experimental-extraction').addEventListener('click', () => {
+  const form = $('template-form');
+  form.hidden = !form.hidden;
+  $('experimental-extraction').setAttribute('aria-expanded', String(!form.hidden));
+  if (!form.hidden) $('template-name').focus();
+});
 boot();
