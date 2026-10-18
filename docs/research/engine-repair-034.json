@@ -1,0 +1,1250 @@
+{
+  "schema": "public-repair-study-034",
+  "repair_trials": [
+    {
+      "series": "repair034-inline",
+      "status": "needs_review",
+      "seconds": 120.006,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 2,
+      "known_cost_usd": "0.1037220",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 2,
+          "codes": [
+            "NO_RULE"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 0,
+              "status": "needs_review",
+              "unresolved_count": 2,
+              "codes": [
+                "NO_RULE"
+              ],
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": []
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034-order",
+      "status": "needs_review",
+      "seconds": 75.003,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 7,
+      "api_attempts": 2,
+      "known_cost_usd": "0.0178445",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "probe-0",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-1",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034b-inline",
+      "status": "needs_review",
+      "seconds": 127.285,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 2,
+      "known_cost_usd": "0.1185020",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 2,
+          "codes": [
+            "NO_RULE"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 0,
+              "status": "needs_review",
+              "unresolved_count": 2,
+              "codes": [
+                "NO_RULE"
+              ],
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": []
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 0,
+              "status": "needs_review",
+              "unresolved_count": 2,
+              "codes": [
+                "NO_RULE"
+              ],
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034b-order",
+      "status": "accepted",
+      "seconds": 138.156,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 7,
+      "api_attempts": 1,
+      "known_cost_usd": "0.013641",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "probe-0",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-1",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 1,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "accepted",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "probe-0",
+              "split": "development",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-1",
+              "split": "development",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            }
+          ],
+          "sealed": [
+            {
+              "id": "probe-2",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-3",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-4",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-5",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "needs_review",
+              "unresolved_count": 3,
+              "codes": [
+                "ORDER_PROTECTED_BOUNDARY"
+              ],
+              "pixel_exact": null,
+              "property_exact": null
+            },
+            {
+              "id": "probe-6",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "series": "repair034c-inline",
+      "status": "needs_review",
+      "seconds": 111.588,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 2,
+      "known_cost_usd": "0.1204345",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 2,
+          "codes": [
+            "NO_RULE"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": false,
+              "property_exact": false
+            }
+          ],
+          "sealed": []
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034c-long",
+      "status": "needs_review",
+      "seconds": 86.621,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 1,
+      "known_cost_usd": "0.079701",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 33,
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034d-long",
+      "status": "needs_review",
+      "seconds": 140.875,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 2,
+      "known_cost_usd": "0.2074195",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 33,
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 33,
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": []
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": null,
+          "retained_for_next_attempt": false,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 33,
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": []
+        }
+      ]
+    },
+    {
+      "series": "repair034e-long",
+      "status": "needs_review",
+      "seconds": 242.627,
+      "image": "sha256:309f3a8927fcdd966a6d62023066a59d2cb180b0f9c7ffa0c922fdb2370b9097",
+      "tests": 8,
+      "api_attempts": 2,
+      "known_cost_usd": "0.1219405",
+      "unknown_cost_attempts": 0,
+      "baseline": [
+        {
+          "id": "document-1-normal",
+          "split": "development",
+          "passed": false,
+          "conflicts": 33,
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-0",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-1",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-2",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-3",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-4",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        },
+        {
+          "id": "probe-5",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "needs_review",
+          "unresolved_count": 3,
+          "codes": [
+            "ORDER_PROTECTED_BOUNDARY"
+          ],
+          "pixel_exact": null,
+          "property_exact": null
+        },
+        {
+          "id": "probe-6",
+          "split": "sealed",
+          "passed": true,
+          "conflicts": 0,
+          "status": "rendered_unverified",
+          "unresolved_count": 0,
+          "codes": [],
+          "pixel_exact": true,
+          "property_exact": true
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "status": "candidate_progress",
+          "code": null,
+          "retained_for_next_attempt": true,
+          "development": [
+            {
+              "id": "document-1-normal",
+              "split": "development",
+              "passed": false,
+              "conflicts": 30,
+              "pixel_exact": null,
+              "property_exact": null
+            }
+          ],
+          "sealed": [
+            {
+              "id": "probe-0",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-1",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-2",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-3",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-4",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            },
+            {
+              "id": "probe-5",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "needs_review",
+              "unresolved_count": 3,
+              "codes": [
+                "ORDER_PROTECTED_BOUNDARY"
+              ],
+              "pixel_exact": null,
+              "property_exact": null
+            },
+            {
+              "id": "probe-6",
+              "split": "sealed",
+              "passed": true,
+              "conflicts": 0,
+              "status": "rendered_unverified",
+              "unresolved_count": 0,
+              "codes": [],
+              "pixel_exact": true,
+              "property_exact": true
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "status": "rejected",
+          "code": "REPAIR_UNRESOLVED",
+          "retained_for_next_attempt": false,
+          "development": [],
+          "sealed": []
+        }
+      ]
+    }
+  ],
+  "fresh_or_managed_trials": [
+    {
+      "series": "repair034-fresh-osu",
+      "status": "reference_verified",
+      "code": null,
+      "final_learning_seconds": 53.52,
+      "certification": {
+        "instance_replay": true,
+        "stress_passed": true,
+        "format_properties_exact": true,
+        "scope": "references_and_applicable_mutations",
+        "universal_accuracy_proven": false
+      },
+      "repair_status": null,
+      "repair_seconds": null,
+      "iterations": 1,
+      "api_attempts": 4,
+      "known_cost_usd": "0.017558075",
+      "unknown_cost_attempts": 0
+    },
+    {
+      "series": "managed034-live",
+      "status": "needs_review",
+      "code": null,
+      "final_learning_seconds": 61.52,
+      "certification": null,
+      "repair_status": "needs_review",
+      "repair_seconds": 300.449,
+      "iterations": 1,
+      "api_attempts": 6,
+      "known_cost_usd": "0.135894485",
+      "unknown_cost_attempts": 0
+    },
+    {
+      "series": "managed034b-live",
+      "status": "reference_verified",
+      "code": null,
+      "final_learning_seconds": 60.3,
+      "certification": {
+        "instance_replay": true,
+        "stress_passed": true,
+        "format_properties_exact": true,
+        "scope": "references_and_applicable_mutations",
+        "universal_accuracy_proven": false
+      },
+      "repair_status": "accepted",
+      "repair_seconds": 293.63,
+      "iterations": 1,
+      "api_attempts": 9,
+      "known_cost_usd": "0.078181015",
+      "unknown_cost_attempts": 0
+    }
+  ],
+  "binding_replay": {
+    "api_attempts": 0,
+    "mode": "saved_candidate_replay_with_reextraction",
+    "id": "document-1-normal",
+    "split": "development",
+    "passed": false,
+    "conflicts": 30,
+    "pixel_exact": null,
+    "property_exact": null
+  },
+  "interpretation": "Fault-injection/replay experiments use frozen student outputs. Fresh/managed trials use new semantic calls. Series overlap: wall times are not isolated latency. Partial candidate progress is not certification. An undisclosed corpus is not proof of universal correctness."
+}

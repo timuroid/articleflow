@@ -41,3 +41,5 @@
 - [Полная передача для облачного Codex](tech/cloud-handoff-023.md).
 
 - [Управляемое исправление движка034](tech/managed-repair-034.md).
+
+- [Исследование034](research/engine-repair-034.md) и [передача034](tech/cloud-handoff-034.md).
