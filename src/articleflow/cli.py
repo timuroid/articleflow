@@ -31,6 +31,12 @@ def main():
     template = commands.add_parser("build-template")
     for name in ["evidence_dir", "annotations", "definitions", "output"]:
         template.add_argument(name, type=Path)
+    imported = commands.add_parser("import-semantic-template",
+        help="compile an external structured teacher JSON and 1–10 reference DOCX files offline")
+    imported.add_argument("teacher_json", type=Path)
+    imported.add_argument("output", type=Path)
+    imported.add_argument("references", nargs="+", type=Path)
+    imported.add_argument("--span-grammar", action="store_true")
     catalogue = commands.add_parser("extract-catalogue")
     for name in ["source", "annotations", "definitions", "output"]:
         catalogue.add_argument(name, type=Path)
@@ -114,6 +120,18 @@ def main():
     elif args.command == "build-template":
         definitions = json.loads(args.definitions.read_text())
         build_template(args.evidence_dir, json.loads(args.annotations.read_text()), definitions["roles"], args.output, definitions.get("inline_rules", []))
+    elif args.command == "import-semantic-template":
+        from .import_semantic037 import import_semantic_template
+        from .docx_engine import DocumentError
+        try:
+            report = import_semantic_template(args.references, args.teacher_json, args.output,
+                                              span_grammar=args.span_grammar)
+        except DocumentError as exc:
+            parser.exit(2, f"articleflow: {exc}\n")
+        print(json.dumps({key: report[key] for key in (
+            "status", "provenance", "model_calls", "paragraphs", "role_counts",
+            "training_conflicts", "conflict_counts", "template_dir")},
+            ensure_ascii=False, indent=2))
     elif args.command == "compare":
         if bool(args.golden_pdf) != bool(args.candidate_pdf):
             parser.error("--golden-pdf and --candidate-pdf must be provided together")

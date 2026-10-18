@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from docx import Document
+from PIL import Image
 from articleflow.agent023 import build_package, extract_input, apply
 from articleflow.order024 import fit, arrange, expected_source
 from articleflow.rules023 import semantic_spans
@@ -55,6 +56,64 @@ class OrderingTests(unittest.TestCase):
                    'structure': [{'kind': 'paragraph', 'id': str(i)} for i in range(4)]}
         contract, conflicts = fit([(content, dict(zip(['0','1','2','3'], ['heading','body','heading','body'])))])
         self.assertFalse(conflicts); self.assertEqual(contract['edges'], [])
+
+    def test_single_object_caption_pair_can_repeat_without_global_order_violation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            image = root/'figure.png'
+            Image.new('RGB', (4, 4), 'black').save(image)
+            def document(path, roles):
+                doc = Document()
+                for role in roles:
+                    if role == 'object_anchor':
+                        doc.add_picture(str(image))
+                    else:
+                        doc.add_paragraph(role)
+                doc.save(path)
+                content = extract_input(path, root/path.stem)
+                return content, {block['id']: role for block, role in zip(content['blocks'], roles)}
+
+            front = ['front_a', 'front_b', 'front_c']
+            training = front + ['prose', 'object_anchor', 'following_label', 'prose']
+            content, labels = document(root/'reference.docx', training)
+            contract, conflicts = fit([(content, labels)])
+            self.assertFalse(conflicts)
+            edges = {(edge['before'], edge['after']) for edge in contract['edges']}
+            self.assertNotIn(('object_anchor', 'following_label'), edges)
+            self.assertFalse(any('object_anchor' in edge or 'following_label' in edge for edge in edges))
+            self.assertTrue({('front_a', 'front_b'), ('front_b', 'front_c')} <= edges)
+
+            heldout = ['front_c', 'front_a', 'front_b', 'prose',
+                       'object_anchor', 'following_label', 'prose',
+                       'object_anchor', 'following_label']
+            content, labels = document(root/'heldout.docx', heldout)
+            arranged, permutation, moves, issues = arrange(content, labels, contract, root/'heldout.docx')
+            self.assertFalse(issues)
+            self.assertEqual([labels[node['id']] for node in arranged['structure']],
+                             ['front_a', 'front_b', 'front_c', 'prose',
+                              'object_anchor', 'following_label', 'prose',
+                              'object_anchor', 'following_label'])
+            self.assertEqual(sorted(permutation), list(range(len(heldout))))
+            self.assertTrue(moves)
+
+    def test_cover_object_does_not_erase_front_matter_order(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            image = root/'logo.png'
+            Image.new('RGB', (4, 4), 'black').save(image)
+            source = root/'cover.docx'
+            doc = Document()
+            doc.add_picture(str(image))
+            for value in ('title', 'authors', 'abstract', 'body first', 'body second'):
+                doc.add_paragraph(value)
+            doc.save(source)
+            content = extract_input(source, root/'input')
+            roles = ['cover_logo', 'front_a', 'front_b', 'front_c', 'prose', 'prose']
+            labels = {block['id']: role for block, role in zip(content['blocks'], roles)}
+            contract, conflicts = fit([(content, labels)])
+            self.assertFalse(conflicts)
+            edges = {(edge['before'], edge['after']) for edge in contract['edges']}
+            self.assertTrue({('front_a', 'front_b'), ('front_b', 'front_c')} <= edges)
 
     def test_table_boundary_blocks_unsafe_move(self):
         with tempfile.TemporaryDirectory() as td:

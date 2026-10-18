@@ -40,6 +40,20 @@
           <label><input type="checkbox" id="creation-consent"> Разрешаю обработку эталонов через OpenRouter и автоматическую проверку шаблона</label>
           <button type="submit" class="button primary">Создать и проверить</button>
         </form>
+        <details class="review" id="semantic-import">
+          <summary>Импортировать разметку, подготовленную вне приложения</summary>
+          <form id="semantic-import-form">
+            <label for="import-name">Название шаблона</label>
+            <input id="import-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
+            <label for="import-files">Эталонные DOCX в порядке разметки, до 10 файлов</label>
+            <input id="import-files" name="files" type="file" accept=".docx" multiple required>
+            <label for="import-json">Структурированная семантическая разметка JSON</label>
+            <input id="import-json" name="teacher_json" type="file" accept=".json,application/json" required>
+            <label><input type="checkbox" name="span_grammar" value="true"> Извлечь переносимые правила для выделений внутри абзацев</label>
+            <p class="help">Импорт выполняется локально и не вызывает модель. Результат останется черновиком: проверьте вопросы и противоречия, затем запустите проверку на новых документах.</p>
+            <button type="submit" class="button">Импортировать черновик</button>
+          </form>
+        </details>
         <div id="template-list" class="stack" aria-live="polite"></div>
         <div id="template-review" class="review" hidden></div>
       </section>

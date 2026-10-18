@@ -16,11 +16,13 @@ def simple(engine,operation,payload,inputs):
     with tempfile.TemporaryDirectory() as td:return engine.invoke(operation,payload,inputs,Path(td)/'result')
 
 
-def build(engine,samples,labels,definitions,destination,inline_roles):
+def build(engine,samples,labels,definitions,destination,inline_roles,span_grammar=False):
     with tempfile.TemporaryDirectory() as td:
         base=Path(td);copies=base/'samples';copies.mkdir()
         for i,sample in enumerate(samples):shutil.copytree(sample['extracted'],copies/str(i))
-        payload={'samples':[{k:s[k] for k in ('content','semantics')} for s in samples],'labels':labels,'definitions':definitions,'inline_roles':inline_roles}
+        payload={'samples':[{k:s[k] for k in ('content','semantics')} for s in samples],
+                 'labels':labels,'definitions':definitions,'inline_roles':inline_roles,
+                 'span_grammar':span_grammar}
         value=engine.invoke('build',payload,{'samples':copies},base/'result')
         shutil.copytree(base/'result/template',destination)
         return value['package'],value['conflicts']
@@ -58,7 +60,8 @@ def apply(engine,source,template,folder,config,caller):
         inline_repair={'status':'not_needed','model_invocations':0}
         first_meta=None
         try:
-            response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles')),
+            response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles'),
+                                                  package.get('inline_role_contexts')),
                                  folder/'student',validate=validate)
             first_meta=meta
         except DocumentError as first_error:

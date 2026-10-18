@@ -1,0 +1,144 @@
+{
+  "schema": "synthetic-span-grammar-ground-truth-037",
+  "license": "CC0-1.0",
+  "family": "synthetic-span-grammar-037",
+  "document_defaults": {
+    "font": "Times New Roman",
+    "size_pt": 11,
+    "line_spacing": 1.25,
+    "section_cm": {
+      "page_width": 21,
+      "page_height": 29.7,
+      "left": 2.6,
+      "right": 2,
+      "top": 2,
+      "bottom": 2
+    }
+  },
+  "paragraph_roles": {
+    "title": {
+      "alignment": "center",
+      "font_size_pt": 15,
+      "bold": true,
+      "first_line_cm": 0
+    },
+    "authors": {
+      "alignment": "center",
+      "font_size_pt": 10,
+      "first_line_cm": 0
+    },
+    "abstract_heading": {
+      "alignment": "left",
+      "font_size_pt": 11,
+      "bold": true,
+      "first_line_cm": 0
+    },
+    "abstract_body": {
+      "alignment": "justify",
+      "font_size_pt": 11,
+      "first_line_cm": 0
+    },
+    "keywords": {
+      "alignment": "left",
+      "font_size_pt": 10,
+      "first_line_cm": 0
+    },
+    "section_heading": {
+      "alignment": "left",
+      "font_size_pt": 12,
+      "bold": true,
+      "first_line_cm": 0
+    },
+    "body": {
+      "alignment": "justify",
+      "font_size_pt": 11,
+      "first_line_cm": 0.5
+    },
+    "definition": {
+      "alignment": "justify",
+      "font_size_pt": 11,
+      "first_line_cm": 0.5
+    },
+    "symbol_explanation": {
+      "alignment": "justify",
+      "font_size_pt": 11,
+      "first_line_cm": 0.5
+    },
+    "equation": {
+      "alignment": "center",
+      "font_size_pt": 11,
+      "first_line_cm": 0
+    },
+    "figure_container": {
+      "alignment": "center",
+      "font_size_pt": 11,
+      "first_line_cm": 0
+    },
+    "figure_caption": {
+      "alignment": "center",
+      "font_size_pt": 10,
+      "first_line_cm": 0
+    }
+  },
+  "inline_roles": {
+    "defined_term": {
+      "selector": "semantic definition marker, not token identity or input typography",
+      "font": "Times New Roman",
+      "bold": true,
+      "color": "17365D"
+    },
+    "latin_symbol": {
+      "selector": "explicit symbol role and Latin text class",
+      "font": "Courier New",
+      "bold": false,
+      "italic": false,
+      "color": "006B5B"
+    },
+    "caption_label": {
+      "selector": "caption label role",
+      "bold": true,
+      "color": "000000"
+    },
+    "plain": {
+      "selector": "all other text in its paragraph role"
+    }
+  },
+  "character_class_rules": [
+    {
+      "paragraph_role": "body",
+      "inline_role": "plain",
+      "unicode_class": "dash",
+      "selector": "every U+2014 em dash in ordinary body text",
+      "color": "9C562C",
+      "bold": false,
+      "italic": false
+    }
+  ],
+  "rule_hierarchy": [
+    "document defaults",
+    "paragraph role",
+    "inline role",
+    "Unicode class"
+  ],
+  "forbidden_predictors": [
+    "reference paragraph number",
+    "block ID",
+    "exact term spelling",
+    "corrupted input font",
+    "corrupted input size",
+    "corrupted input bold/italic",
+    "corrupted input color"
+  ],
+  "special_objects": {
+    "equation": "OMML opaque payload; preserve equations without rewriting",
+    "figure": "one authored PNG and a separate role-labelled caption"
+  },
+  "expected": {
+    "reference_count": 3,
+    "heldout_content_seen_during_fit": false,
+    "identical_resources_and_section": true,
+    "same_word_different_target_style_explained_by_inline_role": true,
+    "plain_semantic_span_contains_distinct_target_character_styles": true,
+    "negative_control_status": "unresolved; identical observable context has two target styles"
+  }
+}

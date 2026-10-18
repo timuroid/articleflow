@@ -12,7 +12,9 @@ def main():
         elif op=='features':value=rules023.features(p['content'],p['assignments'])
         elif op=='build':
             samples=[{**s,'extracted':Path('/work/samples')/str(i)} for i,s in enumerate(p['samples'])]
-            package,conflicts=agent023.build_package(samples,p['labels'],p['definitions'],out/'template',p.get('inline_roles'))
+            package,conflicts=agent023.build_package(
+                samples,p['labels'],p['definitions'],out/'template',p.get('inline_roles'),
+                span_grammar=p.get('span_grammar',False))
             value={'package':package,'conflicts':conflicts}
         elif op=='compile':
             from .leakage034 import compile_probe

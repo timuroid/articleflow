@@ -53,7 +53,8 @@ async function loadTemplates() {
     top.append(node('strong', '', item.name), node('span', `badge ${item.approved ? 'ready' : 'draft'}`, item.approved ? `Версия ${item.version} утверждена` : 'Требует проверки'));
     card.append(top);
     const count = item.spec.samples?.length || 0;
-    card.append(node('p', '', `${count} эталонных DOCX · ${Object.keys(item.spec.conflicts || {}).length} спорных ролей`));
+    const disputed = item.spec.external_import?.training_conflicts ?? Object.keys(item.spec.conflicts || {}).length;
+    card.append(node('p', '', `${count} эталонных DOCX · ${disputed} спорных правил`));
     card.append(button('Открыть шаблон', () => showTemplate(item.id)));
     list.append(card);
     if (item.approved) {
@@ -70,12 +71,86 @@ async function showTemplate(id) {
   target.hidden = false;
   target.replaceChildren(node('h3', '', `${item.name} · версия ${item.version}`));
   const spec = item.spec;
-  target.append(node('p', '', `Эталонов: ${spec.samples.length}. Сначала запустите проверку всех страниц. Спорные варианты оформления сохраняются для проверки.`));
+  target.append(node('p', '', spec.external_import
+    ? `Эталонов: ${spec.samples.length}. Внешняя разметка импортирована как черновик. Перенос на новые документы ещё не проверен.`
+    : `Эталонов: ${spec.samples.length}. Сначала запустите проверку всех страниц. Спорные варианты оформления сохраняются для проверки.`));
   const validation = node('div', 'review stack'); validation.setAttribute('aria-live','polite'); target.append(validation);
   const stageNames = {inventory:'Инвентаризация документа',compact_experiment:'Проверка профилей ролей',enrich_catalogue:'Сохранение полных свойств',catalogue_experiment:'Сравнение всех страниц',negative_controls:'Проверка обнаружения ошибок',production_roundtrip:'Проверка рабочего сборщика на исходном и очищенном тексте',finished:'Цикл завершён'};
   const statusNames = {passed:'Рабочий шаблон прошёл контроль',needs_review:'Шаблон не прошёл проверку',unavailable:'Проверка недоступна',interrupted:'Запуск прерван',queued:'В очереди',running:'Выполняется'};
   async function showRun(runId) {
     const run = await request(`/template-runs/${runId}`); const r=run.report;
+    if(r.schema==='external-semantic-import-037') {
+      validation.replaceChildren(node('strong','','Внешняя разметка: требуется проверка'));
+      validation.append(node('p','help',`Размечено ${r.paragraphs} абзацев в ${r.references.length} эталонах. Противоречий: ${r.training_conflicts}. Вызовов модели: ${r.model_calls}.`));
+      validation.append(node('p','help','Совпадение с эталонами и перенос на новый документ не подтверждены. Импорт сам по себе не делает шаблон доступным для пакетной обработки.'));
+      for(const q of r.questions||[]) validation.append(node('p','',`Вопрос о «${q.role}»: ${q.question}`));
+      if(r.conflicts?.length) {
+        const details=node('details');details.append(node('summary','',`Противоречивые правила (${r.conflicts.length})`));
+        for(const [index,conflict] of r.conflicts.entries()) {
+          const row=node('div','item');
+          const when=Object.entries(conflict.when||{}).map(([key,value])=>`${key}: ${value}`).join(', ');
+          row.append(node('strong','',`${index+1}. ${conflict.kind} · ${conflict.variants||'?'} варианта`));
+          if(when)row.append(node('p','help',when));
+          for(const example of conflict.examples||[]) {
+            const place=[example.document&&`эталон ${example.document}`,example.id&&`блок ${example.id}`,
+              example.range&&`символы ${example.range.join('–')}`].filter(Boolean).join(', ');
+            if(place)row.append(node('p','help',place));
+          }
+          details.append(row);
+        }
+        validation.append(details);
+      }
+      return;
+    }
+    if(r.schema==='external-import-test-037') {
+      const label={queued:'Пробное оформление в очереди',running:'Модель оформляет пробный DOCX',
+        needs_review:'Пробный документ готов к проверке',failed:'Пробное оформление не удалось'};
+      validation.replaceChildren(node('strong','',label[run.status]||run.status));
+      validation.append(node('p','help','Этот запуск проверяет один новый документ и не утверждает шаблон для пакетной обработки.'));
+      if(r.application_status)validation.append(node('p','',`Сборщик: ${r.application_status}. Неразрешённых мест: ${r.unresolved?.length||0}. Вызовов модели: ${r.model_invocations??'не подтверждено'}.`));
+      if(r.code)validation.append(node('p','error',`Причина остановки: ${r.code}`));
+      for(const issue of r.unresolved||[])validation.append(node('p','help',`${issue.code||issue.kind||'Неразрешённое место'}${issue.id?` · ${issue.id}`:''}`));
+      if(r.visual_diagnostics)validation.append(node('p','help',`Проверка всех страниц: ${r.visual_diagnostics.status}. Замечаний: ${r.visual_diagnostics.issues?.length||0}. Это не проверка соответствия новому содержимому шаблона.`));
+      if(r.result_available)for(const [kind,title] of [['docx','Скачать пробный DOCX'],['pdf','Открыть пробный PDF']]){
+        const link=node('a','button',title);link.href=`${api}/import-tests/${runId}/files/${kind}`;link.target='_blank';link.rel='noopener';validation.append(link);
+      }
+      if(['queued','running'].includes(run.status) && target.contains(validation))setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),2000);
+      return;
+    }
+    if(r.schema==='external-import-verification-037') {
+      const label={queued:'Проверка эталонов в очереди',running:'Сверяем восстановление эталонов',
+        needs_review:'Восстановление эталонов не прошло проверку',
+        reference_replay_passed:'Восстановление эталонов прошло проверку'};
+      validation.replaceChildren(node('strong','',label[run.status]||run.status));
+      validation.append(node('p','help','Проверяется воспроизведение очищенных эталонов: роли, внутритекстовые метки, свойства DOCX, все страницы и контрольные ошибки. Независимый новый документ этим не сертифицирован.'));
+      for(const sample of r.samples||[]) {
+        const pixels=sample.pixels?.pixel_exact===true?'все пиксели совпали':'совпадение не подтверждено';
+        const properties=sample.format?.property_exact===true?'OOXML-свойства совпали':'свойства не подтверждены';
+        validation.append(node('p',sample.passed?'success':'help',`Эталон ${sample.document}: роли ${sample.role_correct??'—'}/${sample.role_total??'—'}, внутритекстовые диапазоны ${sample.inline_correct??'—'}/${sample.inline_total??'—'}; ${properties}; ${pixels}. ${sample.code||''}`));
+      }
+      if(r.negative_controls?.length)validation.append(node('p','help',`Контрольных ошибок обнаружено: ${r.negative_controls.filter(c=>c.detected).length}/${r.negative_controls.length}.`));
+      if(r.code)validation.append(node('p','error',`Причина остановки: ${r.code}`));
+      if(run.status==='reference_replay_passed' && !item.approved) {
+        validation.append(node('p','help','Эталонные копии восстановлены точно в проверенном движке. Перенос на независимый документ остаётся непроверенным; утверждение — отдельное решение редактора.'));
+        const imported=(await request(`/template-runs/${spec.external_import.run_id}`)).report;
+        const answers={};
+        for(const q of imported.questions||[]) {
+          const label=node('label','',q.question),select=node('select');
+          for(const [value,title] of [['','Выберите ответ'],['yes','Блок обязателен'],['no','Блок необязателен']]){
+            const option=node('option','',title);option.value=value;select.append(option);
+          }
+          label.append(select);validation.append(label);answers[q.role]=select;
+        }
+        validation.append(button('Утвердить для пакетной обработки',async()=>{
+          if(Object.values(answers).some(select=>!select.value)){message('Ответьте на вопросы о блоках.',true);return;}
+          const chosen=Object.fromEntries(Object.entries(answers).map(([role,select])=>[role,select.value==='yes']));
+          const result=await request(`/templates/${id}/approve-import`,{method:'POST',body:JSON.stringify({run_id:runId,answers:chosen})});
+          await loadTemplates();await showTemplate(id);message(`Утверждена версия ${result.version}; перенос на независимые документы отдельно не измерен.`);
+        },'button primary'));
+      }
+      if(['queued','running'].includes(run.status) && target.contains(validation))setTimeout(()=>showRun(runId).catch(e=>message(e.message,true)),2000);
+      return;
+    }
     if(r.schema==='teacher-student-023') {
       const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
       validation.replaceChildren(node('strong','',names[run.status]||run.status));
@@ -233,6 +308,43 @@ async function showTemplate(id) {
       await request(`/templates/${id}/requirements`,{method:'POST',body:JSON.stringify({expected_version:item.version,answers:Object.fromEntries(Object.entries(answers).filter(([,s])=>s.value).map(([r,s])=>[r,s.value==='yes']))})});
       await loadTemplates();await showTemplate(id);message('Требования сохранены в новой версии шаблона.');
     }));target.append(details);return;
+  }
+  if(spec.external_import && !item.approved) {
+    const imported=spec.external_import;
+    if(runs[0]?.id!==imported.run_id)target.append(button('Показать исходный отчёт импорта',()=>showRun(imported.run_id)));
+    const latestTest=runs.find(row=>JSON.parse(row.report_json).schema==='external-import-test-037');
+    if(latestTest)target.append(button('Показать последнее пробное оформление',()=>showRun(latestTest.id)));
+    const latestVerification=runs.find(row=>JSON.parse(row.report_json).schema==='external-import-verification-037');
+    if(latestVerification)target.append(button('Показать проверку эталонов',()=>showRun(latestVerification.id)));
+    if(imported.training_conflicts)target.append(node('p','help','Пробное оформление заблокировано: сначала устраните противоречивые правила в семантической разметке и импортируйте новую версию.'));
+    else if(state.llm) {
+      const verify=node('div','review');verify.append(node('h4','','Проверить эталоны перед утверждением'));
+      verify.append(node('p','help','Малая модель получит очищенные копии всех эталонов. Система сравнит роли, выделения, точные свойства DOCX и все страницы, затем проверит обнаружение намеренных ошибок. Это несколько вызовов модели — по одному на эталон.'));
+      const verifyLabel=node('label'),verifyConsent=node('input');verifyConsent.type='checkbox';
+      verifyLabel.append(verifyConsent,document.createTextNode(' Разрешаю передать очищенные эталоны в OpenRouter'));verify.append(verifyLabel);
+      verify.append(button('Запустить проверку эталонов',async()=>{
+        if(!verifyConsent.checked){message('Для проверки нужно разрешить отправку эталонов.',true);return;}
+        await request(`/templates/${id}/verify-import`,{method:'POST',body:JSON.stringify({consent_external:true})});
+        await showTemplate(id);message('Проверка эталонов запущена. Утверждение станет доступно только после точного совпадения.');
+      },'button primary'));target.append(verify);
+      const form=node('form','review');
+      form.append(node('h4','','Проверить импорт на новом документе'));
+      const label=node('label','','Новый DOCX для пробного оформления');
+      const input=node('input');input.type='file';input.name='file';input.accept='.docx';input.required=true;label.append(input);form.append(label);
+      const consentLabel=node('label');const consent=node('input');consent.type='checkbox';consent.name='consent_external';consent.value='true';consent.required=true;
+      consentLabel.append(consent,document.createTextNode(' Разрешаю передать текст этого DOCX в OpenRouter'));form.append(consentLabel);
+      form.append(node('p','help','Один вызов малой модели без автоматического исправления ответа. Даже удачный результат останется черновиком.'));
+      const submit=node('button','button primary','Оформить пробный документ');submit.type='submit';form.append(submit);
+      form.addEventListener('submit',async event=>{
+        event.preventDefault();submit.disabled=true;
+        try {await request(`/templates/${id}/test-import`,{method:'POST',body:new FormData(form)});
+          message('Пробное оформление запущено. Проверьте результат и диагностику.');await showTemplate(id);
+        } catch(error){message(`Пробное оформление не запущено: ${error.message}`,true);}
+        finally{submit.disabled=false;}
+      });
+      target.append(form);
+    }
+    return;
   }
   if(runs[0] && JSON.parse(runs[0].report_json).schema==='teacher-student-023') return;
   if (item.approved && spec.extraction_validation?.status === 'passed' && spec.extraction_validation?.acceptance_contract === 'production-roundtrip-022-v1') {
@@ -442,6 +554,17 @@ $('template-form').addEventListener('submit', async (event) => {
     await showTemplate(result.id);
   } catch (error) { message(`Эталон не обработан: ${error.message}`, true); }
   finally { submit.disabled = false; }
+});
+$('semantic-import-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form=event.currentTarget;const submit=form.querySelector('button[type=submit]');
+  submit.disabled=true;
+  try {
+    const result=await request('/templates/import-semantic',{method:'POST',body:new FormData(form)});
+    form.reset();await loadTemplates();await showTemplate(result.id);
+    message(`Разметка импортирована как черновик. Противоречий: ${result.report.training_conflicts}. Проверьте вопросы и правила.`);
+  } catch(error) {message(`Импорт не выполнен: ${error.message}`,true);}
+  finally {submit.disabled=false;}
 });
 $('batch-form').addEventListener('submit', async (event) => {
   event.preventDefault();

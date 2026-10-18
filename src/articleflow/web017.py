@@ -10,6 +10,7 @@ import json
 import os
 import re
 import secrets
+import shutil
 import sqlite3
 import threading
 import uuid
@@ -28,6 +29,7 @@ from .structure017 import SLOTS, REQUIRED, compile_document, inspect_templates, 
 MAX_DOCX = 25 * 1024 * 1024
 MAX_BATCH = 200
 MAX_TEMPLATES = 10
+MAX_SEMANTIC_JSON = 2 * 1024 * 1024
 STATIC = Path(__file__).with_name("web_static017")
 
 
@@ -170,6 +172,28 @@ async def _save_upload(upload: UploadFile, path: Path, *, container_only=False):
         await upload.close()
 
 
+async def _save_semantic_json(upload: UploadFile, path: Path):
+    if not upload.filename or Path(upload.filename).suffix.lower() != ".json":
+        raise HTTPException(400, "TEACHER_JSON_FILENAME_REQUIRED")
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    size = 0
+    try:
+        with path.open("xb") as stream:
+            os.chmod(path, 0o600)
+            while chunk := await upload.read(1024 * 1024):
+                size += len(chunk)
+                if size > MAX_SEMANTIC_JSON:
+                    raise HTTPException(413, "TEACHER_JSON_TOO_LARGE")
+                stream.write(chunk)
+        if not size:
+            raise HTTPException(400, "EMPTY_TEACHER_JSON")
+    except Exception:
+        path.unlink(missing_ok=True)
+        raise
+    finally:
+        await upload.close()
+
+
 def _latest(store: Store, template_id: str) -> dict:
     return store.one("SELECT * FROM template_versions WHERE template_id=? ORDER BY version DESC LIMIT 1", (template_id,))
 
@@ -254,6 +278,12 @@ class Approval(BaseModel):
     selected: dict[str, str] = Field(default_factory=dict)
 
 
+class ImportApproval(BaseModel):
+    run_id: str
+    required_roles: list[str] = Field(default_factory=list)
+    answers: dict[str, bool] = Field(default_factory=dict)
+
+
 class ModelConsent(BaseModel):
     consent_external: bool = False
 
@@ -331,6 +361,300 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
         store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)", (run_id,template_id,1,"queued","{}",_now()))
         background.add_task(run_extraction,run_id)
         return {"id": template_id, "version": 1, "spec": spec, "extraction_run_id":run_id}
+
+    @app.post("/api/v017/templates/import-semantic", dependencies=[Depends(csrf)])
+    async def import_semantic(name: str = Form(...), files: list[UploadFile] = File(...),
+                              teacher_json: UploadFile = File(...), span_grammar: bool = Form(False)):
+        """Import an external candidate offline; publication still needs validation."""
+        if not 1 <= len(files) <= MAX_TEMPLATES or not 1 <= len(name.strip()) <= 120:
+            raise HTTPException(400, "TEMPLATE_INPUT_INVALID")
+        from .docx_engine import digest
+        from .import_semantic037 import import_semantic_template
+        template_id, run_id = _uid(), _uid()
+        template_root = store.path("templates", template_id)
+        run_root = store.path("template-runs", run_id)
+        references = []
+        try:
+            for index, upload in enumerate(files, 1):
+                _safe_name(upload.filename)
+                source = template_root / "samples" / f"{index}.docx"
+                await _save_upload(upload, source, container_only=True)
+                references.append(source)
+            candidate = template_root / "teacher.json"
+            await _save_semantic_json(teacher_json, candidate)
+            report = import_semantic_template(references, candidate, run_root / "import",
+                                              span_grammar=span_grammar)
+            package_root = run_root / "import" / "template"
+            spec = {
+                "samples": [{"sha256": digest(source.read_bytes())} for source in references],
+                "styles": {}, "variants": {}, "structure": {}, "pending_agent": True,
+                "external_import": {
+                    "run_id": run_id, "status": report["status"],
+                    "training_conflicts": report["training_conflicts"],
+                    "certification": report["certification"],
+                    "package_hashes": {part: digest((package_root / part).read_bytes())
+                                       for part in ("rules.json", "semantic.json", "resources.zip")},
+                },
+            }
+            with store.connect() as con:
+                con.execute("INSERT INTO templates VALUES (?,?,?)", (template_id, name.strip(), _now()))
+                con.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
+                            (template_id, 1, json.dumps(spec, ensure_ascii=False), 0, _now()))
+                con.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)",
+                            (run_id, template_id, 1, "needs_review",
+                             json.dumps(report, ensure_ascii=False), _now()))
+        except Exception as exc:
+            shutil.rmtree(template_root, ignore_errors=True)
+            shutil.rmtree(run_root, ignore_errors=True)
+            if isinstance(exc, DocumentError):
+                raise HTTPException(400, str(exc)) from exc
+            raise
+        return {"id": template_id, "version": 1, "approved": False,
+                "import_run_id": run_id, "report": report}
+
+    def run_import_test(run_id: str):
+        from .agent023 import apply
+        from .docx_engine import digest
+        from .documentcheck022 import audit_pdf
+        from .webagent023 import learning_model_configs
+        with store.batch_lock:
+            row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+            report = json.loads(row["report_json"])
+            report["status"] = "running"
+            store.execute("UPDATE template_runs SET status=?,report_json=? WHERE id=?",
+                          ("running", json.dumps(report, ensure_ascii=False), run_id))
+            try:
+                version = store.one("SELECT * FROM template_versions WHERE template_id=? AND version=?",
+                                    (row["template_id"], row["base_version"]))
+                spec = json.loads(version["spec_json"])
+                import_info = spec.get("external_import", {})
+                package_root = store.path("template-runs", import_info["run_id"], "import", "template")
+                expected = import_info["package_hashes"]
+                if set(expected) != {"rules.json", "semantic.json", "resources.zip"} or any(
+                    digest((package_root / part).read_bytes()) != sha for part, sha in expected.items()
+                ):
+                    raise DocumentError("IMPORTED_PACKAGE_CHANGED")
+                config = model_config()
+                if config is None:
+                    raise DocumentError("MODEL_NOT_PROVISIONED")
+                _, student = learning_model_configs(config)
+                # A preview spends at most one student call. A failed inline
+                # response remains an explicit error instead of a hidden retry.
+                student["inline_repair_attempts"] = 0
+                run_root = store.path("template-runs", run_id)
+                source = run_root / "source.docx"
+                application = run_root / "application"
+                report["student_call_attempted"] = True
+                result = apply(source, package_root, application, student)
+                report.update(application_status=result["status"],
+                              unresolved=result.get("unresolved", []),
+                              model_invocations=result.get("model_invocations", 1),
+                              strict_one_pass_eligible=result.get("strict_one_pass_eligible", False),
+                              structure_moves=result.get("structure_moves", []))
+                output = application / "result.docx"
+                pdf = Path(result["pdf"]) if result.get("pdf") else None
+                if result["status"] == "rendered_unverified" and output.is_file() and pdf and pdf.is_file() and pdf.resolve().is_relative_to(application.resolve()):
+                    report["result_available"] = True
+                    report["pdf_relative"] = str(pdf.resolve().relative_to(run_root.resolve()))
+                    try:
+                        report["visual_diagnostics"] = audit_pdf(pdf, output)
+                    except Exception:
+                        report["visual_diagnostics"] = {"status": "unavailable", "code": "VISUAL_CHECK_UNAVAILABLE"}
+                else:
+                    report["result_available"] = False
+                report["status"] = "needs_review"
+                report["certification"] = "single_preview_not_certification"
+            except Exception as exc:
+                report.update(status="failed", result_available=False,
+                              code=str(exc) if isinstance(exc, DocumentError) else "IMPORT_TEST_UNAVAILABLE")
+            store.execute("UPDATE template_runs SET status=?,report_json=? WHERE id=?",
+                          (report["status"], json.dumps(report, ensure_ascii=False), run_id))
+
+    @app.post("/api/v017/templates/{template_id}/test-import", dependencies=[Depends(csrf)])
+    async def test_import(template_id: str, background: BackgroundTasks,
+                          file: UploadFile = File(...), consent_external: bool = Form(False)):
+        if not consent_external or model_config() is None:
+            raise HTTPException(400, "MODEL_CONSENT_OR_CONFIG_REQUIRED")
+        version = _latest(store, template_id)
+        spec = json.loads(version["spec_json"])
+        info = spec.get("external_import")
+        if not info or version["approved"]:
+            raise HTTPException(409, "EXTERNAL_IMPORT_DRAFT_REQUIRED")
+        if info["training_conflicts"]:
+            raise HTTPException(409, "IMPORT_CONFLICTS_UNRESOLVED")
+        if store.all("SELECT id FROM template_runs WHERE template_id=? AND status IN ('queued','running')", (template_id,)):
+            raise HTTPException(409, "TEMPLATE_RUN_IN_PROGRESS")
+        _safe_name(file.filename)
+        run_id = _uid()
+        source = store.path("template-runs", run_id, "source.docx")
+        await _save_upload(file, source, container_only=True)
+        report = {"schema": "external-import-test-037", "status": "queued",
+                  "provenance": "external_candidate", "import_run_id": info["run_id"],
+                  "certification": "single_preview_not_certification",
+                  "result_available": False, "model_invocations": 0}
+        store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)",
+                      (run_id, template_id, version["version"], "queued",
+                       json.dumps(report, ensure_ascii=False), _now()))
+        background.add_task(run_import_test, run_id)
+        return {"id": run_id, "status": "queued", "approved": False}
+
+    @app.get("/api/v017/import-tests/{run_id}/files/{kind}")
+    def import_test_file(run_id: str, kind: str):
+        row = store.one("SELECT report_json FROM template_runs WHERE id=?", (run_id,))
+        report = json.loads(row["report_json"])
+        if report.get("schema") != "external-import-test-037" or not report.get("result_available"):
+            raise HTTPException(404, "IMPORT_TEST_FILE_UNAVAILABLE")
+        run_root = store.path("template-runs", run_id)
+        if kind == "docx":
+            path = run_root / "application" / "result.docx"
+            media = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            name = "articleflow-import-preview.docx"
+        elif kind == "pdf":
+            path = store.path("template-runs", run_id, report["pdf_relative"])
+            media, name = "application/pdf", "articleflow-import-preview.pdf"
+        else:
+            raise HTTPException(404, "IMPORT_TEST_FILE_UNAVAILABLE")
+        if not path.is_file():
+            raise HTTPException(404, "IMPORT_TEST_FILE_UNAVAILABLE")
+        return FileResponse(path, media_type=media, filename=name)
+
+    def run_import_verification(run_id: str):
+        from .docx_engine import digest
+        from .webagent023 import learning_model_configs
+        from .webimport037 import verify_import
+        with store.batch_lock:
+            row = store.one("SELECT * FROM template_runs WHERE id=?", (run_id,))
+            initial = json.loads(row["report_json"])
+            def progress(value):
+                value = {**value, "import_run_id": initial["import_run_id"]}
+                store.execute("UPDATE template_runs SET status=?,report_json=? WHERE id=?",
+                              (value["status"], json.dumps(value, ensure_ascii=False), run_id))
+            progress({**initial, "status": "running"})
+            try:
+                version = store.one("SELECT * FROM template_versions WHERE template_id=? AND version=?",
+                                    (row["template_id"], row["base_version"]))
+                spec = json.loads(version["spec_json"])
+                info = spec["external_import"]
+                if info["training_conflicts"]:
+                    raise DocumentError("IMPORT_CONFLICTS_UNRESOLVED")
+                references = [store.path("templates", row["template_id"], "samples", f"{index}.docx")
+                              for index in range(1, len(spec["samples"]) + 1)]
+                imported_root = store.path("template-runs", info["run_id"], "import")
+                expected = info["package_hashes"]
+                if (set(expected) != {"rules.json", "semantic.json", "resources.zip"}
+                    or any(digest((imported_root / "template" / part).read_bytes()) != sha
+                           for part, sha in expected.items())):
+                    raise DocumentError("IMPORTED_PACKAGE_CHANGED")
+                config = model_config()
+                if config is None:
+                    raise DocumentError("MODEL_NOT_PROVISIONED")
+                _, student = learning_model_configs(config)
+                student["inline_repair_attempts"] = 0
+                result = verify_import(references,
+                                       store.path("templates", row["template_id"], "teacher.json"),
+                                       imported_root,
+                                       store.path("template-runs", run_id, "verification"),
+                                       student, progress=progress)
+                progress(result)
+            except Exception as exc:
+                progress({**initial, "status": "needs_review",
+                          "code": str(exc) if isinstance(exc, DocumentError)
+                          else "IMPORT_VERIFICATION_UNAVAILABLE"})
+
+    @app.post("/api/v017/templates/{template_id}/verify-import", dependencies=[Depends(csrf)])
+    def start_import_verification(template_id: str, body: ModelConsent,
+                                  background: BackgroundTasks):
+        if not body.consent_external or model_config() is None:
+            raise HTTPException(400, "MODEL_CONSENT_OR_CONFIG_REQUIRED")
+        version = _latest(store, template_id)
+        spec = json.loads(version["spec_json"])
+        info = spec.get("external_import")
+        if not info or version["approved"]:
+            raise HTTPException(409, "EXTERNAL_IMPORT_DRAFT_REQUIRED")
+        if info["training_conflicts"]:
+            raise HTTPException(409, "IMPORT_CONFLICTS_UNRESOLVED")
+        if store.all("SELECT id FROM template_runs WHERE template_id=? AND status IN ('queued','running')", (template_id,)):
+            raise HTTPException(409, "TEMPLATE_RUN_IN_PROGRESS")
+        run_id = _uid()
+        report = {"schema": "external-import-verification-037", "status": "queued",
+                  "import_run_id": info["run_id"], "approved": False,
+                  "held_out_transfer": "not_measured", "model_invocations": 0}
+        store.execute("INSERT INTO template_runs VALUES (?,?,?,?,?,?)",
+                      (run_id, template_id, version["version"], "queued",
+                       json.dumps(report, ensure_ascii=False), _now()))
+        background.add_task(run_import_verification, run_id)
+        return {"id": run_id, "status": "queued", "approved": False}
+
+    @app.post("/api/v017/templates/{template_id}/approve-import", dependencies=[Depends(csrf)])
+    def approve_import(template_id: str, body: ImportApproval):
+        from .docx_engine import digest
+        version = _latest(store, template_id)
+        spec = json.loads(version["spec_json"])
+        info = spec.get("external_import")
+        if not info or version["approved"] or info["training_conflicts"]:
+            raise HTTPException(409, "EXTERNAL_IMPORT_DRAFT_REQUIRED")
+        row = store.one("SELECT * FROM template_runs WHERE id=? AND template_id=?",
+                        (body.run_id, template_id))
+        report = json.loads(row["report_json"])
+        flags = report.get("certification", {})
+        if (row["base_version"] != version["version"] or row["status"] != "reference_replay_passed"
+            or report.get("schema") != "external-import-verification-037"
+            or report.get("import_run_id") != info["run_id"]
+            or report.get("held_out_transfer") != "not_measured"
+            or not all(flags.get(name) is True for name in (
+                "neutralized_references_exact", "format_properties_exact",
+                "negative_controls_detected"))
+            or len(report.get("samples", [])) != len(spec["samples"])
+            or not all(sample.get("passed") is True and
+                sample.get("inline_exact") is True and
+                sample.get("role_correct") == sample.get("role_total") and
+                sample.get("role_total", 0) > 0 for sample in report["samples"])
+            or not report.get("negative_controls") or not all(
+                control.get("detected") is True for control in report["negative_controls"])
+            or any(not {"font", "page_geometry", "scientific_content_change"} <=
+                   {control.get("kind") for control in report["negative_controls"]
+                    if control.get("document") == number}
+                   for number in range(1, len(spec["samples"]) + 1))):
+            raise HTTPException(409, "IMPORT_VERIFICATION_REQUIRED")
+        references = [store.path("templates", template_id, "samples", f"{index}.docx")
+                      for index in range(1, len(spec["samples"]) + 1)]
+        candidate = store.path("templates", template_id, "teacher.json")
+        package_root = store.path("template-runs", info["run_id"], "import", "template")
+        if ([digest(path.read_bytes()) for path in references] != report.get("source_hashes")
+            or [digest(path.read_bytes()) for path in references] !=
+                [sample["sha256"] for sample in spec["samples"]]
+            or digest(candidate.read_bytes()) != report.get("teacher_json_sha256")
+            or any(digest((package_root / part).read_bytes()) != sha
+                   for part, sha in info["package_hashes"].items())
+            or info["package_hashes"] != report.get("package_hashes")):
+            raise HTTPException(409, "IMPORT_EVIDENCE_CHANGED")
+        package = json.loads((package_root / "semantic.json").read_text())
+        roles = set(package["roles"])
+        questions = json.loads(candidate.read_text())["questions"]
+        if not set(body.required_roles) <= roles or not set(body.answers) <= roles:
+            raise HTTPException(400, "REQUIRED_ROLE_INVALID")
+        if any(question["role"] not in body.answers for question in questions):
+            raise HTTPException(409, "IMPORT_QUESTIONS_UNANSWERED")
+        required = sorted((set(body.required_roles) |
+                           {role for role, value in body.answers.items() if value}) -
+                          {role for role, value in body.answers.items() if not value})
+        spec["agent023"] = {
+            "run_id": info["run_id"], "iteration": 0, "contract": "external-import-037",
+            "engine_profile": None, "mode": "assisted", "package_hashes": info["package_hashes"],
+            "required_roles": required, "answers": body.answers, "roles": package["roles"],
+            "student_model": report["student_model"], "verification": "reference_verified",
+            "held_out_transfer": "not_measured", "verification_run_id": body.run_id,
+        }
+        with store.connect() as con:
+            con.execute("BEGIN IMMEDIATE")
+            current = con.execute("SELECT MAX(version) FROM template_versions WHERE template_id=?",
+                                  (template_id,)).fetchone()[0]
+            if current != version["version"]:
+                raise HTTPException(409, "TEMPLATE_VERSION_CHANGED")
+            con.execute("INSERT INTO template_versions VALUES (?,?,?,?,?)",
+                        (template_id, current + 1, json.dumps(spec, ensure_ascii=False), 1, _now()))
+        return {"template_id": template_id, "version": version["version"] + 1,
+                "approved": True, "held_out_transfer": "not_measured"}
 
     @app.get("/api/v017/templates/{template_id}")
     def template(template_id: str):
@@ -464,6 +788,8 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
     def approve(template_id: str, body: Approval):
         version = _latest(store, template_id)
         spec = json.loads(version["spec_json"])
+        if spec.get("external_import") and not spec.get("agent023"):
+            raise HTTPException(409, "EXTERNAL_IMPORT_REQUIRES_VALIDATION")
         selected = {}
         for role, variants in spec["variants"].items():
             choice = body.selected.get(role) or (next(iter(variants)) if len(variants) == 1 else None)

@@ -11,10 +11,13 @@ from .docx_engine import DocumentError, NS, load_package, parse_xml, write_packa
 
 def fit(samples):
     sequences = []
+    indexed = []
     for content, assignments in samples:
         blocks = {b['id']: b for b in content['blocks']}
+        structure = content['structure']
+        indexed.append((structure, blocks, assignments))
         sequence = []
-        for node in content['structure']:
+        for node in structure:
             if node['kind'] != 'paragraph':
                 sequence.append(None)
                 continue
@@ -25,8 +28,42 @@ def fit(samples):
             if not sequence or sequence[-1] != role:
                 sequence.append(role)
         sequences.append(sequence)
-    # A role that recurs in any reference cannot be globally sorted (e.g. headings).
+    # Repeated roles cannot be globally sorted. A single object/caption pair
+    # inside recurring content may also repeat in a new document. Infer that
+    # local scope only when already-recurrent roles bracket the object cluster
+    # and its immediately following text. A cover logo before the title has no
+    # such evidence; its title must retain document-wide precedence rules.
     recurrent = {r for seq in sequences for r, n in Counter(seq).items() if n > 1}
+    object_scoped = set()
+    for structure, blocks, assignments in indexed:
+        def standalone_object(node):
+            if node['kind'] != 'paragraph':
+                return False
+            block = blocks[node['id']]
+            return (not block['text'].strip() and
+                    any(atom['kind'] in {'drawing', 'math'} for atom in block['atoms']))
+        def recurrent_nearby(index, direction):
+            while 0 <= index < len(structure) and structure[index]['kind'] == 'paragraph':
+                if assignments[structure[index]['id']] in recurrent:
+                    return True
+                index += direction
+            return False
+        i = 0
+        while i < len(structure):
+            if not standalone_object(structure[i]):
+                i += 1
+                continue
+            end = i + 1
+            while end < len(structure) and standalone_object(structure[end]):
+                end += 1
+            following = structure[end] if end < len(structure) else None
+            if (following is not None and following['kind'] == 'paragraph' and
+                    blocks[following['id']]['text'].strip() and
+                    recurrent_nearby(i - 1, -1) and recurrent_nearby(end + 1, 1)):
+                object_scoped.update(assignments[structure[j]['id']] for j in range(i, end))
+                object_scoped.add(assignments[following['id']])
+            i = end
+    recurrent |= object_scoped
     evidence = {}
     for seq in sequences:
         seq = [r for r in seq if r is not None and r not in recurrent]

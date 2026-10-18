@@ -8,7 +8,7 @@ from pathlib import Path
 from .catalogue import extract_catalogue, render_catalogue, placement_fingerprint
 from .docx_engine import NS, DocumentError, digest, dump, load_package, parse_xml, content_fingerprint
 from . import rules023 as rules
-from .semantic023 import expand_groups, teacher_messages, student_messages
+from .semantic023 import expand_groups, teacher_messages, student_messages, observed_inline_contexts
 from .provider023 import call
 from .research import render_pdf
 from .templateagent022 import compare_all
@@ -61,13 +61,22 @@ def relabel(extracted, labels, definitions):
     return template,plan
 
 
-def build_package(samples,labels,definitions,destination,inline_roles=None):
+def build_package(samples,labels,definitions,destination,inline_roles=None,*,span_grammar=False):
+    if type(span_grammar) is not bool:raise DocumentError('SPAN_GRAMMAR_MODE')
     from .sandbox034 import ACTIVE
     if ACTIVE.get():
         from .engine034 import build
-        return build(ACTIVE.get(),samples,labels,definitions,destination,inline_roles)
+        package,conflicts=build(ACTIVE.get(),samples,labels,definitions,destination,
+                                inline_roles,span_grammar)
+        # The candidate engine compiles formatting rules; the trusted
+        # supervisor derives the student-only context hint from frozen labels.
+        contexts=observed_inline_contexts(samples,labels,inline_roles)
+        if contexts is not None:
+            package['inline_role_contexts']=contexts
+            dump(destination/'semantic.json',package)
+        return package,conflicts
     destination.mkdir(parents=True,exist_ok=False)
-    merged=None;examples=[];sections=set();observed_top=set();spacer_samples=[]
+    merged=None;examples=[];span_examples=[];sections=set();observed_top=set();spacer_samples=[]
     for document,(sample,assignment) in enumerate(zip(samples,labels),1):
         template,plan=relabel(sample['extracted'],assignment,definitions)
         if merged is None:
@@ -80,13 +89,21 @@ def build_package(samples,labels,definitions,destination,inline_roles=None):
             for role,props in template['roles'].items():
                 for group in ('paragraph_styles','character_styles'):
                     merged['roles'][role][group]=sorted(set(merged['roles'][role][group]+props[group]))
-        examples.extend({**r,'document':document} for r in rules.training_examples(sample['content'],plan,sample['semantics']))
+        examples.extend({**r,'document':document} for r in rules.training_examples(sample['content'],plan,sample['semantics'])
+                        if not span_grammar or r['kind']!='character')
+        if span_grammar:
+            span_examples.extend({**r,'document':document} for r in rules.span_grammar_examples(
+                sample['content'],plan,assignment,sample['semantics']))
         f=rules.features(sample['content'],assignment)['paragraph']
         observed_top.update(assignment[b['id']] for b in sample['content']['blocks'] if b['text'].strip() and f[b['id']]['depth']==0)
         sections.add(plan['section_style'])
         spacer_samples.append((sample['content'],plan))
     if len(sections)!=1:raise DocumentError('SECTION_RULE_AMBIGUOUS')
     fitted,conflicts=rules.fit(examples)
+    grammar=None
+    if span_grammar:
+        grammar,span_conflicts=rules.fit_span_grammar(span_examples)
+        conflicts.extend(span_conflicts)
     from .diagnostics024 import explain
     conflicts=explain(conflicts,merged)
     from .spacers023 import fit as fit_spacers
@@ -104,6 +121,9 @@ def build_package(samples,labels,definitions,destination,inline_roles=None):
     if contracts and any(c!=contracts[0] for c in contracts):raise DocumentError('MULTI_REFERENCE_STORY_BINDING_CONFLICT')
     if contracts:package['story_contract']=contracts[0]
     if inline_roles:package['inline_roles']=inline_roles
+    contexts=observed_inline_contexts(samples,labels,inline_roles)
+    if contexts is not None:package['inline_role_contexts']=contexts
+    if grammar is not None:package['span_grammar']=grammar
     dump(destination/'rules.json',merged);dump(destination/'semantic.json',package)
     return package,conflicts
 
@@ -144,7 +164,8 @@ def apply(source,template_dir,folder,config,*,caller=call):
     inline_repair={'status':'not_needed','model_invocations':0}
     first_meta=None
     try:
-        response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles')),folder/'student',
+        response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles'),
+                                              package.get('inline_role_contexts')),folder/'student',
                              validate=validate_response)
         first_meta=meta
     except DocumentError as first_error:
@@ -245,6 +266,8 @@ def application_passed(public,trial):
 
 def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None,feedback_provider=None,acceptance_probe=None,adaptive=False):
     if not 1<=max_iterations<=(8 if adaptive else 5) or not 1<=len(references)<=10:raise DocumentError('AGENT_LIMIT')
+    span_grammar=teacher.get('span_grammar',False)
+    if type(span_grammar) is not bool:raise DocumentError('SPAN_GRAMMAR_MODE')
     folder.mkdir(parents=True,exist_ok=False)
     report={'schema':'teacher-student-023','status':'running','iterations':[],
             'training_documents':len(references),'student_model':student['model'],'teacher_model':teacher['model'],
@@ -348,7 +371,8 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             for i,sample in enumerate(samples):
                 marks={b['id']:inline[f'{i}:{b["id"]}'] for b in sample['content']['blocks']}
                 iteration_samples.append({**sample,'semantics':overlay(sample['semantics'],marks) if response.get('inline_roles') else sample['semantics']})
-            package,conflicts=build_package(iteration_samples,labels,response['roles'],work/'template',response.get('inline_roles'))
+            package,conflicts=build_package(iteration_samples,labels,response['roles'],work/'template',
+                                            response.get('inline_roles'),span_grammar=span_grammar)
             row['conflicting_groups']=len(conflicts);row['questions']=response['questions']
             if len(conflicts)<report.get('best_training_conflicts',float('inf')):
                 report['best_training_conflicts']=len(conflicts)

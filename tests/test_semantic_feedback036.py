@@ -12,6 +12,14 @@ from articleflow.semantic023 import compact_conflicts,teacher_messages,student_m
 
 
 class CompactConflictFeedbackTests(unittest.TestCase):
+    def test_teacher_separates_definition_act_from_repeated_mentions(self):
+        system=teacher_messages({'paragraphs':[],'catalogues':[]})[0]['content']
+        self.assertIn('assign a separate reusable paragraph role',system)
+        self.assertIn('explicit term definition or symbol explanation',system)
+        self.assertIn('merely mention the same term or symbol',system)
+        self.assertIn('repeated spelling elsewhere is not evidence',system)
+        self.assertIn('recognizable in unseen wording',system)
+
     def test_pages_cover_forty_conflicts_without_repeating_first_page(self):
         conflicts=[];groups=[]
         for index in range(40):

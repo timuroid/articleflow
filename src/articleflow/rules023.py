@@ -6,6 +6,7 @@ announced additional DOCX input (not pure-text reconstruction).
 """
 import copy
 import json
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -135,6 +136,137 @@ def training_examples(content, plan, semantics):
     return rows
 
 
+SPAN_GRAMMAR_SCHEMA='content-span-grammar-036'
+SPAN_GRAMMAR_FIELDS=('role','inline_role','character_class')
+
+
+def _character_class(char):
+    """A finite lexical class, never the character or source run style."""
+    if char.isspace():return 'space'
+    if char in '-‐‑‒–—−':return 'dash'
+    name=unicodedata.name(char,'')
+    if 'CYRILLIC' in name:return 'cyrillic'
+    if 'LATIN' in name:return 'latin'
+    if 'GREEK' in name:return 'greek'
+    if 'CJK UNIFIED IDEOGRAPH' in name:return 'han'
+    category=unicodedata.category(char)
+    if category.startswith('N'):return 'number'
+    if category.startswith('P'):return 'punctuation'
+    if category.startswith('S'):return 'symbol'
+    return 'other'
+
+
+def span_grammar_segments(content, assignments, semantics):
+    """Partition text using only content classes and predicted semantic marks.
+
+    Incoming run boundaries and their bold/italic/font/size/language properties
+    are deliberately discarded. ``semantics`` is read only for ``inline_role``;
+    adjacent pieces with the same role and lexical class merge back together.
+    """
+    result={}
+    for block in content['blocks']:
+        bid=block['id'];text=block['text'];segments=[];cursor=0
+        for source_span in semantics.get(bid,[]):
+            a,z=source_span['start'],source_span['end']
+            if a!=cursor or type(z)!=int or not a<z<=len(text):
+                raise DocumentError('SPAN_GRAMMAR_COVERAGE')
+            inline_role=source_span['features'].get('inline_role','plain')
+            if not isinstance(inline_role,str):raise DocumentError('SPAN_GRAMMAR_INLINE_ROLE')
+            for offset in range(a,z):
+                when={'role':assignments[bid],'inline_role':inline_role,
+                      'character_class':_character_class(text[offset])}
+                if segments and segments[-1]['end']==offset and segments[-1]['when']==when:
+                    segments[-1]['end']=offset+1
+                else:segments.append({'start':offset,'end':offset+1,'when':when})
+            cursor=z
+        if cursor!=len(text):raise DocumentError('SPAN_GRAMMAR_COVERAGE')
+        result[bid]=segments
+    return result
+
+
+def span_grammar_examples(content, plan, assignments, semantics):
+    """Observe target styles against the source-independent span partition."""
+    segments=span_grammar_segments(content,assignments,semantics)
+    rows=[]
+    for block in plan['blocks']:
+        bid=block['id'];targets=block['spans']
+        for segment in segments[bid]:
+            cursor=segment['start']
+            for target in targets:
+                a=max(cursor,target['start']);z=min(segment['end'],target['end'])
+                if a>=z:continue
+                if a!=cursor:raise DocumentError('SPAN_GRAMMAR_TARGET_COVERAGE')
+                rows.append({'kind':'character','when':segment['when'],
+                             'set':{'style':target['style']},'id':bid,'range':[a,z]})
+                cursor=z
+                if cursor==segment['end']:break
+            if cursor!=segment['end']:raise DocumentError('SPAN_GRAMMAR_TARGET_COVERAGE')
+    return rows
+
+
+def fit_span_grammar(examples):
+    """Learn only unanimous content selectors; contradictory targets abstain."""
+    groups=defaultdict(list)
+    for row in examples:
+        when=row['when']
+        if set(when)!=set(SPAN_GRAMMAR_FIELDS) or row.get('kind')!='character':
+            raise DocumentError('SPAN_GRAMMAR_EXAMPLE')
+        groups[key(when)].append(row)
+    rules=[];conflicts=[]
+    for selector,rows in sorted(groups.items()):
+        targets={key(row['set']) for row in rows}
+        when=json.loads(selector)
+        if len(targets)>1:
+            conflicts.append({'kind':'character','when':when,'variants':len(targets),
+                              'examples':[{k:row[k] for k in ('id','set','document','range') if k in row}
+                                          for row in rows[:30]],'span_grammar':True})
+        else:
+            rule={'when':when,'set':rows[0]['set'],'support':len(rows)}
+            rule['id']=digest(key(rule).encode())[:16]
+            rules.append(rule)
+    grammar={'schema':SPAN_GRAMMAR_SCHEMA,'status':'ambiguous' if conflicts else 'complete',
+             'selector_fields':list(SPAN_GRAMMAR_FIELDS),'source_typography_used':False,
+             'rules':rules,'unresolved_groups':len(conflicts)}
+    return grammar,conflicts
+
+
+def validate_span_grammar(grammar,template,package):
+    if not isinstance(grammar,dict) or set(grammar)!={
+            'schema','status','selector_fields','source_typography_used','rules','unresolved_groups'}:
+        raise DocumentError('SPAN_GRAMMAR_SCHEMA')
+    if (grammar['schema']!=SPAN_GRAMMAR_SCHEMA or grammar['status'] not in ('complete','ambiguous')
+            or grammar['selector_fields']!=list(SPAN_GRAMMAR_FIELDS)
+            or grammar['source_typography_used'] is not False
+            or not isinstance(grammar['rules'],list)
+            or type(grammar['unresolved_groups'])!=int or grammar['unresolved_groups']<0
+            or (grammar['status']=='complete')!=(grammar['unresolved_groups']==0)):
+        raise DocumentError('SPAN_GRAMMAR_SCHEMA')
+    if any(rule['kind']=='character' for rule in package['rules']):
+        raise DocumentError('SPAN_GRAMMAR_LEGACY_MIXED')
+    seen=set()
+    for rule in grammar['rules']:
+        if not isinstance(rule,dict) or set(rule)!={'when','set','support','id'}:
+            raise DocumentError('SPAN_GRAMMAR_RULE')
+        when=rule['when']
+        if not isinstance(when,dict) or set(when)!=set(SPAN_GRAMMAR_FIELDS):
+            raise DocumentError('SPAN_GRAMMAR_RULE')
+        if any(not isinstance(when[field],str) for field in SPAN_GRAMMAR_FIELDS):
+            raise DocumentError('SPAN_GRAMMAR_RULE')
+        if (when['role'] not in package['roles'] or when['inline_role'] not in
+                {'plain',*package.get('inline_roles',{})}
+                or when['character_class'] not in
+                {'space','dash','cyrillic','latin','greek','han','number','punctuation','symbol','other'}):
+            raise DocumentError('SPAN_GRAMMAR_RULE')
+        selector=key(when)
+        if selector in seen:raise DocumentError('SPAN_GRAMMAR_DUPLICATE')
+        seen.add(selector)
+        if (not isinstance(rule['set'],dict) or set(rule['set'])!={'style'}
+                or rule['set']['style'] not in template['styles']['character']
+                or type(rule['support'])!=int or rule['support']<1
+                or rule['id']!=digest(key({k:rule[k] for k in ('when','set','support')}).encode())[:16]):
+            raise DocumentError('SPAN_GRAMMAR_RULE')
+
+
 ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control','list_level','list_kind','field_commands','role_transition_language'}
 
 
@@ -207,6 +339,13 @@ def validate_rules(rules,template):
 
 def compile_plan(template,content,package,assignments,semantics,forced_empty=None):
     validate_rules(package['rules'],template)
+    grammar=package.get('span_grammar')
+    if grammar is not None:
+        validate_span_grammar(grammar,template,package)
+        if grammar['status']!='complete':
+            return None,[{'kind':'character','id':'template','code':'SPAN_GRAMMAR_AMBIGUOUS'}]
+        grammar_rules={key(rule['when']):rule['set'] for rule in grammar['rules']}
+        grammar_segments=span_grammar_segments(content,assignments,semantics)
     f=features(content,assignments);unresolved=[]
     def choose(kind,feat,item):
         matches=[r for r in package['rules'] if r['kind']==kind and all(feat.get(k)==v for k,v in r['when'].items())]
@@ -224,11 +363,21 @@ def compile_plan(template,content,package,assignments,semantics,forced_empty=Non
             target={'style':forced_empty[bid]}
         else:target=choose('paragraph',f['paragraph'][bid],bid)
         cursor=0
-        for s in semantics[bid]:
+        for s in grammar_segments[bid] if grammar is not None else semantics[bid]:
             if s['start']!=cursor or not s['start']<s['end']<=len(b['text']):raise DocumentError('SEMANTIC_SPAN_COVERAGE')
-            cursor=s['end'];pf=f['paragraph'][bid]
-            style=choose('character',{**pf,'script':pf['language'],**s['features']},bid)
-            if style:spans.append({'start':s['start'],'end':s['end'],'style':style['style']})
+            cursor=s['end']
+            if grammar is not None:
+                style=grammar_rules.get(key(s['when']))
+                if style is None:
+                    unresolved.append({'kind':'character','id':bid,'features':s['when'],
+                                       'code':'NO_SPAN_GRAMMAR_RULE'})
+            else:
+                pf=f['paragraph'][bid]
+                style=choose('character',{**pf,'script':pf['language'],**s['features']},bid)
+            if style:
+                if grammar is not None and spans and spans[-1]['end']==s['start'] and spans[-1]['style']==style['style']:
+                    spans[-1]['end']=s['end']
+                else:spans.append({'start':s['start'],'end':s['end'],'style':style['style']})
         if cursor!=len(b['text']):raise DocumentError('SEMANTIC_SPAN_COVERAGE')
         if target:blocks.append({'id':bid,'role':assignments[bid],'paragraph_style':target['style'],'spans':spans})
     for lid,feat in f['layout'].items():

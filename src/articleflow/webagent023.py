@@ -188,8 +188,11 @@ def process_job(store,job,batch,version,spec):
     settings=spec['agent023'];config=model_config()
     if not batch.get('use_llm') or config is None:raise DocumentError('AGENT_REQUIRES_MODEL_CONSENT')
     run_root=store.path('template-runs',settings['run_id'])
-    if settings.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/('engine-replay/learning' if settings.get('engine_learning_root')=='engine-replay/learning' else 'learning')
-    template=run_root/f'iteration-{settings["iteration"]}'/'template'
+    if settings.get('contract')=='external-import-037':
+        template=run_root/'import'/'template'
+    else:
+        if settings.get('contract') in {'adaptive-template-028','adaptive-template-032'}:run_root=run_root/('engine-replay/learning' if settings.get('engine_learning_root')=='engine-replay/learning' else 'learning')
+        template=run_root/f'iteration-{settings["iteration"]}'/'template'
     if any(digest((template/n).read_bytes())!=h for n,h in settings['package_hashes'].items()):raise DocumentError('PACKAGE_CHANGED')
     source=store.path('jobs',job['id'],'source.docx')
     from .sandbox034 import use
