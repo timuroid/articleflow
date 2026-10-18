@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/web017-recovery",
+  "runtime_commit": "0cb1bac07d8bad13cf0cb6c83a31c583bc90001e",
+  "release_sha256": "5352c95ad247846032b4dcbc62b62c26904d41c9feef3165e82cec02305006aa",
+  "activation": {
+    "commit": "0cb1bac07d8bad13cf0cb6c83a31c583bc90001e",
+    "release": "/opt/articleflow/releases/5352c95ad2478460",
+    "previous": "/opt/articleflow/releases/36777c968ab6339b",
+    "snapshot_sha256": "f705a730801a32f863d42b6bf814408e4f85b632dd7e19151880c94cc6916204",
+    "snapshot_files": 1382,
+    "preserved_counts": {
+      "jobs": 9,
+      "templates": 5,
+      "template_versions": 9,
+      "template_runs": 4,
+      "batches": 6,
+      "exports": 5
+    },
+    "sqlite_integrity": "ok",
+    "caddy_unchanged": true,
+    "ledger_unchanged": true,
+    "health": {
+      "status": "ok",
+      "web_version": "023",
+      "release": "0cb1bac07d8bad13cf0cb6c83a31c583bc90001e",
+      "mode": "model_available"
+    }
+  },
+  "https_acceptance": {
+    "expected_commit": "0cb1bac07d8bad13cf0cb6c83a31c583bc90001e",
+    "fresh_model_calls": 0,
+    "routes": {
+      "/": {
+        "unauthenticated": 401,
+        "authenticated": 200
+      },
+      "/templates": {
+        "unauthenticated": 401,
+        "authenticated": 200
+      },
+      "/documents": {
+        "unauthenticated": 401,
+        "authenticated": 200
+      },
+      "/history": {
+        "unauthenticated": 401,
+        "authenticated": 200
+      },
+      "/healthz": {
+        "unauthenticated": 401,
+        "authenticated": 200
+      }
+    },
+    "health": {
+      "status": "ok",
+      "web_version": "023",
+      "release": "0cb1bac07d8bad13cf0cb6c83a31c583bc90001e",
+      "mode": "model_available"
+    },
+    "fonts_exact": true,
+    "batch": {
+      "id": "a731e0819cca4fc88a7fe38f5a92c99f",
+      "jobs": [
+        {
+          "id": "68273b3085464a5087450cb35b8424de",
+          "status": "draft",
+          "docx_content_preserved": true,
+          "pdf_available": true,
+          "final_http": 409
+        },
+        {
+          "id": "64bb5808307b4b7bbec1a57031e9cf26",
+          "status": "draft",
+          "docx_content_preserved": true,
+          "pdf_available": true,
+          "final_http": 409
+        }
+      ],
+      "zip_manifest_count": 2,
+      "zip_ready_files": 0
+    },
+    "semantic_import": {
+      "template_id": "15bc1ec415c94b1e97a9b982618eed71",
+      "status": "draft_compiled",
+      "unverified_approval_http": 409,
+      "batch_before_approval_http": 409,
+      "verification_without_consent_http": 400
+    },
+    "tls": {
+      "version": "TLSv1.3",
+      "certificate_expires": "Jan 15 06:32:19 2027 GMT",
+      "verified": true,
+      "trust_store": "certifi"
+    }
+  },
+  "tests": {
+    "initial_local": {
+      "total": 285,
+      "errors": 2,
+      "failures": 1
+    },
+    "initial_server": {
+      "total": 285,
+      "errors": 3
+    },
+    "local_corrected_cases": {
+      "passed": 7
+    },
+    "server_corrected_cli_and_web": {
+      "passed": 20
+    },
+    "server_registry_fixture_check": {
+      "passed": 2
+    },
+    "server_bdd": {
+      "features": 3,
+      "scenarios": 41,
+      "steps": 152,
+      "failed": 0
+    }
+  },
+  "new_paid_calls": 0
+}
