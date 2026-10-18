@@ -20,6 +20,22 @@ class VisualTests(unittest.TestCase):
             self.assertFalse(r['all_pages_exact']);self.assertEqual(r['pages'][2]['reason'],'PAGE_MISSING')
             self.assertTrue((p/'out/0003-reference.png').exists())
             self.assertTrue((p/'out/0002-diff.png').exists())
+    def test_visual_model_only_changes_model_and_keeps_same_ledger(self):
+        with tempfile.TemporaryDirectory() as t:
+            p=Path(t);self.pdf(p/'a.pdf',['Reference']);self.pdf(p/'b.pdf',['Different'])
+            seen=[]
+            config={'model':'openai/gpt-6.1-sol','visual_model':'inclusionai/ling-3.0-flash-vl',
+                    'ledger':'shared-ledger','key_file':'shared-key','reasoning_effort':'low'}
+            def caller(model_config,messages,directory,**kwargs):
+                seen.append((dict(model_config),messages))
+                return {'observations':['different text']},{'api_attempts':0}
+            report=inspect(p/'a.pdf',p/'b.pdf',p/'out',config,caller)
+            self.assertEqual(len(seen),1)
+            self.assertEqual(seen[0][0]['model'],'inclusionai/ling-3.0-flash-vl')
+            for field in ('ledger','key_file','reasoning_effort'):
+                self.assertEqual(seen[0][0][field],config[field])
+            self.assertEqual(config['model'],'openai/gpt-6.1-sol')
+            self.assertFalse(report['all_pages_exact'])
     def test_timeout_is_not_consent(self):
         now=[0.];events=[];initial={'revision':0,'text':''}
         result,state=wait([{'question':'Required?'}],initial,lambda:initial,events.append,seconds=30,clock=lambda:now[0],wall=lambda:100,sleep=lambda n:now.__setitem__(0,now[0]+n))

@@ -79,7 +79,7 @@ async function showTemplate(id) {
     if(r.schema==='teacher-student-023') {
       const names={queued:'Обучение в очереди',running:'Агент обучает шаблон',reference_verified:'Совпадение на эталонах подтверждено',needs_review:'Нужна доработка',interrupted:'Обучение прервано',unavailable:'Обучение недоступно'};
       validation.replaceChildren(node('strong','',names[run.status]||run.status));
-      const stages={awaiting_optional_answer:'Можно уточнить требования; затем агент продолжит сам',engine_baseline:'Воспроизводим ошибку движка',engine_proposing_patch:'Готовим исправление сборщика',engine_testing_patch:'Проверяем исправление в изоляции',engine_rechecking:'Повторяем полный цикл с исправленным движком',provider_wait:'Модель временно недоступна. Повторяем запрос с сохранением шаблона',preflight:'Проверяем точную пересборку и адаптируем чтение',extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',stress_testing:'Проверяем изменённое оформление и порядок блоков',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
+      const stages={awaiting_optional_answer:'Можно уточнить требования; затем агент продолжит сам',engine_selecting_replay:'Выбираем лучшую проверенную попытку',engine_baseline:'Воспроизводим ошибку движка',engine_proposing_patch:'Готовим исправление сборщика',engine_testing_patch:'Проверяем исправление в изоляции',engine_rechecking:'Повторяем полный цикл с исправленным движком',provider_wait:'Модель временно недоступна. Повторяем запрос с сохранением шаблона',preflight:'Проверяем точную пересборку и адаптируем чтение',extracting:'Читаем структуру и оформление',teacher:'Создаём правила большой моделью',compiling:'Проверяем совместимость правил',student:'Восстанавливаем документ малой моделью',comparing:'Сравниваем все страницы',stress_testing:'Проверяем изменённое оформление и порядок блоков',negative_controls:'Проверяем обнаружение ошибок',finished:'Проверка завершена'};
       if(!r.engine_repair || r.engine_repair.status==='not_configured') Object.keys(stages).filter(k=>k.startsWith('engine_')).forEach(k=>delete stages[k]);
       const timeline=node('ol','pipeline');
       const current=Object.keys(stages).indexOf(r.stage==='finished' && run.status!=='reference_verified' ? r.last_stage : r.stage);
@@ -88,7 +88,9 @@ async function showTemplate(id) {
       if(r.engine_repair?.total_probes) validation.append(node('p','help',`Исправление движка: проверено ${r.engine_repair.completed_probes||0} из ${r.engine_repair.total_probes} случаев на текущем этапе.`));
       if(r.limits) validation.append(node('p','help',`Прошло ${Math.round((r.elapsed_seconds||0)/60)} мин. Проверяем эталоны и изменённые копии; результат появится после завершения проверок.`));
       for(const prep of r.preparation||[]) validation.append(node('p','help',`Эталон ${prep.document}: ${prep.status||'проверяется'}; попыток чтения ${prep.attempts.length}. ${prep.attempts.map(a=>a.code||a.status||'в работе').join(' → ')}`));
-      const latestQuestions=r.questions||r.iterations?.at(-1)?.questions||[];
+      const bestIteration=r.iterations?.find(row=>row.number===r.best_training_iteration);
+      const latestQuestions=r.questions||bestIteration?.questions||r.iterations?.at(-1)?.questions||[];
+      if(r.best_training_iteration && run.status!=='reference_verified') validation.append(node('p','help',`Лучшая проверенная разметка: итерация ${r.best_training_iteration}, конфликтов ${r.best_training_conflicts}. Неудачные поздние попытки сохранены в истории.`));
       if(r.question_window?.status==='waiting') validation.append(node('p','help',`Можно ответить в течение ${Math.max(0,Math.ceil(r.question_window.deadline_unix-Date.now()/1000))} с. Без ответа агент продолжит анализ; это не подтверждение требований.`));
       if(r.question_window?.status==='continued_without_answer') validation.append(node('p','help','Ответ не получен. Агент продолжил самостоятельно; требования не подтверждены.'));
       if(latestQuestions.length && run.status!=='reference_verified') {validation.append(node('h4','','Вопросы агента'));for(const q of latestQuestions) validation.append(node('p','',q.question));validation.append(node('p','help','Ответ можно передать как уточнение. После завершения цикла используйте повторную проверку ниже.'));}
@@ -135,13 +137,20 @@ async function showTemplate(id) {
         for(const test of iteration.stress||[]) validation.append(node('p',test.passed?'success':'help',`Проверка ${test.variant}, документ ${test.document}: ${test.passed?'совпало':test.code||test.status}.`));
         for(const [index,a] of iteration.applications.entries()) {
           const pixels=a.pixels;
-          validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: роли ${a.role_correct}/${a.role_total}. ${pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` : `Неоднозначных назначений: ${a.unresolved?.length||0}.`}`));
+          const outcome=a.status==='failed' ? `Ответ модели отклонён: ${a.code||'неверный формат'}. Сборка не выполнялась.` :
+            pixels ? `Совпали ${pixels.matched_page_diagnostics.filter(p=>p.pixel_exact).length}/${pixels.golden_pages} страниц.` :
+            `Неоднозначных назначений: ${a.unresolved?.length||0}.`;
+          const roles=Number.isInteger(a.role_correct)&&Number.isInteger(a.role_total) ? `роли ${a.role_correct}/${a.role_total}. ` : '';
+          validation.append(node('p',a.passed?'':'help',`Документ ${index+1}: ${roles}${outcome}`));
         }
       }
       for(let i=1;i<=(r.training_documents||0);i++) for(const [mode,label] of [['reference','Эталон'],['result','Результат']]) {
         const link=node('a','button',`${label} ${i} · PDF`);link.href=`${api}/template-runs/${runId}/agent-preview/${i}/${mode}`;link.target='_blank';link.rel='noopener';validation.append(link);
       }
-      if(r.code) validation.append(node('p','error',`Причина остановки: ${r.code}. История попыток сохранена.`));
+      if(r.code) {
+        const reasons={SEMANTIC_PLATEAU:'Повторная попытка не изменила назначения блоков и спорные правила. Нужен дополнительный эталон или уточнение условия выбора оформления.',TRAINING_CONFLICTS:'В эталоне есть варианты оформления, для которых пока нет однозначного правила.'};
+        validation.append(node('p','error',`Причина остановки: ${reasons[r.code]||r.code}. История попыток сохранена.`));
+      }
       if(r.publication_blocked) validation.append(node('p','error',`Шаблон не сохранён: ${r.publication_blocked}. Для неприменённого уточнения запустите новый цикл, указав его в дополнительных требованиях.`));
       if(run.status==='reference_verified' && !r.published_version && spec.agent023?.run_id!==runId) {
         validation.append(node('p','help','Проверено восстановление эталонов. Точное совпадение для любого нового текста этим не гарантируется.'));

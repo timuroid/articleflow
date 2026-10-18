@@ -144,6 +144,11 @@ def plan_document(blocks, style_keys, config, run_dir):
         state = json.loads(ledger.read_text())
         if state.get("read_only"):
             raise DocumentError("LEDGER_READ_ONLY")
+        # The older planner has no carry-over reserve accounting. A recovered
+        # epoch must only be spent through provider023 until this path supports
+        # its complete budget contract.
+        if state.get("schema") == "budget-recovery-036":
+            raise DocumentError("LEDGER_SCHEMA_UNSUPPORTED")
         balance = account(key)
         status, models = api(key, "models")
         if status != 200:

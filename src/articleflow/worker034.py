@@ -14,6 +14,10 @@ def main():
             samples=[{**s,'extracted':Path('/work/samples')/str(i)} for i,s in enumerate(p['samples'])]
             package,conflicts=agent023.build_package(samples,p['labels'],p['definitions'],out/'template',p.get('inline_roles'))
             value={'package':package,'conflicts':conflicts}
+        elif op=='compile':
+            from .leakage034 import compile_probe
+            value=compile_probe(Path('/work/source.docx'),Path('/work/template'),
+                                p['content'],p['semantics'],p['assignments'],p['marks'])
         elif op=='apply':
             # Rendering and quality assessment take place in the trusted supervisor.
             agent023.render_pdf=lambda *a:Path('/not-rendered')

@@ -68,15 +68,22 @@ def features(content, assignments):
         return [assignments[n['id']]] if n['kind']=='paragraph' else [r for c in n.get('children',[]) for r in roles(c)]
     def walk(nodes, depth=0, columns=0, column=0, band='outside', story_kind='body'):
         visible = [n for n in nodes if n['kind'] != 'marker']
+        role_run=None;transition_language='other';previous_nonempty_language='other'
         for i,n in enumerate(visible):
             kind=n['kind']
             f={'depth': depth, 'columns': columns, 'column': column, 'row_band': band, 'story_kind':story_kind}
             if kind=='paragraph':
+                current_role=assignments[n['id']]
+                if texts[n['id']].strip():
+                    if current_role!=role_run:
+                        transition_language=previous_nonempty_language
+                        role_run=current_role
+                    previous_nonempty_language=language(texts[n['id']])
                 f.update(role=assignments[n['id']],section_boundary=boundaries[n['id']], previous_kind=visible[i-1]['kind'] if i else 'START',
                          next_kind=visible[i+1]['kind'] if i+1<len(visible) else 'END',
                          previous_role=assignments.get(visible[i-1].get('id'),'OBJECT') if i else 'START',
                          next_role=assignments.get(visible[i+1].get('id'),'OBJECT') if i+1<len(visible) else 'END',
-                         language=language(texts[n['id']]))
+                         language=language(texts[n['id']]),role_transition_language=transition_language)
                 f.update(structural[n['id']])
                 result['paragraph'][n['id']]=f
             else:
@@ -113,7 +120,8 @@ def training_examples(content, plan, semantics):
         bid=b['id'];pf=f['paragraph'][bid]
         source=content_by_id[bid]
         if source['text'] or source['atoms'] or pf['depth'] or source.get('section_boundary') or pf['story_kind']!='body':
-            rows.append({'kind':'paragraph','when':pf,'set':{'style':b['paragraph_style']},'id':bid})
+            rows.append({'kind':'paragraph','when':pf,'set':{'style':b['paragraph_style']},'id':bid,
+                         'source_text_digest':digest(source['text'].encode())})
         for span in b['spans']:
             for semantic in semantics[bid]:
                 a=max(span['start'],semantic['start']);z=min(span['end'],semantic['end'])
@@ -127,7 +135,7 @@ def training_examples(content, plan, semantics):
     return rows
 
 
-ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control','list_level','list_kind','field_commands'}
+ALLOWED={'role','previous_kind','next_kind','previous_role','next_role','depth','columns','column','row_band','kind','roles','bold','italic','vertical','hyperlink','language','script','inline_role','section_boundary','story_kind','field_control','list_level','list_kind','field_commands','role_transition_language'}
 
 
 def fit(examples):
@@ -144,10 +152,26 @@ def fit(examples):
             buckets={condition:group}
             if len({key(r['set']) for r in group})>1:
                 buckets=defaultdict(list)
-                for r in group: buckets[key(r['when'])].append(r)
+                for r in group: buckets[key({k:v for k,v in r['when'].items() if k!='role_transition_language'})].append(r)
             for cond,items in sorted(buckets.items()):
                 targets={key(r['set']) for r in items}
                 if len(targets)>1:
+                    # This context feature is used only when it completely
+                    # explains an otherwise contradictory selector. Partial
+                    # splits increase rule count without making it safe.
+                    separated=defaultdict(list)
+                    for r in items:separated[key(r['when'])].append(r)
+                    # The strongest evidence for a context-dependent rule is
+                    # the *same* visible paragraph under two role transitions.
+                    # Different text examples alone cannot establish that
+                    # the transition, rather than their own content, matters.
+                    same_text=(kind=='paragraph' and all(r.get('source_text_digest') for r in items)
+                               and len({r['source_text_digest'] for r in items})==1)
+                    if same_text and len(separated)>1 and all(len({key(r['set']) for r in group})==1 for group in separated.values()):
+                        for exact,group in sorted(separated.items()):
+                            rule={'kind':kind,'when':json.loads(exact),'set':group[0]['set'],'support':len(group)}
+                            rule['id']=digest(key(rule).encode())[:16];rules.append(rule)
+                        continue
                     conflicts.append({'kind':kind,'when':json.loads(cond),'variants':len(targets),
                                       'examples':[{k:r[k] for k in ('id','set','document','range') if k in r} for r in items[:30]]})
                 else:

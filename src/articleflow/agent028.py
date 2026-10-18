@@ -49,6 +49,18 @@ def permute(source,target):
     return {'applied':False,'reason':'NO_SAFE_ADJACENT_BLOCKS'}
 
 
+STRESS_INTEGRITY_GATES=('section_boundaries_exact','content_exact',
+                        'placements_exact','nested_topology_exact',
+                        'protected_vertical_exact')
+
+
+def stress_application_passed(result,pixels,format_audit):
+    """A visually exact stress output must also preserve invisible bindings."""
+    return (pixels.get('pixel_exact') is True and
+            format_audit.get('property_exact') is True and
+            all(result.get(name) is True for name in STRESS_INTEGRITY_GATES))
+
+
 def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',feedback_provider=None,max_calls=40,seconds=1800,validation_sources=(),resume_from=None):
     folder=Path(folder);started=time.monotonic();calls=0;preparation=[];history=[];transport_events=[];latest={}
     original_hashes=[digest(p.read_bytes()) for p in references]
@@ -133,7 +145,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                             pixels=compare_pixels(sample['golden'],Path(result['pdf']));row['pixels']=pixels
                             from .format032 import audit
                             row['format']=audit(sample['source'],base/name/'result.docx')
-                            row['passed']=pixels['pixel_exact'] and result.get('content_exact',False) and row['format']['property_exact']
+                            row['integrity_failures']=[name for name in STRESS_INTEGRITY_GATES
+                                                       if result.get(name) is not True]
+                            row['passed']=stress_application_passed(result,pixels,row['format'])
                             if teacher.get('visual_review'):
                                 from .visual035 import inspect,summary
                                 row['visual']=summary(inspect(sample['golden'],Path(result['pdf']),base/name/'visual',teacher,bounded))

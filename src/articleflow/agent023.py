@@ -124,20 +124,69 @@ def apply(source,template_dir,folder,config,*,caller=call):
     dump(folder/'input-original.json',content)
     package=json.loads((template_dir/'semantic.json').read_text())
     template=json.loads((template_dir/'rules.json').read_text())
+    inline_repair_attempts=config.get('inline_repair_attempts',0)
+    if type(inline_repair_attempts) is not int or inline_repair_attempts not in (0,1):
+        raise DocumentError('INLINE_REPAIR_LIMIT')
     from .stories026 import binding_contract
     if package.get('story_contract') and binding_contract(load_package(source))!=package['story_contract']:
         raise DocumentError('STORY_BINDING_INCOMPATIBLE')
     from .inline026 import validate as validate_inline, overlay
+    captured={}
     def validate_response(response):
+        # provider023 records an invalid first answer but does not return it.
+        # Capture parsed JSON here solely for the bounded inline correction.
+        captured['response']=copy.deepcopy(response)
         if package.get('inline_roles') and (not isinstance(response,dict) or 'inline' not in response):raise DocumentError('INLINE_RESPONSE_REQUIRED')
         expand_groups(response,content['blocks'],package['roles'])
         validate_inline(response,content['blocks'],package.get('inline_roles',{}))
         return response
-    response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles')),folder/'student',
-                         validate=validate_response)
+    first_pass={'status':'valid','code':None}
+    inline_repair={'status':'not_needed','model_invocations':0}
+    first_meta=None
+    try:
+        response,meta=caller(config,student_messages(package['roles'],content,package.get('inline_roles')),folder/'student',
+                             validate=validate_response)
+        first_meta=meta
+    except DocumentError as first_error:
+        first_pass={'status':'invalid','code':str(first_error)}
+        first_meta=json.loads((folder/'student/meta.json').read_text()) if (folder/'student/meta.json').exists() else None
+        if not inline_repair_attempts or str(first_error) not in {
+                'INLINE_ANCHOR_NOT_FOUND','INLINE_ANCHOR_INVALID','INLINE_QUOTE_MISMATCH',
+                'INLINE_RANGE','INLINE_SCHEMA','INLINE_OVERLAP'} or 'response' not in captured:
+            raise
+        from .inline_repair036 import prepare,messages as repair_messages,merge
+        inline_repair={'status':'preparing','model_invocations':0,'first_pass_code':str(first_error)}
+        dump(folder/'inline-repair.json',inline_repair)
+        try:
+            context=prepare(captured['response'],content['blocks'],package.get('inline_roles',{}))
+            repair_prompt=repair_messages(context)
+            inline_repair.update(status='requesting',invalid_rows=len(context['invalid']),
+                                 frozen_rows=len(context['frozen']),model_invocations=1)
+            dump(folder/'inline-repair.json',inline_repair)
+            def validate_correction(candidate):
+                merge(context,candidate,package['roles'])
+                return candidate
+            repair_response,meta=caller(config,repair_prompt,folder/'student-inline-repair',
+                                        max_tokens=4096,validate=validate_correction)
+            # Validate again in the supervisor even when a custom caller ignores
+            # its validate callback. Neither groups nor good rows may change.
+            response=merge(context,repair_response,package['roles'])
+            inline_repair.update(status='repaired',model_invocations=1,
+                                 corrected_rows=len(context['invalid']))
+            dump(folder/'inline-repair.json',inline_repair)
+        except DocumentError as correction_error:
+            inline_repair.update(status='failed',code=str(correction_error),
+                                 model_invocations=inline_repair['model_invocations'])
+            dump(folder/'inline-repair.json',inline_repair)
+            raise
     assignments=expand_groups(response,content['blocks'],package['roles'])
     from .inline026 import validate as validate_inline, overlay
     inline=validate_inline(response,content['blocks'],package.get('inline_roles',{}))
+    # Persist the strictly validated effective answer before compilation or
+    # rendering. A repaired first pass has no student/validated.json because
+    # the provider rejected it, but managed repair still needs its real final
+    # labels and inline annotations for fixed-response replay.
+    dump(folder/'effective-student.json',response)
     semantics=rules.semantic_spans(source)
     if package.get('inline_roles'):semantics=overlay(semantics,inline)
     from .order024 import arrange, expected_source
@@ -148,7 +197,10 @@ def apply(source,template_dir,folder,config,*,caller=call):
     unresolved.extend(order_issues)
     if order_issues:plan=None
     report={'schema':'application-023','model':meta,'unresolved':unresolved,'status':'needs_review',
-            'assignments':assignments,'structure_moves':moves,'structure_permutation':permutation,'source_sha256':original_hash,'input_adapter':adapter}
+            'assignments':assignments,'structure_moves':moves,'structure_permutation':permutation,'source_sha256':original_hash,'input_adapter':adapter,
+            'first_pass':first_pass,'first_pass_model':first_meta,'inline_repair':inline_repair,
+            'model_invocations':1+inline_repair['model_invocations'],
+            'strict_one_pass_eligible':first_pass['status']=='valid'}
     if plan:
         dump(folder/'input/content/content.json',content)
         plan['template_sha256']=digest((template_dir/'rules.json').read_bytes())
@@ -176,6 +228,21 @@ def apply(source,template_dir,folder,config,*,caller=call):
     return report
 
 
+APPLICATION_INTEGRITY_GATES=('section_boundaries_exact','content_exact',
+                             'placements_exact','nested_topology_exact',
+                             'protected_vertical_exact')
+
+
+def application_passed(public,trial):
+    """Keep invisible DOCX structure and teacher labels in the acceptance gate."""
+    return (trial.get('status')=='rendered_unverified' and
+            public.get('role_correct')==public.get('role_total') and
+            public.get('role_total',0)>0 and
+            public.get('pixels',{}).get('pixel_exact') is True and
+            public.get('format',{}).get('property_exact') is True and
+            all(trial.get(name) is True for name in APPLICATION_INTEGRITY_GATES))
+
+
 def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progress=None,context='',resume_from=None,feedback_provider=None,acceptance_probe=None,adaptive=False):
     if not 1<=max_iterations<=(8 if adaptive else 5) or not 1<=len(references)<=10:raise DocumentError('AGENT_LIMIT')
     folder.mkdir(parents=True,exist_ok=False)
@@ -188,6 +255,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
         dump(folder/'result.json',report)
         if progress:progress(copy.deepcopy(report))
     samples=[];observations=[];allblocks=[];feedback=None;feedback_images=[];start=time.monotonic();teacher_output_limit=8000
+    last_conflicted_signature=None;last_conflict_fingerprint=None;conflict_history=[]
     report['stage']='extracting';emit()
     try:
         for i,source in enumerate(references):
@@ -229,10 +297,22 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
             report['feedback_revision_applied']=user_feedback['revision']
             report['stage']='teacher'
             row={'number':iteration+1,'teacher_output_limit':teacher_output_limit,'status':'running','applications':[],'started_seconds':time.monotonic()-start};report['iterations'].append(row);emit()
+            from .inline026 import align_unique_quotes
+            teacher_alignments=[]
+            def validate_teacher(answer):
+                normalized,fixes=align_unique_quotes(answer,allblocks)
+                expand_groups(normalized,allblocks)
+                teacher_alignments.extend(fixes)
+                return normalized
             try:
                 response,meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':user_feedback['text'],'paragraphs':observations,
                            'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher',max_tokens=teacher_output_limit,
-                           validate=lambda r:(expand_groups(r,allblocks) and r))
+                           validate=validate_teacher)
+                # Fake/offline callers may ignore validate. The supervisor
+                # applies the same strict normalization before compilation.
+                response,late_alignments=align_unique_quotes(response,allblocks)
+                teacher_alignments.extend(late_alignments)
+                expand_groups(response,allblocks)
             except DocumentError as exc:
                 recoverable={'MODEL_INCOMPLETE','QUESTION_SCHEMA','TEACHER_SCHEMA','ROLE_DEFINITION_INVALID','SEMANTIC_GROUP_INVALID','SEMANTIC_GROUP_COVERAGE','SEMANTIC_GROUP_OVERLAP','INLINE_ANCHOR_NOT_FOUND','INLINE_QUOTE_MISMATCH','INLINE_RANGE'}
                 if not adaptive or str(exc) not in recoverable:raise
@@ -249,12 +329,18 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     report.update(stage='awaiting_optional_answer',question_window=state,questions=question_evidence(response['questions'],samples,question_labels));emit()
                 latest,window=wait(response['questions'],user_feedback,feedback_provider,question_progress,seconds=min(30,teacher['question_wait_seconds']))
                 if latest['revision']>user_feedback['revision']:
-                    response,answer_meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':latest['text'],'paragraphs':observations,'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher-clarified',max_tokens=teacher_output_limit,validate=lambda r:(expand_groups(r,allblocks) and r))
+                    response,answer_meta=caller(teacher,teacher_messages({'user_context':context,'user_feedback':latest['text'],'paragraphs':observations,'catalogues':unique_catalogues},feedback,feedback_images),work/'teacher-clarified',max_tokens=teacher_output_limit,validate=validate_teacher)
+                    response,late_alignments=align_unique_quotes(response,allblocks)
+                    teacher_alignments.extend(late_alignments)
+                    expand_groups(response,allblocks)
                     # Keep the effective response discoverable by controlled compiler replay.
                     dump(work/'effective-teacher.json',response)
                     row['clarification_teacher']=answer_meta;report['feedback_revision_applied']=latest['revision']
+            from .semantic023 import compact_conflicts,semantic_signature
+            signature=semantic_signature(response,allblocks)
             report['stage']='compiling';emit()
-            row['teacher']=meta;expanded=expand_groups(response,allblocks)
+            row['teacher']=meta;row['teacher_quote_alignments']=teacher_alignments
+            expanded=expand_groups(response,allblocks)
             labels=[{b['id']:expanded[f'{i}:{b["id"]}'] for b in s['content']['blocks']} for i,s in enumerate(samples)]
             from .inline026 import validate as validate_inline, overlay
             inline=validate_inline(response,allblocks)
@@ -264,11 +350,74 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                 iteration_samples.append({**sample,'semantics':overlay(sample['semantics'],marks) if response.get('inline_roles') else sample['semantics']})
             package,conflicts=build_package(iteration_samples,labels,response['roles'],work/'template',response.get('inline_roles'))
             row['conflicting_groups']=len(conflicts);row['questions']=response['questions']
+            if len(conflicts)<report.get('best_training_conflicts',float('inf')):
+                report['best_training_conflicts']=len(conflicts)
+                report['best_training_iteration']=iteration+1
             row['conflict_properties']=sorted({p for c in conflicts for p in c.get('differing_properties',[])})
             from .diagnostics024 import evidence
             row['conflict_evidence']=evidence(conflicts,samples)
             emit()
+            # Role renaming can keep the old plateau detector from firing
+            # even while the same target-style contradiction survives. After
+            # three such observations, offer a small batch of concrete user
+            # questions. No answer is inferred from the timeout; unresolved
+            # training rules remain unpublished.
+            from .questions035 import conflict_signature,clarify
+            conflict_history.append({key for conflict in conflicts
+                                     if (key:=conflict_signature(conflict)) is not None})
+            if (adaptive and conflicts and not response['questions'] and not report.get('questions')
+                    and len(conflict_history)>=3):
+                persistent=set.intersection(*conflict_history[-3:])
+                derived=clarify(conflicts,row['conflict_evidence'],response['roles'],persistent)
+                if derived:
+                    row['derived_questions']=derived;report['questions']=derived;emit()
+                    if (feedback_provider and not report.get('question_window')
+                            and iteration+1<max_iterations and teacher.get('question_wait_seconds',0)>0):
+                        from .questions035 import wait
+                        def question_progress(state):
+                            report.update(stage='awaiting_optional_answer',question_window=state);emit()
+                        latest,window=wait(derived,user_feedback,feedback_provider,question_progress,
+                                           seconds=min(30,teacher['question_wait_seconds']))
+                        if latest['revision']>user_feedback['revision']:
+                            row['clarification_revision_received']=latest['revision']
+                        report['stage']='compiling';emit()
             dump(work/'training-conflicts.json',conflicts)
+            conflict_fingerprint=digest(rules.key([{'kind':c['kind'],'when':c.get('when'),
+                'variants':c.get('variants'),'targets':sorted({rules.key(e['set']) for e in c.get('examples',[])})}
+                for c in conflicts]).encode())
+            compact=compact_conflicts(conflicts,row['conflict_evidence'],expanded,page=iteration)
+            row['conflict_feedback_page']=compact['conflicts_page']
+            row['conflict_feedback_pages_total']=compact['conflicts_pages_total']
+            if (conflicts and adaptive and teacher.get('triage_conflicts') and
+                    signature==last_conflicted_signature and conflict_fingerprint==last_conflict_fingerprint and
+                    iteration>=compact['conflicts_pages_total']):
+                # The teacher may rephrase descriptions or regroup adjacent
+                # blocks. Stop only after every bounded conflict page was
+                # shown to a subsequent teacher response; otherwise later
+                # contrastive groups would never reach the model.
+                row.update(status='needs_review',code='SEMANTIC_PLATEAU',
+                           student_skipped='unchanged_training_plan',
+                           finished_seconds=time.monotonic()-start)
+                report['status']='needs_review';report['code']='SEMANTIC_PLATEAU'
+                emit();break
+            # A conflicting training package cannot yet reproduce the reference.
+            # Let the teacher refine its roles before paying the student and the
+            # visual model to evaluate a package that is already known to fail.
+            if conflicts and adaptive and teacher.get('triage_conflicts'):
+                row.update(status='needs_review',code='TRAINING_CONFLICTS',
+                           student_skipped='training_conflicts',
+                           finished_seconds=time.monotonic()-start)
+                involved={r for c in compact['conflicts'] for r in
+                          [c.get('when',{}).get('role'),*[e.get('assigned_role') for e in c['examples']]] if r in response['roles']}
+                feedback={**compact,'triage_phase':'training_conflicts',
+                          'previous_roles':{r:response['roles'][r][:300] for r in sorted(involved)[:12]},
+                          'previous_role_names':sorted(response['roles']),
+                          'previous_inline_roles':{r:d[:300] for r,d in list(sorted(response.get('inline_roles',{}).items()))[:12]},
+                          'instruction':'Descriptions alone cannot change these conflicts. Revise group role labels or inline ranges only where contrasting examples provide a semantic or structural cue. Preserve exact properties; keep indistinguishable variants unresolved and ask a critical question.'}
+                last_conflicted_signature=signature;last_conflict_fingerprint=conflict_fingerprint
+                dump(work/'feedback.json',feedback)
+                emit()
+                continue
             confusions=[]
             for i,sample in enumerate(samples):
                 # Render an actual degraded DOCX, not just a filtered prompt.
@@ -305,7 +454,9 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                     public['pixels']=compare_all(sample['golden'],Path(trial['pdf']),work/f'diff-{i+1}')
                     from .format032 import audit
                     public['format']=audit(sample['source'],work/f'application-{i+1}'/'result.docx')
-                public['passed']=bool(public.get('pixels',{}).get('pixel_exact')) and trial.get('content_exact',False) and trial.get('placements_exact',False) and public.get('format',{}).get('property_exact',False)
+                public['integrity_failures']=[name for name in APPLICATION_INTEGRITY_GATES
+                                              if trial.get(name) is not True]
+                public['passed']=application_passed(public,trial)
                 row['applications'].append(public);emit()
             success=not conflicts and all(a['passed'] for a in row['applications'])
             if success and acceptance_probe is not None:
@@ -320,7 +471,7 @@ def run(references,folder,teacher,student,*,max_iterations=3,caller=call,progres
                           {'pixel_exact':a.get('pixels',{}).get('pixel_exact'),
                            'unresolved_count':len(a.get('unresolved',[])),
                            'unresolved_examples':a.get('unresolved',[])[:12]} for a in row['applications']]
-            feedback={'conflicts':[{**c,'examples':c.get('examples',[])[:4]} for c in conflicts[:20]],
+            feedback={**compact,
                       'semantic_confusions':confusions[:40],'measurements':measurements,
                       'previous_roles':response['roles'],'previous_groups':response['groups'],
                       'previous_inline_roles':response.get('inline_roles',{}),'previous_inline':response.get('inline',[])}

@@ -6,11 +6,27 @@ from unittest.mock import patch
 from docx import Document
 from lxml import etree
 from articleflow.docx_engine import NS,load_package,write_package,parse_xml,xml_bytes,DocumentError
-from articleflow.agent028 import run,restyle,permute
+from articleflow.agent028 import run,restyle,permute,stress_application_passed
 from articleflow.adapters028 import normalize
 from articleflow.agent023 import extract_input
 
 class Agent028Tests(unittest.TestCase):
+    def test_stress_requires_invisible_document_bindings(self):
+        exact={'section_boundaries_exact':True,'content_exact':True,
+               'placements_exact':True,'nested_topology_exact':True,
+               'protected_vertical_exact':True}
+        pixels={'pixel_exact':True};format_audit={'property_exact':True}
+        self.assertTrue(stress_application_passed(exact,pixels,format_audit))
+        for gate in exact:
+            with self.subTest(gate=gate):
+                broken={**exact,gate:False}
+                self.assertFalse(stress_application_passed(broken,pixels,format_audit))
+        # A link/bookmark can be misplaced without changing visible pixels,
+        # text, or resolved font properties.
+        self.assertFalse(stress_application_passed(
+            {k:v for k,v in exact.items() if k!='placements_exact'},
+            pixels,format_audit))
+
     def test_adapter_only_removes_nonsemantic_markers(self):
         with tempfile.TemporaryDirectory() as td:
             base=Path(td);src=base/'original.docx';d=Document();d.add_paragraph('Title');d.add_paragraph('Text');d.save(src)

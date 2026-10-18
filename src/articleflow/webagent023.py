@@ -34,6 +34,16 @@ class RequirementAnswers(BaseModel):
     answers: dict[str,bool]
 
 
+def learning_model_configs(config):
+    teacher={**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),
+             'visual_model':config.get('visual_model') or 'inclusionai/ling-3.0-flash-vl',
+             'reasoning_effort':'low','visual_review':True,'triage_conflicts':True,
+             'question_wait_seconds':30}
+    student={**config,'model':config.get('student023','qwen/qwen3.8-27b'),
+             'reasoning_effort':'none','inline_repair_attempts':1}
+    return teacher,student
+
+
 def mount(app,store,csrf):
     from .web017 import _latest,_uid,_now,model_config
     store.execute('CREATE TABLE IF NOT EXISTS learning_feedback024 (run_id TEXT PRIMARY KEY, revision INTEGER NOT NULL, text TEXT NOT NULL)')
@@ -52,9 +62,9 @@ def mount(app,store,csrf):
             try:
                 config=model_config()
                 if config is None:raise DocumentError('MODEL_NOT_PROVISIONED')
+                teacher,student=learning_model_configs(config)
                 result=run(paths,store.path('template-runs',run_id),
-                       {**config,'model':config.get('teacher023','openai/gpt-6.1-sol'),'reasoning_effort':'low','visual_review':True,'question_wait_seconds':30},
-                       {**config,'model':config.get('student023','qwen/qwen3.8-27b'),'reasoning_effort':'none'},
+                       teacher,student,
                        context=context,max_iterations=iterations,progress=progress,feedback_provider=feedback,validation_sources=([store.path('jobs',validation_job_id,'source.docx')] if validation_job_id else []))
                 if result['status']=='reference_verified':
                     directory=Path(result['template'])
@@ -186,7 +196,8 @@ def process_job(store,job,batch,version,spec):
     from .managed034 import load_engine
     engine=load_engine(store.path('template-runs',settings['run_id']),settings['engine_profile']) if settings.get('engine_profile') else None
     with use(engine):
-        result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],'reasoning_effort':'none'})
+        result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],
+                                                            'reasoning_effort':'none','inline_repair_attempts':1})
     content=json.loads((folder/'application/input-original.json').read_text())
     present={result['assignments'][b['id']] for b in content['blocks'] if b['text'].strip()}
     missing=[r for r in settings['required_roles'] if r not in present]

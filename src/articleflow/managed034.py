@@ -17,12 +17,29 @@ def load_engine(root,profile):
     return engine
 
 
+def pick_replay_work(folder,count):
+    """Use the strongest completed training evidence, never just the last try."""
+    works=[folder/'learning'/f'iteration-{number}' for number in range(1,count+1)
+           if (folder/'learning'/f'iteration-{number}'/'teacher/validated.json').exists()]
+    student=[work for work in works if any(
+        (application/'effective-student.json').exists() or
+        (application/'student/validated.json').exists()
+        for application in work.glob('application-*') if application.is_dir())]
+    if student:return student[-1]
+    completed=[work for work in works if (work/'training-conflicts.json').exists()]
+    if completed:
+        return min(completed,key=lambda work:(len(json.loads((work/'training-conflicts.json').read_text())),
+                                              int(work.name.split('-')[-1])))
+    return works[-1] if works else None
+
+
 def collect(references,folder,result):
     from .semantic023 import expand_groups
     from .inline026 import validate,overlay
     from .rules023 import semantic_spans
-    count=len(result.get('iterations',[]));work=folder/'learning'/f'iteration-{count}'
-    if not (work/'teacher/validated.json').exists():
+    count=len(result.get('iterations',[]))
+    work=pick_replay_work(folder,count)
+    if work is None:
         cases=[]
         for i,reference in enumerate(references,1):
             normalized=folder/f'preparation-{i}/attempt-2/normalized.docx'
@@ -43,9 +60,19 @@ def collect(references,folder,result):
         candidates=[(work/f'application-{i}',work/f'degraded-{i}.docx','normal')]
         candidates += [(work/f'stress-{i}'/v,work/f'stress-{i}'/(v+'.docx'),v) for v in ['restyled','permuted']]
         for application,source,variant in candidates:
-            if not (application/'student/validated.json').exists():continue
+            effective=application/'effective-student.json'
+            response_path=effective if effective.exists() else application/'student/validated.json'
+            if not response_path.exists():continue
             cases.append({'id':f'document-{i}-{variant}','split':'development','source':source,'template':work/'template',
-                          'response':json.loads((application/'student/validated.json').read_text()),'golden':sample['source'],'training':training})
+                          'teacher_iteration':int(work.name.split('-')[-1]),
+                          'response':json.loads(response_path.read_text()),'golden':sample['source'],'training':training})
+    if not cases:
+        # A compiler conflict may prevent the first student call. Replay the
+        # frozen teacher labels against candidate extraction without inventing
+        # a student response or claiming that instance fidelity proves transfer.
+        cases.append({'id':'training-only','kind':'training','split':'development',
+                      'teacher_iteration':int(work.name.split('-')[-1]),
+                      'training':training,'goldens':list(references)})
     return cases
 
 
@@ -71,6 +98,9 @@ def run(references,folder,teacher,student,*,caller=call,progress=None,repair_ima
         cases=collect(references,folder,result)
         if not cases:
             result['engine_repair']={'status':'needs_review','code':'NO_REPLAYABLE_FAILURE'};emit();return result
+        if cases[0].get('teacher_iteration'):
+            result['repair_source_iteration']=cases[0]['teacher_iteration']
+            emit('engine_selecting_replay')
         from .probes034 import create
         # Independent corruption mechanism supplies diagnostic and sealed cases.
         # The proposal cannot choose either set or their expected outputs.

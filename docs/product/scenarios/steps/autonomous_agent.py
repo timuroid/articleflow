@@ -25,6 +25,44 @@ def limited(c):control('test_controller_stops_at_budget_and_does_not_certify');c
 @then('сохраняется причина остановки без сертификации')
 def verified(c):assert c.checked
 
+def triage_control(name):
+    path=Path(__file__).resolve().parents[4]/'tests/test_triage036.py'
+    spec=importlib.util.spec_from_file_location('triage036_contract_tests',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    import unittest
+    result=unittest.TestResult()
+    module.TriageTests(name).run(result)
+    assert result.wasSuccessful(),str(result.errors+result.failures)
+
+@given('компилятор обнаружил несовместимые свойства одного правила')
+def triage_setup(c):pass
+
+@when('включена предварительная проверка конфликтов шаблона')
+def triage_enabled(c):triage_control('test_conflict_triage_reuses_teacher_feedback_without_student');c.checked=True
+
+@then('агент возвращает конфликт большой модели и не вызывает малую')
+def triage_verified(c):assert c.checked
+
+def question_control(name):
+    path=Path(__file__).resolve().parents[4]/'tests/test_questions035.py'
+    spec=importlib.util.spec_from_file_location('questions035_contract_tests',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    import unittest
+    result=unittest.TestResult()
+    module.ConflictClarificationTests(name).run(result)
+    assert result.wasSuccessful(),str(result.errors+result.failures)
+
+@given('большая модель трижды оставила контраст без вопросов')
+def persistent_setup(c):pass
+
+@when('агент формирует вопрос о двух местах оформления')
+def persistent_question(c):
+    question_control('test_agent_waits_once_after_third_persistent_conflict_and_uses_answer')
+    c.checked=True
+
+@then('ответ передаётся следующей итерации без автоматического утверждения')
+def persistent_verified(c):assert c.checked
+
 def repair_control(name):
     path=Path(__file__).resolve().parents[4]/'tests/test_repair034.py'
     spec=importlib.util.spec_from_file_location('repair034_contract_tests',path)

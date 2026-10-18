@@ -4,6 +4,34 @@ import re
 from .docx_engine import DocumentError
 
 
+def align_unique_quotes(response, blocks, *, max_shift=2):
+    """Align a teacher's small offset error only to its exact unique quote.
+
+    This never changes the paragraph, role, quote or occurrence, and does not
+    infer a missing quote from similar text. Full validation still follows.
+    """
+    result=copy.deepcopy(response)
+    fixes=[]
+    if not isinstance(result,dict) or not isinstance(result.get('inline'),list):
+        return result,fixes
+    for index,row in enumerate(result['inline']):
+        if not isinstance(row,dict) or not {'paragraph','start','end','quote'}<=set(row):continue
+        number,start,end,quote=row['paragraph'],row['start'],row['end'],row['quote']
+        if type(number)!=int or not 1<=number<=len(blocks) or type(start)!=int or type(end)!=int or not isinstance(quote,str) or not quote:
+            continue
+        text=blocks[number-1]['text']
+        if text[start:end]==quote:continue
+        match=text.find(quote)
+        if match<0 or text.find(quote,match+1)>=0:continue
+        corrected_end=match+len(quote)
+        if abs(match-start)>max_shift or abs(corrected_end-end)>max_shift:continue
+        row['start']=match;row['end']=corrected_end
+        fixes.append({'inline_index':index,'paragraph':number,
+                      'start_before':start,'end_before':end,
+                      'start_after':match,'end_after':corrected_end})
+    return result,fixes
+
+
 def validate(response, blocks, definitions=None):
     if definitions is None:
         definitions=response.get('inline_roles',{})

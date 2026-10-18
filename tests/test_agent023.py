@@ -7,12 +7,25 @@ from unittest.mock import patch
 
 from docx import Document
 from docx.shared import Pt
-from articleflow.agent023 import extract_input, build_package
+from articleflow.agent023 import extract_input, build_package, application_passed, APPLICATION_INTEGRITY_GATES
 from articleflow.rules023 import semantic_spans, compile_plan, fit, validate_rules
 from articleflow.semantic023 import expand_groups, student_messages
 from articleflow.catalogue import render_catalogue
 from articleflow.docx_engine import DocumentError, content_fingerprint, digest
 from articleflow import provider023
+
+
+class StudentAcceptanceTests(unittest.TestCase):
+    def test_appearance_cannot_hide_wrong_role_or_invisible_structure(self):
+        trial={'status':'rendered_unverified',**{name:True for name in APPLICATION_INTEGRITY_GATES}}
+        public={'role_correct':3,'role_total':3,'pixels':{'pixel_exact':True},
+                'format':{'property_exact':True}}
+        self.assertTrue(application_passed(public,trial))
+        self.assertFalse(application_passed({**public,'role_correct':2},trial))
+        for gate in APPLICATION_INTEGRITY_GATES:
+            with self.subTest(gate=gate):
+                self.assertFalse(application_passed(public,{**trial,gate:False}))
+        self.assertFalse(application_passed(public,{**trial,'status':'needs_review'}))
 
 
 class SemanticRulesTests(unittest.TestCase):
