@@ -189,6 +189,7 @@ class WebSemanticImportTests(unittest.TestCase):
         self.assertEqual(len(applied), 1)
         self.assertEqual(applied[0][0].parts[-2:], ("import", "template"))
         self.assertEqual(applied[0][1]["model"], "offline-student")
+        self.assertEqual(applied[0][1]["inline_repair_attempts"], 0)
 
     def test_import_approval_rejects_package_tampering_after_replay(self):
         imported = self.upload(reference(), candidate(questions=False)).json()

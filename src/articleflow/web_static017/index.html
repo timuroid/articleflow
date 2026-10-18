@@ -19,7 +19,7 @@
     <section class="intro" aria-labelledby="page-title">
       <p class="eyebrow">Рабочее пространство редактора</p>
       <h1 id="page-title">От образца к проверяемому DOCX</h1>
-      <p>Сначала утвердите оформление по эталону. Затем загрузите документы и проверьте результат оформления. Неопределённые данные остаются черновиком с явными вопросами.</p>
+      <p>Подготовьте смысловую разметку эталонов в Codex, импортируйте её вместе с DOCX и проверьте оформление. После утверждения Qwen применит шаблон к новым документам.</p>
       <div class="notice" id="font-notice" role="status">Проверяем установленные шрифты…</div>
     </section>
 
@@ -28,8 +28,23 @@
     <div class="grid">
       <section class="panel template-panel" aria-labelledby="template-heading">
         <div class="panel-head"><span class="step">01</span><div><h2 id="template-heading">Шаблоны</h2><p>Один или несколько оформленных DOCX одного вида.</p></div></div>
-        <button type="button" class="button" id="create-template">Создать шаблон</button>
-        <form id="template-form">
+        <details class="review" id="semantic-import" open>
+          <summary>Импорт шаблона из Codex · основной режим</summary>
+          <p class="help">Подготовьте приватный <code>packet.json</code> и <code>codex-prompt.md</code> командой <code>PYTHONPATH=src python scripts/export_semantic_packet037.py ПАПКА ЭТАЛОНЫ.docx...</code>. Передайте оба файла и те же DOCX в Codex; сохраните ответ как <code>teacher.json</code>. Полная инструкция — <code>docs/tech/external-semantic-import-037.md</code>.</p>
+          <form id="semantic-import-form">
+            <label for="import-name">Название шаблона</label>
+            <input id="import-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
+            <label for="import-files">Эталонные DOCX в порядке разметки, до 10 файлов</label>
+            <input id="import-files" name="files" type="file" accept=".docx" multiple required>
+            <label for="import-json">Структурированная разметка Codex — teacher.json</label>
+            <input id="import-json" name="teacher_json" type="file" accept=".json,application/json" required>
+            <label><input type="checkbox" name="span_grammar" value="true"> Извлечь переносимые правила для выделений внутри абзацев</label>
+            <p class="help">Импорт выполняется локально, без вызова модели. Получится черновик: проверьте вопросы и противоречия, затем запустите проверку на эталонах и новом документе.</p>
+            <button type="submit" class="button primary">Импортировать черновик</button>
+          </form>
+        </details>
+        <button type="button" class="button" id="create-template" aria-expanded="false">Автоматическое извлечение · эксперимент</button>
+        <form id="template-form" hidden>
           <input type="hidden" name="agentic" value="true">
           <label for="template-name">Название шаблона</label>
           <input id="template-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
@@ -40,20 +55,6 @@
           <label><input type="checkbox" id="creation-consent"> Разрешаю обработку эталонов через OpenRouter и автоматическую проверку шаблона</label>
           <button type="submit" class="button primary">Создать и проверить</button>
         </form>
-        <details class="review" id="semantic-import">
-          <summary>Импортировать разметку, подготовленную вне приложения</summary>
-          <form id="semantic-import-form">
-            <label for="import-name">Название шаблона</label>
-            <input id="import-name" name="name" type="text" maxlength="120" required placeholder="Например, статья журнала">
-            <label for="import-files">Эталонные DOCX в порядке разметки, до 10 файлов</label>
-            <input id="import-files" name="files" type="file" accept=".docx" multiple required>
-            <label for="import-json">Структурированная семантическая разметка JSON</label>
-            <input id="import-json" name="teacher_json" type="file" accept=".json,application/json" required>
-            <label><input type="checkbox" name="span_grammar" value="true"> Извлечь переносимые правила для выделений внутри абзацев</label>
-            <p class="help">Импорт выполняется локально и не вызывает модель. Результат останется черновиком: проверьте вопросы и противоречия, затем запустите проверку на новых документах.</p>
-            <button type="submit" class="button">Импортировать черновик</button>
-          </form>
-        </details>
         <div id="template-list" class="stack" aria-live="polite"></div>
         <div id="template-review" class="review" hidden></div>
       </section>
@@ -68,7 +69,7 @@
           <p class="help">Не более 25 МиБ на файл. Исходники и все ревизии остаются доступны.</p>
           <label><input type="checkbox" name="use_llm" value="true" id="use-llm"> Определить роли небольшой моделью</label>
           <label><input type="checkbox" name="consent_external" value="true" id="external-consent"> Разрешаю отправить текст этих статей в OpenRouter</label>
-          <p class="help">Один вызов на документ. Расходы ограничены общим бюджетом; ошибки модели сохраняются в отчёте.</p>
+          <p class="help">Для шаблона из Codex — один вызов Qwen на документ. Расходы ограничены общим бюджетом; ошибки модели сохраняются в отчёте.</p>
           <button type="submit" class="button primary">Начать обработку</button>
         </form>
         <div id="batch-history" class="stack"></div>
@@ -81,6 +82,6 @@
       <div id="job-view" class="empty">Выберите статью из пакета, чтобы увидеть вопросы, блоки и файлы.</div>
     </section>
   </main>
-  <footer class="footer">ArticleFlow · Версия 032 · Обучение шаблона с обратной связью и проверкой всех страниц.</footer>
+  <footer class="footer">ArticleFlow · Импорт шаблона из Codex и проверяемое оформление DOCX.</footer>
 </body>
 </html>

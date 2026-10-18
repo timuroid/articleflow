@@ -105,6 +105,41 @@ def export_packet(references: list[Path], output: Path) -> dict:
         packet_path = stage / "packet.json"
         packet_path.write_text(json.dumps(packet, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         packet_path.chmod(0o600)
+        prompt = f"""# Задание Codex: разметка эталонных DOCX
+
+Изучи приложенные DOCX как образцы одного шаблона и `packet.json` из этой папки.
+Порядок файлов и глобальные номера абзацев (`blocks[*].n`) заданы пакетом.
+Обработай все {len(references_out)} документов и все {len(blocks_out)} блоков, включая
+пустые абзацы, таблицы и подписи. Визуальные свойства смотри в самих DOCX.
+
+Создай UTF-8 файл `teacher.json`. В нём должен быть **только** JSON-объект
+ровно с пятью ключами: `roles`, `groups`, `inline_roles`, `inline`, `questions`.
+`roles` — объект `snake_case_id: смысловое определение роли абзаца`.
+`groups` — массив объектов `{{"start": n, "end": n, "role": "id"}}`:
+неперекрывающиеся включительные интервалы должны покрыть все номера от 1 до
+{len(blocks_out)} ровно один раз. Каждая роль должна существовать в `roles`.
+`inline_roles` — объект `snake_case_id: определение роли фрагмента` или {{}}.
+`inline` — массив объектов `{{"paragraph": n, "quote": "точный текст",
+"occurrence": 1, "role": "id"}}` или []; цитата должна дословно совпадать с
+извлечённым текстом абзаца и не перекрываться с другими метками.
+`questions` — массив `{{"role": "id", "question": "..."}}` только для
+неразрешимых неоднозначностей или [].
+
+Делай роли переносимыми: Qwen будет определять их в новом документе без
+исходного оформления. Не используй в определениях конкретное имя автора,
+номер абзаца, буквальную фразу, Word style ID, bold/italic или положение на
+странице. Если два одинаково распознаваемых случая оформлены по-разному и
+не удаётся вывести условие, сохрани различие и задай точный вопрос. Не
+угадывай. После записи проверь JSON-синтаксис, полное покрытие номеров,
+существование ролей и точность цитат. Не объявляй шаблон проверенным:
+приложение отдельно проверит его воспроизведение.
+
+Исходные SHA-256: {', '.join(row['sha256'] for row in references_out)}.
+Для деталей контракта см. `docs/tech/external-semantic-import-037.md` в репозитории.
+"""
+        prompt_path = stage / "codex-prompt.md"
+        prompt_path.write_text(prompt, encoding="utf-8")
+        prompt_path.chmod(0o600)
         (stage / ".gitignore").write_text("*\n", encoding="utf-8")
         if output.exists() or output.is_symlink():
             raise DocumentError("OUTPUT_ALREADY_EXISTS")

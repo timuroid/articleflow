@@ -581,6 +581,6 @@ $('batch-form').addEventListener('submit', async (event) => {
   } catch (error) { message(`Пакет не принят: ${error.message}`, true); }
   finally { submit.disabled = false; }
 });
-if(location.pathname==='/templates') {document.body.classList.add('templates-page');$('page-title').textContent='Шаблоны документов';$('template-form').hidden=true;}
-$('create-template').addEventListener('click',()=>{$('template-form').hidden=!$('template-form').hidden;if(!$('template-form').hidden)$('template-name').focus();});
+if(location.pathname==='/templates') {document.body.classList.add('templates-page');$('page-title').textContent='Шаблоны документов';}
+$('create-template').addEventListener('click',()=>{const form=$('template-form');form.hidden=!form.hidden;$('create-template').setAttribute('aria-expanded',String(!form.hidden));if(!form.hidden)$('template-name').focus();});
 boot();

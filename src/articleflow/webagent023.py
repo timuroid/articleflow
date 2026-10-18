@@ -198,9 +198,10 @@ def process_job(store,job,batch,version,spec):
     from .sandbox034 import use
     from .managed034 import load_engine
     engine=load_engine(store.path('template-runs',settings['run_id']),settings['engine_profile']) if settings.get('engine_profile') else None
+    repair_attempts=0 if settings.get('contract')=='external-import-037' else 1
     with use(engine):
         result=apply(source,template,folder/'application',{**config,'model':settings['student_model'],
-                                                            'reasoning_effort':'none','inline_repair_attempts':1})
+                                                            'reasoning_effort':'none','inline_repair_attempts':repair_attempts})
     content=json.loads((folder/'application/input-original.json').read_text())
     present={result['assignments'][b['id']] for b in content['blocks'] if b['text'].strip()}
     missing=[r for r in settings['required_roles'] if r not in present]
